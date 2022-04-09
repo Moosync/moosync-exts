@@ -1,0 +1,9 @@
+name: Emby / Jellyfin Integration
+description: Fetch music from Emby or Jellyfin server
+url: https://github.com/Ovenoboyo/moosync-emby-jellyfin
+logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-emby-jellyfin/main/public/emby_jellyfin_logo.svg'
+packageName: moosync.emby.jellyfin
+release: 
+  url: https://github.com/Ovenoboyo/moosync-emby-jellyfin/releases/download/v{version}/moosync.emby.jellyfin-{version}.msox
+  version: 1.0.0
+
