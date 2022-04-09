@@ -1,0 +1,9 @@
+name: Discord Rich Presence
+description: Discord rich Presence for Moosync
+url: https://github.com/Ovenoboyo/moosync-discord-rpc
+logo: './logos_discord-icon.svg'
+packageName: discord.rich.presence
+release: 
+  url: https://github.com/Ovenoboyo/moosync-discord-rpc/releases/download/v{version}/discord.rich.presence-{version}.msox
+  version: 1.1.0
+
