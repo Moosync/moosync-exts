@@ -5,5 +5,5 @@ logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-emby-jellyfin/main/pu
 packageName: moosync.emby.jellyfin
 release: 
   url: https://github.com/Ovenoboyo/moosync-emby-jellyfin/releases/download/v{version}/moosync.emby.jellyfin-{version}.msox
-  version: 1.0.0
+  version: 1.1.0
 
