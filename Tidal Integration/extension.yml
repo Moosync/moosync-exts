@@ -1,0 +1,9 @@
+name: Tidal Integration
+description: Fetch your music and playlists from Tidal
+url: https://github.com/Ovenoboyo/moosync-tidal
+logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-tidal/main/assets/logo.svg'
+packageName: moosync.tidal
+release: 
+  url: https://github.com/Ovenoboyo/moosync-tidal/releases/download/v{version}/moosync.tidal-{version}.msox
+  version: 1.0.0
+
