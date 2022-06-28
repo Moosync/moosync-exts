@@ -5,5 +5,5 @@ logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-tidal/main/assets/log
 packageName: moosync.tidal
 release: 
   url: https://github.com/Ovenoboyo/moosync-tidal/releases/download/v{version}/moosync.tidal-{version}.msox
-  version: 1.0.0
+  version: 2.0.0
 

@@ -1,9 +1,8 @@
 name: Soundcloud Integration
 description: Fetch your music and playlists from Soundcloud
 url: https://github.com/Ovenoboyo/moosync-soundcloud
-logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-soundcloud/main/assets/icon.svg'
+logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync-soundcloud/main/assets/icon.svg"
 packageName: moosync.soundcloud
-release: 
+release:
   url: https://github.com/Ovenoboyo/moosync-soundcloud/releases/download/v{version}/moosync.soundcloud-{version}.msox
-  version: 1.0.0
-
+  version: 2.0.0
