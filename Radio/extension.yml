@@ -1,0 +1,9 @@
+name: Radio
+description: Stream online radios
+url: https://github.com/Ovenoboyo/moosync_radio_provider
+logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync_radio_provider/main/assets/icon.svg'
+packageName: moosync.radio
+release: 
+  url: https://github.com/Ovenoboyo/moosync_radio_provider/releases/download/v{version}/moosync.radio-{version}.msox
+  version: 1.0.0
+
