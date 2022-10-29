@@ -5,5 +5,5 @@ logo: './logos_discord-icon.svg'
 packageName: discord.rich.presence
 release: 
   url: https://github.com/Ovenoboyo/moosync-discord-rpc/releases/download/v{version}/discord.rich.presence-{version}.msox
-  version: 3.0.1
+  version: 3.0.3
 
