@@ -1,0 +1,8 @@
+name: Librespot Patcher
+description: Patch librespot to work with free accounts
+url: https://github.com/Ovenoboyo/moosync_librespot_patcher
+logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync_librespot_patcher/main/assets/icon.svg"
+packageName: moosync.librespot.patcher
+release:
+  url: https://github.com/Ovenoboyo/moosync_librespot_patcher/releases/download/v{version}/moosync.librespot.patcher-{version}.msox
+  version: 1.0.1
