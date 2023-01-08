@@ -5,4 +5,4 @@ logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync-soundcloud/main/asset
 packageName: moosync.soundcloud
 release:
   url: https://github.com/Ovenoboyo/moosync-soundcloud/releases/download/v{version}/moosync.soundcloud-{version}.msox
-  version: 2.0.1
+  version: 2.1.1

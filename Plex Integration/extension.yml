@@ -1,9 +1,8 @@
 name: Plex Integration
 description: Fetch music from Plex server
 url: https://github.com/Ovenoboyo/moosync-plex-integration
-logo: 'https://raw.githubusercontent.com/Ovenoboyo/moosync-plex-integration/main/public/plex_icon.svg'
+logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync-plex-integration/main/public/plex_icon.svg"
 packageName: moosync.plex
-release: 
+release:
   url: https://github.com/Ovenoboyo/moosync-plex-integration/releases/download/v{version}/moosync.plex-{version}.msox
-  version: 1.3.0
-
+  version: 1.3.1
