@@ -1,0 +1,8 @@
+name: Subsonic Integration
+description: Fetch your music and playlists from Subsonic compatible servers
+url: https://github.com/Ovenoboyo/moosync_subsonic
+logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync_subsonic/main/assets/icon.png"
+packageName: moosync.subsonic
+release:
+  url: https://github.com/Ovenoboyo/moosync_subsonic/releases/download/v{version}/moosync.subsonic-{version}.msox
+  version: 1.0.0
