@@ -5,4 +5,4 @@ logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync_subsonic/main/assets/
 packageName: moosync.subsonic
 release:
   url: https://github.com/Ovenoboyo/moosync_subsonic/releases/download/v{version}/moosync.subsonic-{version}.msox
-  version: 1.0.0
+  version: 1.1.0
