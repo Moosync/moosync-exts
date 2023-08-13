@@ -5,4 +5,4 @@ logo: "https://raw.githubusercontent.com/Ovenoboyo/moosync_librespot_patcher/mai
 packageName: moosync.librespot.patcher
 release:
   url: https://github.com/Ovenoboyo/moosync_librespot_patcher/releases/download/v{version}/moosync.librespot.patcher-{version}.msox
-  version: 1.1.0
+  version: 1.1.1
