@@ -1,0 +1,9 @@
+name: Youtube Downloader (POC)
+description: Download music from youtube
+url: 'https://github.com/Moosync/moosync-exts'
+logo: 'https://raw.githubusercontent.com/Moosync/Python-extension-POC/main/assets/icon.svg'
+packageName: moosync.yt.download
+release: 
+  url: https://github.com/Moosync/Python-extension-POC/releases/download/{version}/moosync.yt.download-{version}.msox
+  version: 1.0.0
+
