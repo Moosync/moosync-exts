@@ -1,0 +1,4 @@
+*.msox
+target
+dist
+node_modules
