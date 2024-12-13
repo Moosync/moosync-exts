@@ -1,0 +1,14 @@
+{
+  "name": "moosync.discord.rpc",
+  "version": "0.0.1",
+  "icon": "assets/icon.svg",
+  "extensionEntry": "dist/ext.wasm",
+  "moosyncExtension": true,
+  "displayName": "Sample Extesion",
+  "permissions": {
+    "hosts": [
+      "ws.audioscrobbler.com"
+    ],
+    "paths": {}
+  }
+}
