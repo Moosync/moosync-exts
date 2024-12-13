@@ -238,6 +238,7 @@ dependencies = [
 [[package]]
 name = "common_types"
 version = "0.1.0"
+source = "git+https://github.com/Moosync/wasm-extension-runner.git#411e1fa9b52211ca8a138ebfddbf522a42430f07"
 dependencies = [
  "extism-convert",
  "serde",
@@ -602,6 +603,7 @@ dependencies = [
 [[package]]
 name = "moosync-edk"
 version = "0.1.0"
+source = "git+https://github.com/Moosync/wasm-extension-runner.git#411e1fa9b52211ca8a138ebfddbf522a42430f07"
 dependencies = [
  "common_types",
  "extism-pdk",
