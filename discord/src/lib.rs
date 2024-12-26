@@ -260,7 +260,7 @@ impl DiscordRPC {
     fn open_sock(&self) -> MoosyncResult<()> {
         let mut sock = self.sock.lock().unwrap();
 
-        let id = open_sock("/run/user/1000/discord-ipc-0".to_string())?;
+        let id = open_sock("/discord-ipc-0".to_string())?;
         if id == -1 {
             return Err("Failed to connect to sock".into());
         }
@@ -325,11 +325,7 @@ impl DiscordRPC {
             }
         );
 
-        let start_time = if start_time == 0 {
-            get_system_time()
-        } else {
-            start_time
-        };
+        let start_time = get_system_time() - start_time;
 
         let mut buttons = vec![];
         if song.song.playback_url.is_some() {
@@ -422,6 +418,16 @@ impl PlayerEvents for DiscordRPC {
     fn on_seeked(&self, time: f64) -> MoosyncResult<()> {
         let current_song = extension_api::get_current_song()?;
         let player_state = extension_api::get_player_state()?;
+        self.set_activity(current_song, player_state, time as u64)?;
+
+        Ok(())
+    }
+
+    fn on_player_state_changed(&self) -> MoosyncResult<()> {
+        let current_song = extension_api::get_current_song()?;
+        let player_state = extension_api::get_player_state()?;
+        let time = extension_api::get_time()?;
+
         self.set_activity(current_song, player_state, time as u64)?;
 
         Ok(())

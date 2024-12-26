@@ -178,9 +178,9 @@ checksum = "325918d6fe32f23b19878fe4b34794ae41fc19ddbe53b10571a4874d44ffd39b"
 
 [[package]]
 name = "cc"
-version = "1.2.3"
+version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27f657647bcff5394bf56c7317665bbf790a137a50eaaa5c6bfbb9e27a518f2d"
+checksum = "9157bbaa6b165880c27a4293a474c91cdcf265cc68cc829bf10be0964a391caf"
 dependencies = [
  "jobserver",
  "libc",
@@ -238,7 +238,7 @@ dependencies = [
 [[package]]
 name = "common_types"
 version = "0.1.0"
-source = "git+https://github.com/Moosync/wasm-extension-runner.git#411e1fa9b52211ca8a138ebfddbf522a42430f07"
+source = "git+https://github.com/Moosync/wasm-extension-runner.git#b61e947bb1c7f18488a7be94201ba36aed2090ea"
 dependencies = [
  "extism-convert",
  "serde",
@@ -603,7 +603,7 @@ dependencies = [
 [[package]]
 name = "moosync-edk"
 version = "0.1.0"
-source = "git+https://github.com/Moosync/wasm-extension-runner.git#411e1fa9b52211ca8a138ebfddbf522a42430f07"
+source = "git+https://github.com/Moosync/wasm-extension-runner.git#b61e947bb1c7f18488a7be94201ba36aed2090ea"
 dependencies = [
  "common_types",
  "extism-pdk",
@@ -1113,7 +1113,7 @@ dependencies = [
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/Moosync/tauri#bedd1ec7579dc8f74e0754302fd73478b7152102"
+source = "git+https://github.com/Moosync/tauri#17541993292a234c0139b098608fd3f5b4da9735"
 dependencies = [
  "async-trait",
  "bitcode",

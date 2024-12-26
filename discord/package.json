@@ -4,11 +4,17 @@
   "icon": "assets/icon.svg",
   "extensionEntry": "dist/ext.wasm",
   "moosyncExtension": true,
-  "displayName": "Sample Extesion",
+  "displayName": "Discord RPC",
   "permissions": {
-    "hosts": [
-      "ws.audioscrobbler.com"
-    ],
-    "paths": {}
+    "hosts": [],
+    "paths": {
+      "{XDG_RUNTIME_DIR}": "/",
+      "/tmp": "/",
+      "{TEMP_DIR}": "/",
+      "{TMPDIR}": "/",
+      "{TMP}": "/",
+      "{TEMP}": "/",
+      "{XDG_RUNTIME_DIR}/app/com.discordapp.Discord": "/"
+    }
   }
 }
