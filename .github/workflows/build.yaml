@@ -50,6 +50,9 @@ jobs:
       - name: build extensions
         run: make
 
+      - name: Generate manifest
+        run: python3 gen-manifest.py
+
       - name: Get release name
         id: date
         run: |
@@ -70,7 +73,7 @@ jobs:
             const release = await github.repos.createRelease({
               owner, repo,
               tag_name: `release-${sha}`,
-              draft: true,
+              draft: false,
               target_commitish: sha
             });
 
