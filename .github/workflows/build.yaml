@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - release
+      - v2
 
 jobs:
   publish-extensions:
