@@ -15,7 +15,6 @@ jobs:
       matrix:
         include:
           - platform: "ubuntu-22.04"
-            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -70,7 +69,7 @@ jobs:
 
             const release = await github.repos.createRelease({
               owner, repo,
-              tag_name: process.env.GITHUB_REF,
+              tag_name: `release-${sha},
               draft: true,
               target_commitish: sha
             });
