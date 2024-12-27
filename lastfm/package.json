@@ -2,7 +2,7 @@
   "name": "moosync.lastfm",
   "version": "0.0.1",
   "icon": "assets/icon.svg",
-  "extensionEntry": "dist/ext.wasm",
+  "extensionEntry": "ext.wasm",
   "moosyncExtension": true,
   "displayName": "Sample Extesion",
   "permissions": {

@@ -1,0 +1,84 @@
+name: "build"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release
+
+jobs:
+  publish-extensions:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "ubuntu-22.04"
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: "v2"
+
+      - name: install dependencies (ubuntu only)
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: make
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: "wasm32-unknown-unknown,wasm32-wasip1"
+
+      - name: install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: install mopack
+        run: npm install -g @moosync/packer
+
+      - name: build extensions
+        run: make
+
+      - name: Get release name
+        id: date
+        run: |
+          echo "{release_name}={Extensions release ($(date +'%Y-%m-%d'))}" >> $GITHUB_STATE
+
+      - name: Create Release
+        uses: actions/github-script@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log('environment', process.versions);
+
+            const fs = require('fs').promises;
+
+            const { repo: { owner, repo }, sha } = context;
+            console.log({ owner, repo, sha });
+
+            const release = await github.repos.createRelease({
+              owner, repo,
+              tag_name: process.env.GITHUB_REF,
+              draft: true,
+              target_commitish: sha
+            });
+
+            console.log('created release', { release });
+
+            for (let file of await fs.readdir('./dist')) {
+              console.log('uploading', file);
+
+              await github.repos.uploadReleaseAsset({
+                owner, repo,
+                release_id: release.data.id,
+                name: file,
+                data: await fs.readFile(`./${file}`)
+              });
+            }

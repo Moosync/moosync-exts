@@ -2,7 +2,7 @@
   "name": "moosync.discord.rpc",
   "version": "0.0.1",
   "icon": "assets/icon.svg",
-  "extensionEntry": "dist/ext.wasm",
+  "extensionEntry": "ext.wasm",
   "moosyncExtension": true,
   "displayName": "Discord RPC",
   "permissions": {
@@ -14,7 +14,11 @@
       "{TMPDIR}": "/",
       "{TMP}": "/",
       "{TEMP}": "/",
-      "{XDG_RUNTIME_DIR}/app/com.discordapp.Discord": "/"
+      "{XDG_RUNTIME_DIR}/app/com.discordapp.Discord": "/",
+      "\\\\.\\pipe\\": "/"
     }
-  }
+  },
+  "exclude": [
+    "target/"
+  ]
 }

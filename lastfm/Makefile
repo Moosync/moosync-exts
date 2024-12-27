@@ -1,13 +1,16 @@
 TARGET_DIR = target/wasm32-wasip1/release
 DIST_DIR := dist
 
-all: build copy pack
+all: build copy opt pack
 
 build:
 	@cargo build --quiet --release --target wasm32-wasip1
 
+opt:
+	@wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
+
 pack:
-	@mopack --path .
+	@mopack --path dist
 
 copy:
 	mkdir -p $(DIST_DIR)
@@ -15,7 +18,8 @@ copy:
 		filename=$$(basename $$file .wasm); \
 		cp $$file $(DIST_DIR)/ext.wasm; \
 	done
+	cp package.json dist/
 
 test: build copy
-	rm -f ~/.local/share/app.moosync.moosync/extensions/moosync.sample.extension/dist/ext.wasm
-	cp $(DIST_DIR)/ext.wasm ~/.local/share/app.moosync.moosync/extensions/moosync.sample.extension/dist
+	rm -f ~/.local/share/app.moosync.moosync/extensions/moosync.discord.rpc/dist/ext.wasm
+	cp $(DIST_DIR)/ext.wasm ~/.local/share/app.moosync.moosync/extensions/moosync.discord.rpc/dist

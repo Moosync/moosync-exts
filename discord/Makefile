@@ -10,7 +10,7 @@ opt:
 	@wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
 
 pack:
-	@mopack --path .
+	@mopack --path dist
 
 copy:
 	mkdir -p $(DIST_DIR)
@@ -18,6 +18,7 @@ copy:
 		filename=$$(basename $$file .wasm); \
 		cp $$file $(DIST_DIR)/ext.wasm; \
 	done
+	cp package.json dist/
 
 test: build copy
 	rm -f ~/.local/share/app.moosync.moosync/extensions/moosync.discord.rpc/dist/ext.wasm
