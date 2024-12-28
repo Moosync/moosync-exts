@@ -27,13 +27,12 @@ class SoundCloudExtension {
     })
 
     api.on('getSearch', async (term) => {
-      console.log('inside search', term)
       const songs = await this.soundcloudApi.searchSongs(term, false)
       const artists = await this.soundcloudApi.searchArtist(term, false)
       const playlists = await this.soundcloudApi.searchPlaylists(term, false)
       return {
-        songs: [],
-        artists: [],
+        songs,
+        artists,
         albums: [],
         playlists,
         genres: []

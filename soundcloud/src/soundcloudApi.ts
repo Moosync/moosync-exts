@@ -45,7 +45,7 @@ export class SoundcloudApi {
 
     console.log('setting key', key)
     this.key = key
-    // this.updateKeyCallback(key)
+    this.updateKeyCallback(key)
   }
 
   private getRaw(url: URL) {
@@ -146,14 +146,7 @@ export class SoundcloudApi {
       ret.push({
         artist_id: data.urn.toString(),
         artist_name: data.full_name || data.username,
-        artist_coverPath: data.avatar_url,
-        artist_extra_info: {
-          extensions: {
-            'moosync.soundcloud': {
-              artist_id: data.urn.replace('soundcloud:users:', '')
-            }
-          }
-        }
+        artist_coverPath: data.avatar_url
       })
     }
 
@@ -288,14 +281,7 @@ export class SoundcloudApi {
               {
                 artist_id: t.user_id.toString(),
                 artist_name: t.user.full_name || t.user.username,
-                artist_coverPath: t.user.avatar_url,
-                artist_extra_info: {
-                  extensions: {
-                    'moosync.soundcloud': {
-                      artist_id: t.urn.replace('soundcloud:users:', '')
-                    }
-                  }
-                }
+                artist_coverPath: t.user.avatar_url
               }
             ],
             type: 'URL'
