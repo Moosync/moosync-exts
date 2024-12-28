@@ -253,10 +253,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@moosync/edk@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@moosync/edk@npm:0.0.6"
-  checksum: 10c0/a7f1f2e9f8e21b633f61b9955d37bac9d787b0b2cd51d65a9caf915631947b8af9bbb7bafc384e7a9a51135d2fcb97d43a4569b118c42eabc90981e426f7aadb
+"@moosync/edk@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@moosync/edk@npm:0.0.7"
+  checksum: 10c0/b3ddc0c848259446bad37c298b0c26d28747c373e76c13d47890eeeecb2e2eb4d923643fe91ced816c096974aa49670adb82cc6e2c00d284b62ccceb882df9ff
   languageName: node
   linkType: hard
 
@@ -1232,7 +1232,7 @@ __metadata:
   dependencies:
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     "@extism/js-pdk": "npm:^1.1.1"
-    "@moosync/edk": "npm:^0.0.6"
+    "@moosync/edk": "npm:^0.0.7"
     "@moosync/packer": "npm:^0.1.4"
     esbuild: "npm:^0.24.0"
     node-fetch: "npm:^3.2.6"

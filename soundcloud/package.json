@@ -10,7 +10,8 @@
   "permissions": {
     "hosts": [
       "soundcloud.com",
-      "*.soundcloud.com"
+      "*.soundcloud.com",
+      "*.sndcdn.com"
     ],
     "paths": {}
   },
@@ -21,7 +22,7 @@
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@extism/js-pdk": "^1.1.1",
-    "@moosync/edk": "^0.0.6",
+    "@moosync/edk": "^0.0.7",
     "@moosync/packer": "^0.1.4",
     "esbuild": "^0.24.0",
     "ts-loader": "^9.4.2",

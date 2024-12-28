@@ -1,6 +1,5 @@
-import { api, Artist, Playlist, Song } from '@moosync/edk/api'
+import { api, Artist, Playlist, Song } from '@moosync/edk'
 import { PlaylistInfo, Playlists, TrackInfo, Tracks, UserInfo } from './types'
-import { URL, URLSearchParams } from 'url'
 
 // https://github.com/DevAndromeda/soundcloud-scraper/blob/master/src/constants/Constants.js
 const SCRIPT_URL_MATCH_REGEX =
@@ -30,6 +29,7 @@ export class SoundcloudApi {
         const data = this.getRaw(new URL(u))
         if (data.includes(',client_id:"')) {
           const a = data.split(',client_id:"')
+          console.log('got key', a[1].split('"')[0])
           return a[1].split('"')[0]
         }
       }
@@ -38,16 +38,20 @@ export class SoundcloudApi {
 
   public async generateKey(key?: string) {
     if (!key) {
+      console.log('fetching key')
       key = await this.fetchKey()
+      console.log('fetched key', key)
     }
 
+    console.log('setting key', key)
     this.key = key
-    this.updateKeyCallback(key)
+    // this.updateKeyCallback(key)
   }
 
   private getRaw(url: URL) {
+    console.log('Fetching', url)
     const resp = Http.request({
-      url,
+      url: url.toString(),
       headers: {
         'x-requested-with': 'https://soundcloud.com'
       },
@@ -62,6 +66,10 @@ export class SoundcloudApi {
     invalidateCache: boolean,
     maxTries = 0
   ): Promise<T | undefined> {
+    if (!this.key) {
+      await this.generateKey()
+    }
+
     const parsedParams = new URLSearchParams({
       ...params,
       client_id: this.key
@@ -73,7 +81,9 @@ export class SoundcloudApi {
     // }
 
     try {
-      const resp = JSON.parse(this.getRaw(parsedUrl))
+      const raw = this.getRaw(parsedUrl)
+      console.log('raw', parsedUrl)
+      const resp = JSON.parse(raw)
       // this.cacheHandler.addToCache(url.toString(), resp)
       return resp
     } catch (e) {
@@ -185,7 +195,7 @@ export class SoundcloudApi {
       '/search/playlists',
       {
         q: term,
-        limit: 50
+        limit: 10
       },
       invalidateCache
     )
@@ -194,6 +204,7 @@ export class SoundcloudApi {
   }
 
   public async searchSongs(term: string, invalidateCache: boolean) {
+    console.log('requesting songs')
     const data = await this.get<TrackInfo>(
       '/search/tracks',
       {
@@ -203,6 +214,7 @@ export class SoundcloudApi {
       invalidateCache
     )
 
+    console.log('got data', data)
     return await this.parseSongs(invalidateCache, ...data.collection)
   }
 
@@ -237,9 +249,7 @@ export class SoundcloudApi {
   }
 
   private findStreamURL(track: Tracks) {
-    const streamUrl = track.media.transcodings.find(
-      (val) => val.format.protocol === 'progressive' && !val.url.includes('preview')
-    )?.url
+    const streamUrl = track.media.transcodings.find((val) => val.format.protocol === 'progressive')?.url
 
     return streamUrl
   }
@@ -261,6 +271,7 @@ export class SoundcloudApi {
 
       if (t.streamable && t.media?.transcodings) {
         const streamUrl = this.findStreamURL(t)
+        console.log('got stream url', streamUrl)
         if (streamUrl) {
           // this.cacheHandler.addToCache(`song:${t.id}`, streamUrl)
           songs.push({
@@ -314,7 +325,9 @@ export class SoundcloudApi {
 
       const data = await this.get<TrackInfo>(`/users/${urn}/tracks`, params, invalidateCache)
       if (data.collection) {
-        tracks.push(...(await this.parseSongs(invalidateCache, ...data.collection)))
+        const songs = await this.parseSongs(invalidateCache, ...data.collection)
+        console.log('ot collections', songs)
+        tracks.push(...songs)
       }
 
       next = data.next_href

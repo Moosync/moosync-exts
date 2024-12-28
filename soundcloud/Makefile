@@ -1,6 +1,6 @@
 DIST_DIR := dist
 
-all: build opt pack
+all: build pack
 
 build:
 	@corepack yarn install

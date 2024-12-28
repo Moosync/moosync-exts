@@ -1,4 +1,4 @@
-import { Playlist, Song, api } from '@moosync/edk/api'
+import { Artist, Exports, Playlist, Song, api } from '@moosync/edk'
 import { SoundcloudApi } from './soundcloudApi'
 
 class SoundCloudExtension {
@@ -6,12 +6,6 @@ class SoundCloudExtension {
 
   private updateKey(key: string) {
     api.setSecure({ key: 'apiKey', value: key })
-  }
-
-  async onStarted() {
-    this.fetchPreferences()
-    this.registerListeners()
-    console.info('Started soundcloud extension')
   }
 
   private fetchPreferences() {
@@ -33,34 +27,27 @@ class SoundCloudExtension {
     })
 
     api.on('getSearch', async (term) => {
+      console.log('inside search', term)
       const songs = await this.soundcloudApi.searchSongs(term, false)
       const artists = await this.soundcloudApi.searchArtist(term, false)
       const playlists = await this.soundcloudApi.searchPlaylists(term, false)
       return {
-        songs,
-        artists,
+        songs: [],
+        artists: [],
         albums: [],
         playlists,
         genres: []
       }
     })
 
-    api.on('getArtistSongs', async (artist) => {
-      // const extraInfo = api.utils.getArtistExtraInfo(artist)
-      // let artistId: string
-      // if (!extraInfo || !extraInfo['artist_id']) {
-      //   const soundcloudArtist = (await this.soundcloudApi.searchArtist(artist.artist_name, false))[0]
-      //   if (soundcloudArtist) {
-      //     artistId = api.utils.getArtistExtraInfo(soundcloudArtist).artist_id
-      //     await api.setArtistEditableInfo(artist.artist_id, {
-      //       artist_id: artistId
-      //     })
-      //   }
-      // } else {
-      //   artistId = extraInfo['artist_id']
-      // }
+    api.on('getArtistSongs', async (artist: Artist) => {
+      const soundcloudArtist = (await this.soundcloudApi.searchArtist(artist.artist_name, false))[0]
+      if (soundcloudArtist) {
+        const artistId = soundcloudArtist.artist_id.replace('soundcloud:users:', '')
+        const songs = await this.soundcloudApi.getArtistSongs(artistId, false)
+        return { songs }
+      }
 
-      // const songs = await this.soundcloudApi.getArtistSongs(artistId, false)
       return {
         songs: []
       }
@@ -118,4 +105,7 @@ export function entry() {
   console.log('Initialized soundcloud ext')
 }
 
-export * from '@moosync/edk'
+module.exports = {
+  ...module.exports,
+  ...require('@moosync/edk').Exports
+}

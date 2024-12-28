@@ -1,7 +1,7 @@
 const esbuild = require('esbuild')
 // include this if you need some node support:
 // npm i @esbuild-plugins/node-modules-polyfill --save-dev
-// const { NodeModulesPolyfillPlugin } = require('@esbuild-plugins/node-modules-polyfill')
+const { NodeModulesPolyfillPlugin } = require('@esbuild-plugins/node-modules-polyfill')
 
 esbuild.build({
   // supports other types like js or ts
@@ -10,11 +10,11 @@ esbuild.build({
   bundle: true,
   sourcemap: true,
   plugins: [
-    // NodeModulesPolyfillPlugin({
-    //   url: true
-    // })
+    NodeModulesPolyfillPlugin({
+      url: true
+    })
   ], // include this if you need some node support
   minify: false, // might want to use true for production build
   format: 'cjs', // needs to be CJS for now
-  target: ['es2018'] // don't go over es2020 because quickjs doesn't support it
+  target: ['es2020'] // don't go over es2020 because quickjs doesn't support it
 })

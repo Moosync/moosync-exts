@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "moduleResolution": "Bundler",
     "lib": [], // this ensures unsupported globals aren't suggested
-    "types": ["@extism/js-pdk"] // while this makes the IDE aware of the ones that are
+    "types": ["@extism/js-pdk", "@types/node"] // while this makes the IDE aware of the ones that are
   },
   "include": ["src/index.ts"]
 }
