@@ -15,7 +15,8 @@
       "{TMP}": "/",
       "{TEMP}": "/",
       "{XDG_RUNTIME_DIR}/app/com.discordapp.Discord": "/",
-      "\\\\.\\pipe\\": "/"
+      "\\\\.\\pipe\\": "/",
+      "{XDG_RUNTIME_DIR}/.flatpak/dev.vencord.Vesktop/xdg-run": "/"
     }
   },
   "exclude": [
