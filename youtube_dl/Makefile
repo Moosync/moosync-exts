@@ -4,6 +4,7 @@ all: install-deps build copy pack
 
 install-deps:
 	python -m venv .venv
+	ls -l `which sh`
 	source .venv/bin/activate && pip install git+https://github.com/Moosync/wasm-extension-runner/#subdirectory=wasm-extension-py && pip install yt-dlp
 
 build:

@@ -8,7 +8,7 @@ DIST_DIR=$(shell pwd)/dist
 
 $(SUBDIRS):
 	@echo "Building in $@"
-	@$(MAKE) -s -C $@
+	$(MAKE) -s -C $@
 
 copy_msox:
 	@mkdir -p $(DIST_DIR)
