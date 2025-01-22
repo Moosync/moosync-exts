@@ -3,8 +3,7 @@ use std::collections::HashMap;
 
 use md5::{Digest, Md5};
 use moosync_edk::{
-    api::extension_api::get_system_time, error, http, info, HttpRequest, MoosyncResult as Result,
-    Song,
+    api::extension_api::get_system_time, error, http, info, HttpRequest, Result, Song,
 };
 use regex::Regex;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};

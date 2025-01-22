@@ -6,12 +6,12 @@ use moosync_edk::{
         extension_api::{
             self, get_current_song, get_secure, register_oauth, set_secure, update_accounts,
         },
-        Accounts, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
     },
     error,
     handler::register_extension,
-    info, ExtensionAccountDetail, ExtensionProviderScope, MoosyncResult, MoosyncResult as Result,
-    PreferenceData, Song,
+    info, ExtensionAccountDetail, ExtensionProviderScope, PreferenceData, Result,
+    Result as MoosyncResult, Song,
 };
 
 mod client;
@@ -30,7 +30,7 @@ impl SampleExtension {
             if let Ok(parsed_session) = serde_json::from_value(session.clone()) {
                 let mut client = self.client.lock().unwrap();
                 client.set_session(parsed_session);
-                update_accounts().unwrap();
+                update_accounts(Some("moosync.lastfm".into())).unwrap();
             } else {
                 error!("Failed to parse existing sessions {:?}", session);
             }
@@ -76,6 +76,7 @@ impl Provider for SampleExtension {
 }
 impl DatabaseEvents for SampleExtension {}
 impl PreferenceEvents for SampleExtension {}
+impl ContextMenu for SampleExtension {}
 impl Extension for SampleExtension {}
 impl Accounts for SampleExtension {
     fn get_accounts(&self) -> MoosyncResult<Vec<moosync_edk::ExtensionAccountDetail>> {
@@ -123,7 +124,7 @@ impl Accounts for SampleExtension {
             }
         }
 
-        update_accounts()
+        update_accounts(Some("moosync.lastfm".into()))
     }
 }
 
