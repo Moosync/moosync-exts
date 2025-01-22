@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "ubuntu-22.04"
+          - platform: "ubuntu-latest"
 
     runs-on: ${{ matrix.platform }}
     defaults:
@@ -35,6 +35,7 @@ jobs:
         run: |
           curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
           bash install.sh
+          ldd --version
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
