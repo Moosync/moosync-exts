@@ -311,6 +311,7 @@ dependencies = [
 [[package]]
 name = "moosync-edk"
 version = "0.1.0"
+source = "git+https://github.com/Moosync/wasm-extension-runner.git#980c032f38ad4ec4cc2216826ccb20994e06344b"
 dependencies = [
  "extism-convert",
  "extism-pdk",
@@ -583,7 +584,7 @@ dependencies = [
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/Moosync/moosync-tauri#c930f43fd4e4d29a6bb2c46bb799eb18552adcd2"
+source = "git+https://github.com/Moosync/moosync-tauri#c753fc962c3774201f2eb5a5275fb57588542d4c"
 dependencies = [
  "async-trait",
  "bitcode",

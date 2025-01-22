@@ -7,7 +7,7 @@ use moosync_edk::{
             self, get_current_song, get_secure, get_system_time, open_sock, read_sock,
             register_oauth, set_secure, update_accounts, write_sock,
         },
-        Accounts, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
     },
     config, error,
     handler::register_extension,
@@ -440,6 +440,7 @@ impl Provider for DiscordRPC {
 impl DatabaseEvents for DiscordRPC {}
 impl PreferenceEvents for DiscordRPC {}
 impl Extension for DiscordRPC {}
+impl ContextMenu for DiscordRPC {}
 impl Accounts for DiscordRPC {}
 
 #[no_mangle]
