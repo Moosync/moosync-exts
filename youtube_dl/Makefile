@@ -4,13 +4,11 @@ all: install-deps build copy pack
 
 install-deps:
 	python -m venv .venv
-	source .venv/bin/activate
-	pip install git+https://github.com/Moosync/wasm-extension-runner/#subdirectory=wasm-extension-py
-	pip install yt-dlp
+	source .venv/bin/activate && pip install git+https://github.com/Moosync/wasm-extension-runner/#subdirectory=wasm-extension-py && pip install yt-dlp
 
 build:
 	mkdir -p $(DIST_DIR)
-	moosync-edk extension.py -o $(DIST_DIR)/ext.wasm
+	source .venv/bin/activate && moosync-edk extension.py -o $(DIST_DIR)/ext.wasm
 
 opt:
 	wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm

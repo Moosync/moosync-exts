@@ -26,7 +26,7 @@ jobs:
       - name: install dependencies (ubuntu only)
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: make binaryen
+          packages: make binaryen python3.11 curl
 
       - name: Install extism-js
         run: |
