@@ -17,6 +17,9 @@ jobs:
           - platform: "ubuntu-22.04"
 
     runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,7 +52,6 @@ jobs:
 
       - name: build extensions
         run: make
-        shell: bash
 
       - name: Generate manifest
         run: python3 gen-manifest.py
