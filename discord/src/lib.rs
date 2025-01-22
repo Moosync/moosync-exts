@@ -11,8 +11,7 @@ use moosync_edk::{
     },
     config, error,
     handler::register_extension,
-    info, ExtensionAccountDetail, ExtensionProviderScope, MoosyncResult, MoosyncResult as Result,
-    PlayerState, PreferenceData, Song, SongType,
+    info, ExtensionProviderScope, PlayerState, Result as MoosyncResult, Song, SongType,
 };
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;

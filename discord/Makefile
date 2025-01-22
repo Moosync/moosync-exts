@@ -1,10 +1,10 @@
 TARGET_DIR = target/wasm32-wasip1/release
 DIST_DIR := dist
 
-all: build copy opt pack
+all: build copy pack
 
 build:
-	@cargo build --quiet --release --target wasm32-wasip1
+	@cargo build --quiet --target wasm32-wasi
 
 opt:
 	@wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
