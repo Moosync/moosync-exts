@@ -101,16 +101,24 @@ impl Accounts for LastFMExtension {
         }])
     }
 
-    fn perform_account_login(&self, args: moosync_edk::AccountLoginArgs) -> MoosyncResult<()> {
+    fn perform_account_login(&self, args: moosync_edk::AccountLoginArgs) -> MoosyncResult<String> {
         info!("Performing account login {}", args.login_status);
+        let mut client = self.client.lock().unwrap();
         if args.login_status {
-            let client = self.client.lock().unwrap();
             let res = client.login();
             info!("opening url {}", res);
-            extension_api::open_external_url(res).unwrap();
+            extension_api::open_external_url(res.clone()).unwrap();
+            Ok(res)
+        } else {
+            client.logout();
+            set_secure(PreferenceData {
+                key: "session".to_string(),
+                value: None,
+                default_value: None,
+            })?;
+            update_accounts(Some("moosync.lastfm".into()))?;
+            Ok(String::new())
         }
-
-        Ok(())
     }
 
     fn oauth_callback(&self, code: String) -> MoosyncResult<()> {

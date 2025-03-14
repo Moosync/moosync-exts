@@ -174,6 +174,10 @@ impl Client {
         )
     }
 
+    pub fn logout(&mut self) {
+        self.session = None;
+    }
+
     pub fn authorize(&mut self, code: String) -> Result<Session> {
         let re = Regex::new(r"(?i)[?&]token=([^&]+)").unwrap();
         if let Some(token) = re.captures(&code) {
