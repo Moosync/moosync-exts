@@ -10,29 +10,34 @@ use moosync_edk::{
     },
     error,
     handler::register_extension,
-    info, ExtensionAccountDetail, ExtensionProviderScope, PreferenceData, Result,
+    info, warn, ExtensionAccountDetail, ExtensionProviderScope, PreferenceData, Result,
     Result as MoosyncResult, Song,
 };
 
 mod client;
 
-struct SampleExtension {
+struct LastFMExtension {
     client: Mutex<Client>,
 }
 
-impl SampleExtension {
+impl LastFMExtension {
     fn fetch_session(&self) -> MoosyncResult<()> {
         if let Ok(session) = get_secure(PreferenceData {
             key: "session".to_string(),
             value: None,
             default_value: None,
         }) {
-            if let Ok(parsed_session) = serde_json::from_value(session.clone()) {
-                let mut client = self.client.lock().unwrap();
-                client.set_session(parsed_session);
-                update_accounts(Some("moosync.lastfm".into())).unwrap();
+            let session = session.get("value");
+            if let Some(session) = session {
+                if let Ok(parsed_session) = serde_json::from_value(session.clone()) {
+                    let mut client = self.client.lock().unwrap();
+                    client.set_session(parsed_session);
+                    update_accounts(Some("moosync.lastfm".into())).unwrap();
+                } else {
+                    error!("Failed to parse existing sessions {:?}", session);
+                }
             } else {
-                error!("Failed to parse existing sessions {:?}", session);
+                warn!("Session could not be retrieved");
             }
         }
 
@@ -40,7 +45,7 @@ impl SampleExtension {
     }
 }
 
-impl SampleExtension {
+impl LastFMExtension {
     pub fn new() -> Self {
         Self {
             client: Mutex::new(
@@ -53,7 +58,7 @@ impl SampleExtension {
     }
 }
 
-impl PlayerEvents for SampleExtension {
+impl PlayerEvents for LastFMExtension {
     fn on_song_changed(&self) -> MoosyncResult<()> {
         let client = self.client.lock().unwrap();
         if let Ok(Some(current_song)) = get_current_song() {
@@ -63,9 +68,12 @@ impl PlayerEvents for SampleExtension {
         Ok(())
     }
 }
-impl Provider for SampleExtension {
+impl Provider for LastFMExtension {
     fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
-        Ok(vec![ExtensionProviderScope::Scrobbles])
+        Ok(vec![
+            ExtensionProviderScope::Scrobbles,
+            ExtensionProviderScope::Accounts,
+        ])
     }
 
     fn scrobble(&self, song: Song) -> Result<()> {
@@ -74,11 +82,11 @@ impl Provider for SampleExtension {
         Ok(())
     }
 }
-impl DatabaseEvents for SampleExtension {}
-impl PreferenceEvents for SampleExtension {}
-impl ContextMenu for SampleExtension {}
-impl Extension for SampleExtension {}
-impl Accounts for SampleExtension {
+impl DatabaseEvents for LastFMExtension {}
+impl PreferenceEvents for LastFMExtension {}
+impl ContextMenu for LastFMExtension {}
+impl Extension for LastFMExtension {}
+impl Accounts for LastFMExtension {
     fn get_accounts(&self) -> MoosyncResult<Vec<moosync_edk::ExtensionAccountDetail>> {
         let client = self.client.lock().unwrap();
         let username = client.get_username();
@@ -132,7 +140,7 @@ impl Accounts for SampleExtension {
 pub extern "C" fn init() {
     info!("Initializing SampleExtension");
 
-    let extension = SampleExtension::new();
+    let extension = LastFMExtension::new();
     extension.fetch_session().unwrap();
 
     register_extension(Box::new(extension)).unwrap();
