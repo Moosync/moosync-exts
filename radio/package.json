@@ -1,0 +1,18 @@
+{
+  "name": "moosync.radio",
+  "version": "0.0.1",
+  "icon": "assets/icon.svg",
+  "extensionEntry": "ext.wasm",
+  "moosyncExtension": true,
+  "displayName": "Radio",
+  "permissions": {
+    "hosts": [
+      "*.api.radio-browser.info",
+      "api.radio-browser.info"
+    ],
+    "paths": {}
+  },
+  "exclude": [
+    "target/"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "getProviderScopes",
+      "data": {
+        "packageName": "moosync.radio"
+      },
+      "expected": ["search"]
+    },
+    {
+      "type": "requestedSearchResult",
+      "data": ["country_code:us"],
+      "expected": "ignore"
+    }
+  ],
+  "requests": []
+}
