@@ -1,7 +1,7 @@
 TARGET_DIR = target/wasm32-wasip1/release
 DIST_DIR := dist
 
-all: build opt copy pack
+all: build copy opt pack
 
 build:
 	@cargo build --release --target wasm32-wasip1
@@ -21,4 +21,4 @@ copy:
 	cp package.json dist/
 
 test: build copy
-	moodriver -d ./traces dist/ext.wasm
+	moodriver -v -d ./traces dist/ext.wasm

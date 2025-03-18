@@ -12,6 +12,11 @@
       "type": "requestedSearchResult",
       "data": ["country_code:us"],
       "expected": "ignore"
+    },
+    {
+      "type": "requestedSongFromURL",
+      "data": ["hello", false],
+      "expected": "ignore"
     }
   ],
   "requests": []

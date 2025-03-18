@@ -132,6 +132,11 @@ impl Provider for RadioExtension {
             ..Default::default()
         })
     }
+
+    fn get_song_from_url(&self, url: String) -> Result<Option<Song>> {
+        info!("Got URL {}", url);
+        Ok(None)
+    }
 }
 impl DatabaseEvents for RadioExtension {}
 impl PreferenceEvents for RadioExtension {}
