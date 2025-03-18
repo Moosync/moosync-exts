@@ -43,6 +43,11 @@ jobs:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: "wasm32-unknown-unknown,wasm32-wasip1"
 
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ">=1.24.0"
+
       - name: install Node.js
         uses: actions/setup-node@v4
         with:
