@@ -2,8 +2,6 @@ module soundcloud
 
 go 1.24.0
 
-replace github.com/Moosync/extensions-sdk/wasm-extension-go => /home/ovenoboyo/projects/moosync/tauri/Moosync/lib/extensions-wasm/wasm-extension-go/
-
 require (
 	github.com/Moosync/extensions-sdk/wasm-extension-go v0.0.0-20250318052809-0a68599b6e69
 	github.com/Ovenoboyo/scdl/v2 v2.3.10-0.20250318212557-ddc97913d03b
