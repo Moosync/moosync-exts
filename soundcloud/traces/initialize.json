@@ -1,0 +1,34 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "getProviderScopes",
+      "data": {
+        "packageName": "moosync.soundcloud"
+      },
+      "expected": [
+        "search",
+        "songFromUrl",
+        "playlistFromUrl",
+        "playbackDetails",
+        "playlistSongs"
+      ]
+    },
+    {
+      "type": "requestedSearchResult",
+      "data": ["hello"],
+      "expected": "ignore"
+    },
+    {
+      "type": "customRequest",
+      "data": ["extension://moosync.soundcloud/230155983"],
+      "expected": "ignore"
+    },
+    {
+      "type": "requestedPlaylistSongs",
+      "data": ["moosync.soundcloud:1831511154", false, ""],
+      "expected": null
+    }
+  ],
+  "requests": []
+}

@@ -1,39 +1,16 @@
 {
   "name": "moosync.soundcloud",
+  "author": "Sahil Gupte",
   "version": "2.1.2",
   "description": "Soundcloud integration for moosync",
-  "main": "src/index.ts",
   "icon": "assets/icon.svg",
-  "extensionEntry": "dist/ext.wasm",
+  "extensionEntry": "ext.wasm",
   "moosyncExtension": true,
   "displayName": "Soundcloud",
   "permissions": {
     "hosts": [
-      "soundcloud.com",
-      "*.soundcloud.com",
-      "*.sndcdn.com"
+      "*"
     ],
     "paths": {}
-  },
-  "scripts": {
-    "build": "node esbuild && extism-js dist/index.js -i ./node_modules/@moosync/edk/src/plugin.d.ts -o dist/ext.wasm --skip-opt && mopack --path ."
-  },
-  "author": "Sahil Gupte",
-  "devDependencies": {
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@extism/js-pdk": "^1.1.1",
-    "@moosync/edk": "^0.0.7",
-    "@moosync/packer": "^0.1.4",
-    "esbuild": "^0.24.0",
-    "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
-  },
-  "dependencies": {
-    "node-fetch": "^3.2.6",
-    "semver": "^7.3.7",
-    "url": "^0.11.4"
-  },
-  "packageManager": "yarn@4.5.1+sha512.341db9396b6e289fecc30cd7ab3af65060e05ebff4b3b47547b278b9e67b08f485ecd8c79006b405446262142c7a38154445ef7f17c1d5d1de7d90bf9ce7054d"
+  }
 }

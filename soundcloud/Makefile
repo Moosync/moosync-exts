@@ -1,17 +1,19 @@
 DIST_DIR := dist
 
-all: build pack
+all: build opt copy pack
 
 build:
-	@corepack yarn install
-	@corepack yarn build
+	GOOS=wasip1 GOARCH=wasm go build -buildmode=c-shared -tags std -o $(DIST_DIR)/ext.wasm .
 
 opt:
-	@wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
+	@wasm-opt --enable-bulk-memory -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
 
 pack:
-	@mopack --path .
+	@mopack --path dist
+
+copy:
+	mkdir -p $(DIST_DIR)
+	cp package.json $(DIST_DIR)/
 
 test: build copy
-	rm -f ~/.local/share/app.moosync.moosync/extensions/moosync.sample.extension/dist/ext.wasm
-	cp $(DIST_DIR)/ext.wasm ~/.local/share/app.moosync.moosync/extensions/moosync.sample.extension/dist
+	moodriver -vv -d ./traces $(DIST_DIR)/ext.wasm
