@@ -23,7 +23,7 @@ func scTracksToSong(track soundcloudapi.Track) types.Song {
 			Title:             track.Title,
 			Date:              track.DisplayDate,
 			Duration:          &duration,
-			Type:              types.SongTypeURL,
+			Type:              types.SongTypeHLS,
 			URL:               track.PermalinkURL,
 			SongCoverPathHigh: track.ArtworkURL,
 			PlaybackURL:       "extension://moosync.soundcloud/" + strconv.Itoa(int(track.ID)),
@@ -90,7 +90,7 @@ func getStreamUrl(trackInfo *soundcloudapi.Track) (string, error) {
 		return "", err
 	}
 
-	streamURL, err := client.ConstructStreamURL(doc, soundcloud.StreamTypeProgressive)
+	streamURL, err := client.ConstructStreamURL(doc, soundcloud.StreamTypeHLS)
 	if err != nil {
 		return "", err
 	}

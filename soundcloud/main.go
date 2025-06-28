@@ -30,6 +30,8 @@ func (s *SoundcloudExtension) HandleCustomRequest(url string) (ret types.CustomR
 		return
 	}
 
+	api.LogInfo("Track streamable %v", trackInfo.Streamable)
+
 	streamURL, err := getStreamUrl(trackInfo)
 	if err != nil {
 		return
