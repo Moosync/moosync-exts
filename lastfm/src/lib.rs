@@ -156,5 +156,10 @@ pub extern "C" fn init() {
     if let Err(e) = register_oauth("lastfmcallback".to_string()) {
         error!("Failed to register oauth callback {:?}", e);
     }
+
+    if let Err(e) = register_oauth("lastfm".to_string()) {
+        error!("Failed to register oauth callback {:?}", e);
+    }
+
     info!("Initialized SampleExtension");
 }
