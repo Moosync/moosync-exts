@@ -19,9 +19,9 @@ pub enum KoelError {
 impl fmt::Display for KoelError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            KoelError::Http(e) => write!(f, "HTTP error: {}", e),
-            KoelError::Json(e) => write!(f, "JSON error: {}", e),
-            KoelError::Other(e) => write!(f, "Other error: {}", e),
+            KoelError::Http(e) => write!(f, "HTTP error: {e}"),
+            KoelError::Json(e) => write!(f, "JSON error: {e}"),
+            KoelError::Other(e) => write!(f, "Other error: {e}"),
             KoelError::MissingToken => write!(f, "Missing auth token"),
             KoelError::NoUsername => write!(f, "Missing username for koel"),
             KoelError::NoPassword => write!(f, "Missing password for koel"),

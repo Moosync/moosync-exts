@@ -13,9 +13,16 @@ use moosync_edk::{
 
 mod error;
 mod koel;
+mod utils;
 
 pub struct KoelExtension {
     pub inner: Mutex<koel::KoelClient>,
+}
+
+impl Default for KoelExtension {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl KoelExtension {
@@ -117,7 +124,7 @@ impl Accounts for KoelExtension {
         let mut inner = self.inner.lock().unwrap();
         let resp = inner.perform_account_login(args);
         info!("Got resp {:?}", resp);
-        return Ok(resp?);
+        Ok(resp?)
     }
 }
 impl Extension for KoelExtension {}
@@ -127,7 +134,7 @@ pub extern "C" fn init() {
     info!("Initializing KoelExtension");
     register_extension(Box::new(KoelExtension::new())).unwrap();
 
-    register_user_preferences(vec![
+    let _ = register_user_preferences(vec![
         PreferenceUIData {
             _type: PreferenceTypes::EditText,
             title: "Instance URL".into(),

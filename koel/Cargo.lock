@@ -1556,7 +1556,7 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/Moosync/moosync-tauri#13f072306ea59a3a09fa0b323151709ce9bc80f0"
+source = "git+https://github.com/Moosync/moosync-tauri#717c5d6a8d6e0c9fe43e229d5a8ce5ca2cfb9bd9"
 dependencies = [
  "async-trait",
  "bitcode",
