@@ -3,7 +3,8 @@
   "commands": [
     {
       "type": "requestedPlaylistSongs",
-      "data": ["moosync.koel:all_songs", false, null]
+      "data": ["moosync.koel:all_songs", false, null],
+      "expected": "ignore"
     }
   ],
   "requests": [

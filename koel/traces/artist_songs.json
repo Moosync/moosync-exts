@@ -10,7 +10,102 @@
           "artist_song_count": 0
         },
         null
-      ]
+      ],
+      "expected": {
+        "songs": [
+          {
+            "_id": "moosync.koel:9f7703da-49d8-4546-a032-f8e737062fe0",
+            "title": "Dissipate",
+            "duration": 209.40002267574,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xep928fw912tw91m3dtpwn.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703da-49d8-4546-a032-f8e737062fe0",
+            "show_in_library": true,
+            "track_no": 1.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xep90q1xw02t1ad7g70t8z",
+              "album_name": "Dissipate",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xep928fw912tw91m3dtpwn.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xep8yj5w4th1mz1784e6wf",
+                "artist_name": "ALESTI feat. Anxxiety",
+                "artist_song_count": 0.0
+              }
+            ],
+            "genre": [
+              {
+                "genre_name": "Pop, Rock, Metal",
+                "genre_song_count": 0.0
+              }
+            ]
+          },
+          {
+            "_id": "moosync.koel:9f77040f-1880-4428-a64c-794b81f06db6",
+            "title": "House of Glass",
+            "duration": 190.92841269841,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqaw9ctbxy9vypdjwmmx3.webp",
+            "playbackUrl": "extension://moosync.koel/9f77040f-1880-4428-a64c-794b81f06db6",
+            "show_in_library": true,
+            "track_no": 5.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xeqavmp0e8x32z118ag25n",
+              "album_name": "Elements",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqaw9ctbxy9vypdjwmmx3.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xepgvag68k9pe0ggqn51ys",
+                "artist_name": "ALESTI feat. James DeBerg",
+                "artist_song_count": 0.0
+              }
+            ],
+            "genre": [
+              {
+                "genre_name": "Pop, Rock",
+                "genre_song_count": 0.0
+              }
+            ]
+          },
+          {
+            "_id": "moosync.koel:9f770400-d802-4849-8e64-5c3297b34a78",
+            "title": "Paralyzed",
+            "duration": 224.18183673469,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeq16ktj5js8necby0h3s3.webp",
+            "playbackUrl": "extension://moosync.koel/9f770400-d802-4849-8e64-5c3297b34a78",
+            "show_in_library": true,
+            "track_no": 4.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xeq15hfky2f8mc4gts1q4a",
+              "album_name": "Voices",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeq16ktj5js8necby0h3s3.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xepgvag68k9pe0ggqn51ys",
+                "artist_name": "ALESTI feat. James DeBerg",
+                "artist_song_count": 0.0
+              }
+            ],
+            "genre": [
+              {
+                "genre_name": "Pop, Rock, Metal",
+                "genre_song_count": 0.0
+              }
+            ]
+          }
+        ],
+        "nextPageToken": 2
+      }
     }
   ],
   "requests": [

@@ -22,4 +22,4 @@ copy:
 	cp package.json dist/
 
 test: build copy
-	moodriver -t traces/artist_songs.json ./dist/package.json -vv
+	moodriver ./dist/package.json -vv

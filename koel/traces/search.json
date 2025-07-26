@@ -3,7 +3,139 @@
   "commands": [
     {
       "type": "requestedSearchResult",
-      "data": ["a"]
+      "data": ["a"],
+      "expected": {
+        "songs": [
+          {
+            "_id": "moosync.koel:9f7703df-c693-4580-bb59-177f38fe1c69",
+            "title": "Gimme Gimme Gimme (A man after midnight)",
+            "year": "2020",
+            "duration": 152.65955,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xepchqz5zh9k9ndm3thdtn.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703df-c693-4580-bb59-177f38fe1c69",
+            "show_in_library": true,
+            "track_no": 1.0,
+            "provider_extension": "koel"
+          },
+          {
+            "_id": "moosync.koel:9f7703f7-6c58-4633-a014-6822b44780e4",
+            "title": "Trapped in a Dream",
+            "year": "2023",
+            "duration": 111.936,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xepvpyvzs2dv7c4nfvhbff.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703f7-6c58-4633-a014-6822b44780e4",
+            "show_in_library": true,
+            "track_no": 1.0,
+            "provider_extension": "koel"
+          },
+          {
+            "_id": "moosync.koel:9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+            "title": "5 A.M",
+            "year": "2023",
+            "duration": 199.032,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcfzdszvt62cwk70y526.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+            "show_in_library": true,
+            "track_no": 2.0,
+            "provider_extension": "koel"
+          },
+          {
+            "_id": "moosync.koel:9f770412-11c6-411f-8c99-3d6ee9164c68",
+            "title": "Like A Villain",
+            "year": "null",
+            "duration": 210.68505668934,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqdvm2x9w7t347r42xrpj.webp",
+            "playbackUrl": "extension://moosync.koel/9f770412-11c6-411f-8c99-3d6ee9164c68",
+            "show_in_library": true,
+            "track_no": 6.0,
+            "provider_extension": "koel"
+          },
+          {
+            "_id": "moosync.koel:9f770414-6c64-441e-8e15-9aae2f5f6f95",
+            "title": "H.A.T.E.",
+            "year": "null",
+            "duration": 242.60863945578,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqe8v09j92ct7mz8hdxcn.webp",
+            "playbackUrl": "extension://moosync.koel/9f770414-6c64-441e-8e15-9aae2f5f6f95",
+            "show_in_library": true,
+            "track_no": 9.0,
+            "provider_extension": "koel"
+          },
+          {
+            "_id": "moosync.koel:9f77042a-7fad-4c60-93bd-23d9444179a3",
+            "title": "Devil In The Details",
+            "year": "2024",
+            "duration": 178.176,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqwcy8b5eeyt5k8mgzv8s.webp",
+            "playbackUrl": "extension://moosync.koel/9f77042a-7fad-4c60-93bd-23d9444179a3",
+            "show_in_library": true,
+            "track_no": 0.0,
+            "provider_extension": "koel"
+          }
+        ],
+        "playlists": [],
+        "artists": [
+          {
+            "artist_id": "moosync.koel:01k0xeqgsh217pnzjphc8dnywm",
+            "artist_name": "A. R. Rahman",
+            "artist_song_count": 0.0
+          },
+          {
+            "artist_id": "moosync.koel:01k0xeqwamp1q3jbfg5y4ev59t",
+            "artist_name": "Monument Of A Memory",
+            "artist_song_count": 0.0
+          }
+        ],
+        "albums": [
+          {
+            "album_id": "moosync.koel:01k0xepbpt1z8q47hk2gs08a3h",
+            "album_name": "M A N I A",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xepbr1a64qkacnmg6m2wjt.webp",
+            "album_song_count": 0.0,
+            "year": "2018"
+          },
+          {
+            "album_id": "moosync.koel:01k0xepcgg45qeehgexdws7jmb",
+            "album_name": "Gimme Gimme Gimme (A man after midnight)",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xepchqz5zh9k9ndm3thdtn.webp",
+            "album_song_count": 0.0,
+            "year": "2020"
+          },
+          {
+            "album_id": "moosync.koel:01k0xepvnwp26kys37zhbk13a5",
+            "album_name": "Trapped in a Dream",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xepvpyvzs2dv7c4nfvhbff.webp",
+            "album_song_count": 0.0,
+            "year": "2023"
+          },
+          {
+            "album_id": "moosync.koel:01k0xeqgtapj9dsxtsbezwczq5",
+            "album_name": "Rockstar",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqgv9yk7npz456s441kww.webp",
+            "album_song_count": 0.0,
+            "year": "2011"
+          },
+          {
+            "album_id": "moosync.koel:01k0xeqwbmpp6vf6jhcgx0nwsd",
+            "album_name": "Devil In The Details",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqwcy8b5eeyt5k8mgzv8s.webp",
+            "album_song_count": 0.0,
+            "year": "2024"
+          }
+        ]
+      }
     }
   ],
   "requests": [

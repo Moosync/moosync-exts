@@ -8,7 +8,127 @@
     },
     {
       "type": "requestedPlaylistSongs",
-      "data": ["moosync.koel:9f771b56-dc17-407a-8dc4-55465be1bb99", false, null]
+      "data": [
+        "moosync.koel:9f771b56-dc17-407a-8dc4-55465be1bb99",
+        false,
+        null
+      ],
+      "expected": {
+        "songs": [
+          {
+            "_id": "moosync.koel:9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+            "title": "5 A.M",
+            "year": "2023",
+            "duration": 199.032,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcfzdszvt62cwk70y526.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+            "show_in_library": true,
+            "track_no": 2.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xepgm3ptqzw6qr8xjrbfdm",
+              "album_name": "Overthrown",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcfzdszvt62cwk70y526.webp",
+              "album_song_count": 0.0,
+              "year": "2023"
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xepgk5krhm1cwth95h3kx5",
+                "artist_name": "Scarlett O'Hara",
+                "artist_song_count": 0.0
+              }
+            ]
+          },
+          {
+            "_id": "moosync.koel:9f7703fb-2d96-4812-8b27-f62f58c449c6",
+            "title": "Aaj",
+            "duration": 300.66666666667,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcn3w6gxdmzc9xqgdre2.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703fb-2d96-4812-8b27-f62f58c449c6",
+            "show_in_library": true,
+            "track_no": 2.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xepc6pbhf3kd1zmfqdy15v",
+              "album_name": "Rakshak",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcn3w6gxdmzc9xqgdre2.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xepc5wgppzh8h6jmmzptp5",
+                "artist_name": "Bloodywood",
+                "artist_song_count": 0.0
+              }
+            ],
+            "genre": [
+              {
+                "genre_name": "FolkCore / Metal",
+                "genre_song_count": 0.0
+              }
+            ]
+          },
+          {
+            "_id": "moosync.koel:9f770404-6553-4e11-8cd5-ef28d80ed91e",
+            "title": "Afterlife",
+            "duration": 226.54666666667,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeq3k3dzdp7vpnfy1j1pe7.webp",
+            "playbackUrl": "extension://moosync.koel/9f770404-6553-4e11-8cd5-ef28d80ed91e",
+            "show_in_library": true,
+            "track_no": 4.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xeq2ywrnfgxdrcs1snh2ca",
+              "album_name": "The Greatest Mistake of My Life",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeq3k3dzdp7vpnfy1j1pe7.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xeq2pbszvyqpdryf6zq1kd",
+                "artist_name": "Holding Absence",
+                "artist_song_count": 0.0
+              }
+            ],
+            "genre": [
+              {
+                "genre_name": "Metalcore",
+                "genre_song_count": 0.0
+              }
+            ]
+          },
+          {
+            "_id": "moosync.koel:9f7703da-af8a-4983-a0d5-65ae3e8c517b",
+            "title": "Aigiri Nandini",
+            "year": "2014",
+            "duration": 240.024,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xep9aqmqta2fvspsmstp19.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703da-af8a-4983-a0d5-65ae3e8c517b",
+            "show_in_library": true,
+            "track_no": 1.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xep99nr73pmdp9exz35jpx",
+              "album_name": "Aigiri Nandini",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xep9aqmqta2fvspsmstp19.webp",
+              "album_song_count": 0.0,
+              "year": "2014"
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xep98vhggzmprta9hwqxbe",
+                "artist_name": "Brodha V",
+                "artist_song_count": 0.0
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "requests": [

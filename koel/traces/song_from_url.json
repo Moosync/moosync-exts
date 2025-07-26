@@ -6,7 +6,35 @@
       "data": [
         "http://127.0.0.1:8000/#/songs/9f7703fa-f2cb-4388-89fe-0d8e1831746f",
         false
-      ]
+      ],
+      "expected": {
+        "song": {
+          "_id": "moosync.koel:9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+          "title": "5 A.M",
+          "year": "2023",
+          "lyrics": "",
+          "duration": 199.032,
+          "type": "LOCAL",
+          "song_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcfzdszvt62cwk70y526.webp",
+          "playbackUrl": "extension://moosync.koel/9f7703fa-f2cb-4388-89fe-0d8e1831746f",
+          "show_in_library": true,
+          "track_no": 2.0,
+          "album": {
+            "album_id": "moosync.koel:01k0xepgm3ptqzw6qr8xjrbfdm",
+            "album_name": "Overthrown",
+            "album_coverPath_high": "http://localhost:8000/img/covers/01k0xeqcfzdszvt62cwk70y526.webp",
+            "album_song_count": 0.0,
+            "year": "2023"
+          },
+          "artists": [
+            {
+              "artist_id": "moosync.koel:01k0xepgk5krhm1cwth95h3kx5",
+              "artist_name": "Scarlett O'Hara",
+              "artist_song_count": 0.0
+            }
+          ]
+        }
+      }
     }
   ],
   "requests": [

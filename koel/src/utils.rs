@@ -1,6 +1,4 @@
-use moosync_edk::{
-    QueryableAlbum, QueryableArtist, QueryableGenre, QueryablePlaylist, QueryableSong, Song,
-};
+use moosync_edk::{QueryableAlbum, QueryableArtist, QueryablePlaylist, QueryableSong};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -101,21 +99,6 @@ pub fn parse_playlists(value: &Value) -> Vec<QueryablePlaylist> {
         .collect()
 }
 
-/// Parse a vector of Song from a serde_json::Value (usually from API response)
-/// Requires a mapping function from KoelSong to Song.
-pub fn parse_songs<F>(value: &Value, map_koel_song: F) -> Vec<Song>
-where
-    F: Fn(&KoelSong) -> Song,
-{
-    value
-        .as_array()
-        .unwrap_or(&vec![])
-        .iter()
-        .filter_map(|ks| serde_json::from_value::<KoelSong>(ks.clone()).ok())
-        .map(|ks| map_koel_song(&ks))
-        .collect()
-}
-
 /// Parse a vector of QueryableSong from a serde_json::Value (for search results)
 pub fn parse_queryable_songs(value: &Value) -> Vec<QueryableSong> {
     value
@@ -145,22 +128,4 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<QueryableSong> {
             ..Default::default()
         })
         .collect()
-}
-
-/// Parse a vector of QueryableGenre from a genre field in a song object
-pub fn parse_genres(genre: Option<&Value>) -> Option<Vec<QueryableGenre>> {
-    genre.and_then(|g| {
-        if let Some(genre_str) = g.as_str() {
-            if !genre_str.is_empty() {
-                Some(vec![QueryableGenre {
-                    genre_name: Some(genre_str.to_string()),
-                    ..Default::default()
-                }])
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    })
 }

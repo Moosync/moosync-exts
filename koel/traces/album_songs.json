@@ -10,7 +10,36 @@
           "album_name": "Already Over"
         },
         null
-      ]
+      ],
+      "expected": {
+        "songs": [
+          {
+            "_id": "moosync.koel:9f7703db-00f4-4a6b-a94d-1f3ff2481051",
+            "title": "Already Over",
+            "duration": 160.64,
+            "lyrics": "",
+            "type": "LOCAL",
+            "song_coverPath_high": "http://localhost:8000/img/covers/01k0xep9gxghdncgtm3mfaqm21.webp",
+            "playbackUrl": "extension://moosync.koel/9f7703db-00f4-4a6b-a94d-1f3ff2481051",
+            "show_in_library": true,
+            "track_no": 1.0,
+            "album": {
+              "album_id": "moosync.koel:01k0xep9fyfvddmr9d5t31d3w6",
+              "album_name": "Already Over",
+              "album_coverPath_high": "http://localhost:8000/img/covers/01k0xep9gxghdncgtm3mfaqm21.webp",
+              "album_song_count": 0.0
+            },
+            "artists": [
+              {
+                "artist_id": "moosync.koel:01k0xep9f577p0t4c4bbt7hfwd",
+                "artist_name": "Mike Shinoda",
+                "artist_song_count": 0.0
+              }
+            ]
+          }
+        ],
+        "nextPageToken": 2
+      }
     }
   ],
   "requests": [
