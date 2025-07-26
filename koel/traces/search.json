@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "requestedSearchResult",
+      "data": ["a"]
+    }
+  ],
+  "requests": [
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_instance_url",
+        "value": "http://localhost:8000"
+      }
+    },
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_username",
+        "value": "admin@koel.dev"
+      }
+    },
+    {
+      "type": "getSecure",
+      "data": {
+        "key": "koel_password",
+        "value": "KoelIsCool"
+      }
+    }
+  ]
+}

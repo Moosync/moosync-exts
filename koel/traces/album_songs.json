@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "requestedAlbumSongs",
+      "data": [
+        {
+          "album_id": "1",
+          "album_song_count": 0,
+          "album_name": "Already Over"
+        },
+        null
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_instance_url",
+        "value": "http://localhost:8000"
+      }
+    },
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_username",
+        "value": "admin@koel.dev"
+      }
+    },
+    {
+      "type": "getSecure",
+      "data": {
+        "key": "koel_password",
+        "value": "KoelIsCool"
+      }
+    }
+  ]
+}

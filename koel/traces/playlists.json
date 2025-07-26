@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "requestedPlaylists",
+      "data": [false],
+      "expected": "ignore"
+    },
+    {
+      "type": "requestedPlaylistSongs",
+      "data": ["moosync.koel:9f771b56-dc17-407a-8dc4-55465be1bb99", false, null]
+    }
+  ],
+  "requests": [
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_instance_url",
+        "value": "http://localhost:8000"
+      }
+    },
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "koel_username",
+        "value": "admin@koel.dev"
+      }
+    },
+    {
+      "type": "getSecure",
+      "data": {
+        "key": "koel_password",
+        "value": "KoelIsCool"
+      }
+    }
+  ]
+}

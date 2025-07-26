@@ -1,0 +1,17 @@
+{
+  "name": "moosync.koel",
+  "version": "0.0.1",
+  "icon": "assets/icon.png",
+  "extensionEntry": "ext.wasm",
+  "moosyncExtension": true,
+  "displayName": "Koel",
+  "permissions": {
+    "hosts": [
+      "*"
+    ],
+    "paths": {}
+  },
+  "exclude": [
+    "target/"
+  ]
+}
