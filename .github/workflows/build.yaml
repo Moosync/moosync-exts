@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "ubuntu-latest"
+          - platform: "ubuntu-22.04"
 
     runs-on: ${{ matrix.platform }}
     defaults:
@@ -29,8 +29,7 @@ jobs:
       - name: install dependencies (ubuntu only)
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          add-repository: ppa:deadsnakes/ppa
-          packages: make binaryen python3.11 curl
+          packages: make binaryen curl
 
       - name: Install extism-js
         run: |
@@ -53,6 +52,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "latest"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11' 
 
       - name: install mopack
         run: npm install -g @moosync/packer
