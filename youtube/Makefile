@@ -10,7 +10,7 @@ opt:
 	@-wasm-opt -Oz $(DIST_DIR)/ext.wasm -o $(DIST_DIR)/ext.wasm
 
 pack:
-	cp -r assets dist/
+# 	cp -r assets dist/
 	@mopack --path dist
 
 copy:
