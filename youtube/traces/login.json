@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "performAccountLogin",
+      "data": {
+        "accountId": "youtube",
+        "loginStatus": true,
+        "packageName": "moosync.youtube"
+      },
+      "expected": "https://accounts.google.com/o/oauth2/v2/auth?client_id=test_client_id&redirect_uri=https%3A%2F%2Fmoosync.app%2Fyoutube&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.readonly+openid+profile+email&access_type=offline&state=test_state&prompt=consent"
+    },
+    {
+      "type": "getAccounts",
+      "data": {
+        "packageName": "moosync.youtube"
+      },
+      "expected": [{
+        "id": "youtube",
+        "bgColor": "",
+        "icon": "",
+        "loggedIn": false,
+        "name": "Youtube",
+        "packageName": "moosync.youtube"
+      }]
+    }
+  ],
+  "requests": [
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "client_id",
+        "value": "test_client_id"
+      }
+    },
+    {
+      "type": "getPreference",
+      "data": {
+        "key": "client_secret",
+        "value": "test_client_secret"
+      }
+    }
+  ]
+}

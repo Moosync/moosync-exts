@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "requestedAlbumSongs",
+      "data": [
+        {
+          "album_id": "PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5",
+          "album_name": "The Dark Side of the Moon",
+          "album_coverPath_high": "https://i.ytimg.com/vi/example/maxresdefault.jpg",
+          "album_song_count": 10
+        },
+        null
+      ],
+      "expected": "ignore"
+    }
+  ],
+  "requests": []
+}

@@ -4,15 +4,16 @@
     "icon": "assets/icon.svg",
     "extensionEntry": "ext.wasm",
     "moosyncExtension": true,
-    "displayName": "YoutubeDL",
+    "displayName": "Youtube (No API)",
     "permissions": {
       "hosts": [
         "*.youtube.com",
         "youtube.com",
-        "*.googlevideo.com"
+        "*.googlevideo.com",
+        "cipher.moosync.app"
       ],
       "paths": {
-        "/home/ovenoboyo/projects/moosync/tauri/extism/sample_ext/youtube_dl/test": "/downloads"
+        "{CACHE_DIR}/youtube_dl/test": "/downloads"
       }
     }
   }

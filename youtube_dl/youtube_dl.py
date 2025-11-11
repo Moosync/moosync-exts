@@ -39,7 +39,7 @@ os.environ["YTDLP_NO_LAZY_EXTRACTORS"] = "true"
 import yt_dlp.downloader
 # from yt_dlp.downloader.http import HttpFD
 # from yt_dlp import YoutubeDL, extractor
-# from yt_dlp.extractor import extractors
+import yt_dlp.extractor.youtube
 import yt_dlp
 import yt_dlp.utils.networking
 import yt_dlp.networking.common
@@ -101,12 +101,18 @@ yt_dlp.cookies.normalize_url = normalize_url
 
 ytdl = YoutubeDL({
     'nocheckcertificate': True,
-    'verbose': True,
+    'verbose': False,
     'outtmpl': "/downloads/ytdl/%(title)s.%(ext)s",
     "paths": {
         "home": "/downloads",
         "temp": "/downloads/temp"
     },
     "cachedir": "/downloads/cache",
-    "format": "best/bestaudio",
+    "extractor_args": {
+        'youtubejsc-remotecipher': {
+            'base_url': ['https://cipher.moosync.app']
+        }
+    }
 }, auto_init="no_verbose_header")
+
+import yt_dlp_plugins.extractor.remote_cipher # type: ignore

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "customRequest",
+      "data": ["extension://moosync.youtubedl/D9G1VOjN_84"],
+      "expected": "null"
+    }
+  ],
+  "requests": []
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+  "commands": [
+    {
+      "type": "requestedPlaylistSongs",
+      "data": ["PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5", "continuation_token_example", "false"],
+      "expected": {
+        "songs": [
+          {
+            "_id": "HW-lXjOyUWM",
+            "title": "Time",
+            "duration": 421,
+            "type": "URL",
+            "playbackUrl": "extension://moosync.youtubedl/HW-lXjOyUWM",
+            "song_coverPath_high": "https://i.ytimg.com/vi/HW-lXjOyUWM/maxresdefault.jpg",
+            "song_coverPath_low": "https://i.ytimg.com/vi/HW-lXjOyUWM/default.jpg",
+            "artists": [
+              {
+                "artist_id": "UC25-_5i19rPlLosl_h_J_Rg",
+                "artist_name": "Pink Floyd Official"
+              }
+            ]
+          }
+        ],
+        "nextPageToken": "continuation_token_example"
+      }
+    }
+  ],
+  "requests": []
+}
