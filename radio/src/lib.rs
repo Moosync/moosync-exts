@@ -1,6 +1,6 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    ExtensionProviderScope, MoosyncError, QueryableSong, Result, SearchResult, Song, SongType,
+    ExtensionProviderScope, MoosyncError, InnerSong, Result, SearchResult, Song, SongType,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
     },
@@ -77,7 +77,7 @@ impl RadioExtension {
         stations
             .into_iter()
             .map(|s| Song {
-                song: QueryableSong {
+                song: InnerSong {
                     _id: Some(format!("radio-{}", s.serveruuid.unwrap_or(s.url.clone()))),
                     title: Some(s.name),
                     bitrate: Some(s.bitrate as f64),

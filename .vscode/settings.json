@@ -1,4 +1,4 @@
 {
     "python.analysis.typeCheckingMode": "strict",
-     "python.analysis.extraPaths": ["./youtube_dl"]
+    "python.analysis.extraPaths": ["./youtube_dl"]
 }

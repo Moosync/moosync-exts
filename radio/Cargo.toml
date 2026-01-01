@@ -7,7 +7,7 @@ edition = "2024"
 futures = "0.3.31"
 moosync-edk = { git = "https://github.com/Moosync/wasm-extension-runner.git" }
 radiobrowser = { git = "https://github.com/Ovenoboyo/radiobrowser_lib_extism", default-features = false }
-regex = "1.11.1"
+regex = "1.12.2"
 
 [lib]
 crate-type = ["cdylib"]

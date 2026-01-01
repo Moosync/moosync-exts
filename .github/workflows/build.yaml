@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - v2
+  pull_request:
+    branches:
+      - v2
 
 jobs:
   publish-extensions:
@@ -55,7 +58,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.11' 
+          python-version: "3.11"
 
       - name: install mopack
         run: npm install -g @moosync/packer

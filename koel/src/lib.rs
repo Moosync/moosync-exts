@@ -2,7 +2,7 @@ use std::sync::Mutex;
 
 use moosync_edk::{
     CustomRequestReturnType, ExtensionProviderScope, InputType, PreferenceTypes, PreferenceUIData,
-    QueryablePlaylist, Result, SearchResult, Song, SongsWithPageTokenReturnType,
+    Playlist, Result, SearchResult, Song, SongsWithPageTokenReturnType,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
         extension_api::register_user_preferences,
@@ -58,7 +58,7 @@ impl Provider for KoelExtension {
         Ok(inner.get_song_from_url(url)?)
     }
 
-    fn get_playlists(&self) -> Result<Vec<QueryablePlaylist>> {
+    fn get_playlists(&self) -> Result<Vec<Playlist>> {
         let mut inner = self.inner.lock().unwrap();
         Ok(inner.get_playlists()?)
     }
@@ -75,7 +75,7 @@ impl Provider for KoelExtension {
 
     fn get_artist_songs(
         &self,
-        artist: moosync_edk::QueryableArtist,
+        artist: moosync_edk::Artist,
         next_page_token: Option<String>,
     ) -> Result<SongsWithPageTokenReturnType> {
         let artist_name = artist.artist_name;
@@ -88,7 +88,7 @@ impl Provider for KoelExtension {
 
     fn get_album_songs(
         &self,
-        album: moosync_edk::QueryableAlbum,
+        album: moosync_edk::Album,
         next_page_token: Option<String>,
     ) -> Result<SongsWithPageTokenReturnType> {
         let album_name = album.album_name;

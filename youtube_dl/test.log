@@ -1,0 +1,1360 @@
+=== Starting test CLI for WASM extensions ===
+
+Loaded test case with 1 commands and 0 requests
+
+[2m2025-10-27T00:54:07.506118Z[0m [32m INFO[0m [1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mFindNewExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command FindNewExtensions
+Responded to request ExtensionsUpdated with ExtensionsUpdated(false)
+[2m2025-10-27T00:54:07.506230Z[0m [34mDEBUG[0m [1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mFindNewExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command response Empty
+Responded to request ExtensionsUpdated with ExtensionsUpdated(false)
+[2m2025-10-27T00:54:07.506315Z[0m [32m INFO[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command GetInstalledExtensions
+[2m2025-10-27T00:54:07.506326Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Extension map: [ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: false }]
+[2m2025-10-27T00:54:07.506335Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command response ExtensionList([ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: false }])
+Extension found moosync.youtubedl, active: false
+[2m2025-10-27T00:54:07.506422Z[0m [32m INFO[0m [1mspawn_extension[0m[1m{[0m[3mmanifest[0m[2m=[0mExtensionManifest { moosync_extension: true, display_name: "YoutubeDL", extension_entry: "./dist/ext.wasm", author: None, name: "moosync.youtubedl", version: "0.0.1", icon: "./dist/assets/icon.svg", permissions: Some(ManifestPermissions { hosts: ["*.youtube.com", "youtube.com", "*.googlevideo.com"], paths: {"/home/ovenoboyo/projects/moosync/tauri/extism/sample_ext/youtube_dl/test": "/downloads"} }) } [3mreply_map[0m[2m=[0mMutex { data: {}, poisoned: false, .. } [3mext_command_tx[0m[2m=[0mUnboundedSender { chan: Tx { inner: Chan { tx: Tx { block_tail: 0x55f94fe0b7c0, tail_position: 2 }, semaphore: Semaphore(0), rx_waker: AtomicWaker, tx_count: 3, rx_fields: "..." } } } [3mcache_path[0m[2m=[0m"/tmp/ext-tmp-cache"[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got allowed paths {"/home/ovenoboyo/projects/moosync/tauri/extism/sample_ext/youtube_dl/test": "/downloads"}
+[2m2025-10-27T00:54:08.441901Z[0m [34mDEBUG[0m [1mspawn_extension[0m[1m{[0m[3mmanifest[0m[2m=[0mExtensionManifest { moosync_extension: true, display_name: "YoutubeDL", extension_entry: "./dist/ext.wasm", author: None, name: "moosync.youtubedl", version: "0.0.1", icon: "./dist/assets/icon.svg", permissions: Some(ManifestPermissions { hosts: ["*.youtube.com", "youtube.com", "*.googlevideo.com"], paths: {"/home/ovenoboyo/projects/moosync/tauri/extism/sample_ext/youtube_dl/test": "/downloads"} }) } [3mreply_map[0m[2m=[0mMutex { data: {}, poisoned: false, .. } [3mext_command_tx[0m[2m=[0mUnboundedSender { chan: Tx { inner: Chan { tx: Tx { block_tail: 0x55f94fe0b7c0, tail_position: 2 }, semaphore: Semaphore(0), rx_waker: AtomicWaker, tx_count: 3, rx_fields: "..." } } } [3mcache_path[0m[2m=[0m"/tmp/ext-tmp-cache"[1m}[0m[2m:[0m [2mextism::plugin[0m[2m:[0m Available pages: None
+[2m2025-10-27T00:54:08.452702Z[0m [34mDEBUG[0m [1mspawn_extension[0m[1m{[0m[3mmanifest[0m[2m=[0mExtensionManifest { moosync_extension: true, display_name: "YoutubeDL", extension_entry: "./dist/ext.wasm", author: None, name: "moosync.youtubedl", version: "0.0.1", icon: "./dist/assets/icon.svg", permissions: Some(ManifestPermissions { hosts: ["*.youtube.com", "youtube.com", "*.googlevideo.com"], paths: {"/home/ovenoboyo/projects/moosync/tauri/extism/sample_ext/youtube_dl/test": "/downloads"} }) } [3mreply_map[0m[2m=[0mMutex { data: {}, poisoned: false, .. } [3mext_command_tx[0m[2m=[0mUnboundedSender { chan: Tx { inner: Chan { tx: Tx { block_tail: 0x55f94fe0b7c0, tail_position: 2 }, semaphore: Semaphore(0), rx_waker: AtomicWaker, tx_count: 3, rx_fields: "..." } } } [3mcache_path[0m[2m=[0m"/tmp/ext-tmp-cache"[1m}[0m[2m:[0m [2mextism::plugin[0m[2m:[0m 3ead8b4d-1ec1-45cf-962f-f3203008dc9d created
+[2m2025-10-27T00:54:08.452809Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m input size: 0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:08.453361Z[0m [34mDEBUG[0m [2mextism::pdk[0m[2m:[0m initialized YTDL extension
+ [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:08.453390Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m output offset=0, length=0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:08.453397Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m error offset=0, length=0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:08.453402Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m got return code: 0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+Responded to request ExtensionsUpdated with ExtensionsUpdated(false)
+[2m2025-10-27T00:54:08.506453Z[0m [32m INFO[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command GetInstalledExtensions
+[2m2025-10-27T00:54:08.506507Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Extension map: [ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: true }]
+[2m2025-10-27T00:54:08.506525Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command response ExtensionList([ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: true }])
+[2m2025-10-27T00:54:08.506561Z[0m [32m INFO[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command GetInstalledExtensions
+[2m2025-10-27T00:54:08.506569Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Extension map: [ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: true }]
+[2m2025-10-27T00:54:08.506576Z[0m [34mDEBUG[0m [1mget_installed_extensions[0m[2m:[0m[1mhandle_runner_command[0m[1m{[0m[3mcommand[0m[2m=[0mGetInstalledExtensions[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Got runner command response ExtensionList([ExtensionDetail { name: "YoutubeDL", package_name: "moosync.youtubedl", desc: None, author: None, version: "0.0.1", has_started: true, entry: "./dist/ext.wasm", preferences: [], extension_path: "./dist/ext.wasm", extension_icon: Some("./dist/assets/icon.svg"), active: true }])
+Extension active: moosync.youtubedl
+
+------------------------------------------------------------
+=== Running commands from test case traces/album_songs.json ... ===
+
+Command [1/1]: ExtensionExtraEvent[type: RequestedAlbumSongs(QueryableAlbum { album_id: Some("PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5"), album_name: Some("The Dark Side of the Moon"), album_artist: None, album_coverpath_high: Some("https://i.ytimg.com/vi/example/maxresdefault.jpg"), album_song_count: 10.0, year: None, album_coverpath_low: None, album_extra_info: None }, None)]
+[2m2025-10-27T00:54:08.506659Z[0m [34mDEBUG[0m [1mhandle_extension_command[0m[1m{[0m[3mcommand[0m[2m=[0mExtraExtensionEvent(ExtensionExtraEventArgs { data: RequestedAlbumSongs(QueryableAlbum { album_id: Some("PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5"), album_name: Some("The Dark Side of the Moon"), album_artist: None, album_coverpath_high: Some("https://i.ytimg.com/vi/example/maxresdefault.jpg"), album_song_count: 10.0, year: None, album_coverpath_low: None, album_extra_info: None }, None), package_name: "moosync.youtubedl" }) [3mtx[0m[2m=[0mUnboundedSender { chan: Tx { inner: Chan { tx: Tx { block_tail: 0x55f94fde4400, tail_position: 0 }, semaphore: Semaphore(0), rx_waker: AtomicWaker, tx_count: 1, rx_fields: "..." } } }[1m}[0m[2m:[0m [2mextensions::ext_runner[0m[2m:[0m Executing command ExtraExtensionEvent(ExtensionExtraEventArgs { data: RequestedAlbumSongs(QueryableAlbum { album_id: Some("PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5"), album_name: Some("The Dark Side of the Moon"), album_artist: None, album_coverpath_high: Some("https://i.ytimg.com/vi/example/maxresdefault.jpg"), album_song_count: 10.0, year: None, album_coverpath_low: None, album_extra_info: None }, None), package_name: "moosync.youtubedl" })
+[2m2025-10-27T00:54:08.506803Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m input size: 278 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:08.507314Z[0m [34mDEBUG[0m [2mextism::pdk[0m[2m:[0m Building object for <class 'moosync_edk.custom_types.Album'> with data {'album_id': 'PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5', 'album_name': 'The Dark Side of the Moon', 'album_artist': None, 'album_coverPath_high': 'https://i.ytimg.com/vi/example/maxresdefault.jpg', 'album_song_count': 10.0, 'year': None, 'album_coverPath_low': None, 'album_extra_info': None}
+ [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:11.205752Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m output offset=383290, length=135647 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:11.205784Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m error offset=0, length=0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+[2m2025-10-27T00:54:11.205793Z[0m [34mDEBUG[0m [2mextism::plugin[0m[2m:[0m got return code: 0 [3mplugin[0m[2m=[0m"3ead8b4d-1ec1-45cf-962f-f3203008dc9d"
+
+=== Extension output ===
+
+
+
+=== End Extension output ===
+
+Expected response does not match received response:
+
+-""
++{
+  "songs": [
+    {
+      "_id": "moosync.youtubedl:60ItHLz5WEA",
+      "duration": 213.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/60ItHLz5WEA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/60ItHLz5WEA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAHEApS5HDlKsdjg0HSscTqdFZwxg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/60ItHLz5WEA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAzsxKizpa2mZYBrOH005QuoyAdFg",
+      "title": "Alan Walker - Faded",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:YqeW9_5kURI",
+      "duration": 179.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/YqeW9_5kURI",
+      "song_coverPath_high": "https://i.ytimg.com/vi/YqeW9_5kURI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDOpeD8pF34EJn8M7EtIl-ZcpxIxg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/YqeW9_5kURI/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAApEAg_aWkRm4h2AP6aKZra8QC9Q",
+      "title": "Major Lazer & DJ Snake - Lean On (feat. MØ) [Official 4K Music Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:PT2_F-1esPk",
+      "duration": 262.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/PT2_F-1esPk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/PT2_F-1esPk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdTHUOlHrdQlFGrfMql533Rwu3_w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/PT2_F-1esPk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAHCyooy7zYE1a1bhAtuhvaAeP1SQ",
+      "title": "The Chainsmokers - Closer (Lyric) ft. Halsey",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:papuvlVeZg8",
+      "duration": 254.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/papuvlVeZg8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/papuvlVeZg8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA_qrPMBapJbyrq-lIiD4Rg4ZG79w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/papuvlVeZg8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBpMrpHIoRFQxBDJd6LEeVpQpxFmA",
+      "title": "Clean Bandit - Rockabye (feat. Sean Paul & Anne-Marie) [Official Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:kOkQ4T5WO9E",
+      "duration": 240.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/kOkQ4T5WO9E",
+      "song_coverPath_high": "https://i.ytimg.com/vi/kOkQ4T5WO9E/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBRRBJ3mnARifC0VYgZJQXnirG1hA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/kOkQ4T5WO9E/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBrTRWlOmUfGGN-hI_k_Zl8TGPFnw",
+      "title": "Calvin Harris, Rihanna - This Is What You Came For (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:ALZHF5UqnU4",
+      "duration": 200.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/ALZHF5UqnU4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/ALZHF5UqnU4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB_GntLlr4fLzzdaWo10rFAvQLZrw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/ALZHF5UqnU4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLB967_TTaotlqS9ZOxljrk9Y4bQbQ",
+      "title": "Marshmello - Alone (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:IcrbM1l_BoI",
+      "duration": 273.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/IcrbM1l_BoI",
+      "song_coverPath_high": "https://i.ytimg.com/vi/IcrbM1l_BoI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBlZ2oUx67fIZArp6i40I_ytw8N4g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/IcrbM1l_BoI/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBzCrJZ53aqfXODB6OzPSSj9rujAA",
+      "title": "Avicii - Wake Me Up (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:FM7MFYoylVs",
+      "duration": 248.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/FM7MFYoylVs",
+      "song_coverPath_high": "https://i.ytimg.com/vi/FM7MFYoylVs/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDHbAPskC3ACr-atpywe-ArYyuFCg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/FM7MFYoylVs/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLApcTHViGVLrB_wjvzrIfE8w_W-Vw",
+      "title": "The Chainsmokers & Coldplay - Something Just Like This (Official Lyric Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:NywWB67Z7zQ",
+      "duration": 206.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/NywWB67Z7zQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/NywWB67Z7zQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA0xSIOnnq25zHzj-jJpJvfFx7Cqw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/NywWB67Z7zQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLD5XdUNLr2iCmREwY6m_h-vw6YAzw",
+      "title": "Justin Bieber - What Do You Mean? (Lyric Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:aL1NiObaq30",
+      "duration": 156.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/aL1NiObaq30",
+      "song_coverPath_high": "https://i.ytimg.com/vi/aL1NiObaq30/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYfyA0KGswDw==&rs=AOn4CLCV-mYdCbJ2XEXSL0qDHwoygXrcYw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/aL1NiObaq30/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARh_IDQoazAP&rs=AOn4CLBnBspNoWQFOgaqggwl1FcP-hCPCg",
+      "title": "Ryan Robinette - You Got It (Ryan Riback Remix) [Official Audio Visualizer]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:JRfuAukYTKg",
+      "duration": 246.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/JRfuAukYTKg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/JRfuAukYTKg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB5G_UU3fEMctenXbe0lfj14jMQcA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/JRfuAukYTKg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDC3Pl7_XvWKt_nC87mUP9Plb26Xg",
+      "title": "David Guetta - Titanium ft. Sia (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:IPYTxAHeR_o",
+      "duration": 188.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/IPYTxAHeR_o",
+      "song_coverPath_high": "https://i.ytimg.com/vi/IPYTxAHeR_o/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYWiBCKHIwDw==&rs=AOn4CLBm-SQ7f4U8fynF1kk0r8X3FjDLBQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/IPYTxAHeR_o/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARhaIEIocjAP&rs=AOn4CLAbB0wI8fa0e6RQpObzloEOJMn-Ng",
+      "title": "Martin Garrix - Animals (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:euCqAq6BRa4",
+      "duration": 206.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/euCqAq6BRa4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/euCqAq6BRa4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBzMq3M8ckqrr3pAOflzuKH3-Pkfw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/euCqAq6BRa4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBORBZvsVUg1NB8NpI2cxSh2QXS-g",
+      "title": "DJ Snake - Let Me Love You ft. Justin Bieber",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:foE1mO2yM04",
+      "duration": 237.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/foE1mO2yM04",
+      "song_coverPath_high": "https://i.ytimg.com/vi/foE1mO2yM04/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA4mqEyKvXOKNIyR7VO6qEADmJuRw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/foE1mO2yM04/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCgYAL1f8skG3Qg9ikW6SZW9fIaMA",
+      "title": "Mike Posner - I Took A Pill In Ibiza (Seeb Remix) (Explicit)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:CFE0bdqBrJk",
+      "duration": 203.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/CFE0bdqBrJk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/CFE0bdqBrJk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAKkmjItqHLvBuirYTd-7Vksi3r3g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/CFE0bdqBrJk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDp0l8IGMjZZr-OAJKfLdi3RO5PEA",
+      "title": "HNTR - Shook Ones pt III - Live at Concourse Project",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:ebXbLfLACGM",
+      "duration": 234.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/ebXbLfLACGM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/ebXbLfLACGM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAynkoEB9SDMvTUNa_8rl0fFfo-pA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/ebXbLfLACGM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDEN8muCOVl8rx3WPhUgwgmcknbng",
+      "title": "Calvin Harris - Summer (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:uO59tfQ2TbA",
+      "duration": 200.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/uO59tfQ2TbA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/uO59tfQ2TbA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBVqC7acHDK522jVOgg_2cl3CuOiA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/uO59tfQ2TbA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLB5OihmvySChDOzZLC1Dd9GdPyhIg",
+      "title": "David Guetta - Hey Mama (Official Video) ft Nicki Minaj, Bebe Rexha & Afrojack",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:1-xGerv5FOk",
+      "duration": 164.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/1-xGerv5FOk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/1-xGerv5FOk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCh9-8yP-7_Eh4Hf0a_hET_aHZi4A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/1-xGerv5FOk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCdPLBB_-EuC4yeX874Gz-UgnlEow",
+      "title": "Alan Walker - Alone",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:m7Bc3pLyij0",
+      "duration": 234.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/m7Bc3pLyij0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/m7Bc3pLyij0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAdIyhIqrJc9dqAGQ5vdcm1j42_UQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/m7Bc3pLyij0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBuatGqsTerR3gyafwRqGshVNmW1Q",
+      "title": "Marshmello ft. Bastille - Happier (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:2xP1xhbqG_4",
+      "duration": 231.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/2xP1xhbqG_4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/2xP1xhbqG_4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBw4F4g4fWX5SFG10DPLX9qexRWtQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/2xP1xhbqG_4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDyTmvtGjC9QogFoB-T0BNvE0cQ7A",
+      "title": "Paul Kalkbrenner – DREAMING ON (Official Visualizer)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:nntGTK2Fhb0",
+      "duration": 252.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/nntGTK2Fhb0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/nntGTK2Fhb0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCEXbfID4UqGpQDj6SimH1CBeoapA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/nntGTK2Fhb0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBVhnPupPnaxtfjB0P-zBNoz1529A",
+      "title": "Skrillex and Diplo - \"Where Are Ü Now\" with Justin Bieber (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:cHHLHGNpCSA",
+      "duration": 231.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/cHHLHGNpCSA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/cHHLHGNpCSA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA4j4YrQxwFEHXcBbY3zVumS3Kk_A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/cHHLHGNpCSA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDBrTU8Wfy8u4Ww_bqMtYEcSX9-Gw",
+      "title": "Avicii - Waiting For Love",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:EPo5wWmKEaI",
+      "duration": 267.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/EPo5wWmKEaI",
+      "song_coverPath_high": "https://i.ytimg.com/vi/EPo5wWmKEaI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBoD8RPkTUR5kObF7OF6CuEMy-wyA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/EPo5wWmKEaI/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCiq6S0AFQ7dnUyTvmsHHZfFSzitQ",
+      "title": "Pitbull - Give Me Everything ft. Ne-Yo, Afrojack, Nayer",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:lf7TVbYwJ7s",
+      "duration": 241.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/lf7TVbYwJ7s",
+      "song_coverPath_high": "https://i.ytimg.com/vi/lf7TVbYwJ7s/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYRyBlKFkwDw==&rs=AOn4CLCu7W20QokNK1oo0K_rqLhhbNV3fQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/lf7TVbYwJ7s/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARhHIGUoWTAP&rs=AOn4CLAEYQazJH3BjJ6T2GgfWL6eZt6KFw",
+      "title": "Alan Walker - Spectre (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:85nmYx3wXmE",
+      "duration": 256.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/85nmYx3wXmE",
+      "song_coverPath_high": "https://i.ytimg.com/vi/85nmYx3wXmE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAs4n94TEN3c6QJYqTS3SEckgHnSg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/85nmYx3wXmE/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAQbseigPYHGWk7YCJ5poQC53I03Q",
+      "title": "EAZY CHRIZ feat. Bmonde  I Walk Away (official music video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:5dbEhBKGOtY",
+      "duration": 242.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/5dbEhBKGOtY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/5dbEhBKGOtY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBSshB53Rf-YZsDzdvYHjtA19ejkQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/5dbEhBKGOtY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBQh0jd4m5p_1MYe_MInXOfAjqt6Q",
+      "title": "David Guetta - Play Hard ft. Ne-Yo, Akon (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:L8eRzOYhLuw",
+      "duration": 248.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/L8eRzOYhLuw",
+      "song_coverPath_high": "https://i.ytimg.com/vi/L8eRzOYhLuw/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCFDbMHC-DPFcJfyNrUTKSBoL-r_A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/L8eRzOYhLuw/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAZExmKI_vLDE4iFQozpzW1rLF29w",
+      "title": "Ariana Grande - Break Free (Official Video) ft. Zedd",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Ys7-6_t7OEQ",
+      "duration": 293.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Ys7-6_t7OEQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Ys7-6_t7OEQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCyDWjhLXJDkscdlajdkAP63-eSWg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Ys7-6_t7OEQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDqrF9uvcWrrhRhm35W3oYGZmxAsw",
+      "title": "Justin Bieber - Beauty And A Beat (Official Music Video) ft. Nicki Minaj",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:tg00YEETFzg",
+      "duration": 276.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/tg00YEETFzg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/tg00YEETFzg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCuMemLtw1svAw13GILoQN6vNp3Kg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/tg00YEETFzg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDv-NAAK-JcPoCnkLMlwgaWsGc8iA",
+      "title": "Rihanna - We Found Love ft. Calvin Harris",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:zihorUSQjCs",
+      "duration": 181.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/zihorUSQjCs",
+      "song_coverPath_high": "https://i.ytimg.com/vi/zihorUSQjCs/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAqg6Uk5aT9AFigjEki2fjbCo92XA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/zihorUSQjCs/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLChMQNbPH23XXlnCaGqSVQiIq7oaw",
+      "title": "qSTATE — DROWN (Official Visualizer)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:oC-GflRB0y4",
+      "duration": 171.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/oC-GflRB0y4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/oC-GflRB0y4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA1SictqV45lAF_plZQROfUllu7Mw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/oC-GflRB0y4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCcuEAs0Ln4MXbowmV0qhti91f-Fw",
+      "title": "David Guetta & Showtek - Bad ft.Vassy (Lyrics Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:1y6smkh6c-0",
+      "duration": 335.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/1y6smkh6c-0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/1y6smkh6c-0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBAz_c5t2910qlmMZT_m5lPcuHAvA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/1y6smkh6c-0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBA2o3BHmzQTNZtxtRuTMPy7MAIjw",
+      "title": "Swedish House Mafia ft. John Martin - Don't You Worry Child (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:8JnfIa84TnU",
+      "duration": 224.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/8JnfIa84TnU",
+      "song_coverPath_high": "https://i.ytimg.com/vi/8JnfIa84TnU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCPtaW5kr6-_Q6bMIiF07EnBZP8BQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/8JnfIa84TnU/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCIfQqL_udDeHWxlnZ265f9pk8jDg",
+      "title": "Clean Bandit - Solo (feat. Demi Lovato) [Official Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:9Sc-ir2UwGU",
+      "duration": 223.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/9Sc-ir2UwGU",
+      "song_coverPath_high": "https://i.ytimg.com/vi/9Sc-ir2UwGU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAb1_nPSACafWdD-7Ypn5ZeRVg8PA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/9Sc-ir2UwGU/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCzEnFNWCg-PpwSn9lh3Q4j1WcEXA",
+      "title": "Kygo - Firestone ft. Conrad Sewell (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:UD5DgzxFRjg",
+      "duration": 137.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/UD5DgzxFRjg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/UD5DgzxFRjg/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYfyAlKDAwDw==&rs=AOn4CLCyRAtlW8yOf1fbN2JZoPJr6wRtSw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/UD5DgzxFRjg/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARh_ICUoMDAP&rs=AOn4CLB8sFB8WNRjImjVlRm8VJ9734ZV0A",
+      "title": "Wuki - Ring of Fire [Official Visualizer]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:UtF6Jej8yb4",
+      "duration": 191.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/UtF6Jej8yb4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/UtF6Jej8yb4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDXYQOpNTgFO75qYJyUpUYryAYfIw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/UtF6Jej8yb4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDztCv3ZCX87xU-rNR6rHaKdPQ27A",
+      "title": "Avicii - The Nights",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:RnBT9uUYb1w",
+      "duration": 206.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/RnBT9uUYb1w",
+      "song_coverPath_high": "https://i.ytimg.com/vi/RnBT9uUYb1w/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLChJak_PCpAIIaPELVr_BXHT_ziHw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/RnBT9uUYb1w/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCYyUdQE2sYAwM5Mvl42bjy47ugsw",
+      "title": "Martin Garrix & Bebe Rexha - In The Name Of Love (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:6ACl8s_tBzE",
+      "duration": 255.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/6ACl8s_tBzE",
+      "song_coverPath_high": "https://i.ytimg.com/vi/6ACl8s_tBzE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD2UdyTdiw-IdNhphpzm-iTB1gnEg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/6ACl8s_tBzE/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBWAMVNkmrYxm7x3vNWfdI6bGp6Mg",
+      "title": "Calvin Harris - Blame ft. John Newman",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:qPTfXwPf_HM",
+      "duration": 184.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/qPTfXwPf_HM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/qPTfXwPf_HM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCRDuuL0Tw1M87Yy-jawkw3wAQ1BQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/qPTfXwPf_HM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCwJcl6wA07Ms8KsdrQWCqI4xB3AQ",
+      "title": "Jonas Blue - Mama ft. William Singe",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Pd4rg2totco",
+      "duration": 189.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Pd4rg2totco",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Pd4rg2totco/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYQSBVKGUwDw==&rs=AOn4CLBc9aYPVD0RD22z0r7BIGJ3Sl8UMw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Pd4rg2totco/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARhBIFUoZTAP&rs=AOn4CLCGEo3GvIxgOpOxwam7ZmOTJ88sXw",
+      "title": "EDO DENOVA x SZ_BECCA - SHOULDA",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:AtKZKl7Bgu0",
+      "duration": 227.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/AtKZKl7Bgu0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/AtKZKl7Bgu0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBtnraqWr3Z7OdIZ3xJfKMVfg64Yg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/AtKZKl7Bgu0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCPvMbrHjrnL2Rf-pZaVAz9G4ie5w",
+      "title": "Calvin Harris - I Need Your Love (Official Video) ft. Ellie Goulding",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Ey_hgKCCYU4",
+      "duration": 208.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Ey_hgKCCYU4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Ey_hgKCCYU4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD-PB6N95bKICHgsZgb4pgklGg0_w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Ey_hgKCCYU4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC5lIfHUcLW34EW1qQ6LTZ5gk3D8A",
+      "title": "Jonas Blue - Perfect Strangers ft. JP Cooper",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:J9NQFACZYEU",
+      "duration": 226.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/J9NQFACZYEU",
+      "song_coverPath_high": "https://i.ytimg.com/vi/J9NQFACZYEU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBaeGyVEoBd0ganzkpH9Wa7Qr-r0A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/J9NQFACZYEU/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLA-s6u2ZV93XcPG2-wLnb6abuUFrw",
+      "title": "Calvin Harris - Outside (Official Video) ft. Ellie Goulding",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:M-P4QBt-FWw",
+      "duration": 240.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/M-P4QBt-FWw",
+      "song_coverPath_high": "https://i.ytimg.com/vi/M-P4QBt-FWw/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCZoApn36kCTLmHEB8ehYAPyWDhfQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/M-P4QBt-FWw/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDwz7_M1qC9rkkXkksOdJkJPhWNig",
+      "title": "Alan Walker - Darkside (feat. Au/Ra and Tomine Harket)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:eYB3EaN9yhw",
+      "duration": 215.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/eYB3EaN9yhw",
+      "song_coverPath_high": "https://i.ytimg.com/vi/eYB3EaN9yhw/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYfyBFKCwwDw==&rs=AOn4CLAkRKd-zfT0DYrsPNqWd94Hh_tCmQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/eYB3EaN9yhw/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARh_IEUoLDAP&rs=AOn4CLDHXv6iT-7FCoKm2ghOSMCEpwkJ4w",
+      "title": "WHITENO1SE x Davee x Ela x Livicious - The Look In My Eyes",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:e2vBLd5Egnk",
+      "duration": 231.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/e2vBLd5Egnk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/e2vBLd5Egnk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAsIwjDrbaNME4xM5rmVMlCf1S0xA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/e2vBLd5Egnk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDyTyhCxfv52RQ7sM9KEy6FBKjtRg",
+      "title": "Martin Garrix & Dua Lipa - Scared To Be Lonely (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:12CeaxLiMgE",
+      "duration": 213.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/12CeaxLiMgE",
+      "song_coverPath_high": "https://i.ytimg.com/vi/12CeaxLiMgE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDc370BGLBkoGp9XFsTlPCDftrIGA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/12CeaxLiMgE/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCJfSuqjSH4IVcpruX310M2ho_cLQ",
+      "title": "Dillon Francis, DJ Snake - Get Low (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:_ovdm2yX4MA",
+      "duration": 199.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/_ovdm2yX4MA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/_ovdm2yX4MA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCqrlOHpY1qG_zGBVajD2VaDFIemg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/_ovdm2yX4MA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCiqFDXRh15TZykhlGqxSIueX_S1A",
+      "title": "Avicii - Levels",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:GsF05B8TFWg",
+      "duration": 204.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/GsF05B8TFWg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/GsF05B8TFWg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBxuzbITQpa2lCR5QDp7Og20kpfEw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/GsF05B8TFWg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCpcJMfPpz2nqzbqnEfqV5103RIzA",
+      "title": "Axwell /\\ Ingrosso, Axwell, Sebastian Ingrosso - More Than You Know",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:2i2khp_npdE",
+      "duration": 192.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/2i2khp_npdE",
+      "song_coverPath_high": "https://i.ytimg.com/vi/2i2khp_npdE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAR-YxwoJzn7nHpWfL3UIJDg2TvKA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/2i2khp_npdE/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDMYOpXn9bviLXh8Dzbg606cM0FkA",
+      "title": "Alan Walker - Sing Me To Sleep",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:xA1JZL7aE2o",
+      "duration": 181.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/xA1JZL7aE2o",
+      "song_coverPath_high": "https://i.ytimg.com/vi/xA1JZL7aE2o/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA1EeytJG0LF6WV9RnEd6CuHvHL2w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/xA1JZL7aE2o/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBvl627e3aCYwZ8FNBcejIsxlOvjw",
+      "title": "SUNVOLUME - i hope all of your dreams come true (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:9vMh9f41pqE",
+      "duration": 199.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/9vMh9f41pqE",
+      "song_coverPath_high": "https://i.ytimg.com/vi/9vMh9f41pqE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDXzznw-Oh7dlhDm6uupN0nSWtD6g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/9vMh9f41pqE/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBd5elZdP03O8oRSuSpoDFRM_mZJw",
+      "title": "Dimitri Vegas, Martin Garrix, Like Mike - Tremor (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:5yXQJBU8A28",
+      "duration": 216.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/5yXQJBU8A28",
+      "song_coverPath_high": "https://i.ytimg.com/vi/5yXQJBU8A28/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBLnafODDLrSAlVPzjM7b0ljBISjQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/5yXQJBU8A28/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDEIhpllF-3026HQkIwjMzeXQm6xw",
+      "title": "Jonas Blue - Fast Car ft. Dakota (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:xUVz4nRmxn4",
+      "duration": 202.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/xUVz4nRmxn4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/xUVz4nRmxn4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCOH6b16Ezk9AufAvwvENcWel_qMg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/xUVz4nRmxn4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAauw2mtlU7XQ92gic2PKi-EX52nA",
+      "title": "Galantis - No Money (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:u3VTKvdAuIY",
+      "duration": 242.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/u3VTKvdAuIY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/u3VTKvdAuIY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDjXGUhblq8ZOa3PCJC6k16k0vvFA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/u3VTKvdAuIY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBXsNJgHb6TcAwoT7dTTeX6g1PAWg",
+      "title": "Kygo, Selena Gomez - It Ain't Me (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:N6zn5nynpJw",
+      "duration": 268.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/N6zn5nynpJw",
+      "song_coverPath_high": "https://i.ytimg.com/vi/N6zn5nynpJw/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB_hagLGDbrCFg__Q3pRHCkDJqYlA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/N6zn5nynpJw/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCqHe1PSMKZbVOK-ggFWqBen7GxIA",
+      "title": "By the Light of the Moon",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:kdemFfbS5H0",
+      "duration": 224.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/kdemFfbS5H0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/kdemFfbS5H0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBR0_h2M0oUJbGm2HxgHrnCEohX3g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/kdemFfbS5H0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBGJTuKEEN27koQ1CeRhCwLdRtsaA",
+      "title": "#SELFIE (Official Music Video) - The Chainsmokers",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:3x2ABSAMVno",
+      "duration": 193.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/3x2ABSAMVno",
+      "song_coverPath_high": "https://i.ytimg.com/vi/3x2ABSAMVno/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDD3yeMMyi6zUF51xm1fGTEjo790Q",
+      "song_coverPath_low": "https://i.ytimg.com/vi/3x2ABSAMVno/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCjz3DZIt_UVzcNT2VtFjLnhicjgg",
+      "title": "David Guetta - Shot Me Down ft. Skylar Grey (Lyric Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:cH4E_t3m3xM",
+      "duration": 213.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/cH4E_t3m3xM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/cH4E_t3m3xM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBpNZbRdi0aKkmYhMI8OdvzyATNfA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/cH4E_t3m3xM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAgQSDYw2HXjB-XiU52VClB96lNww",
+      "title": "Selena Gomez, Marshmello - Wolves",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:6Cp6mKbRTQY",
+      "duration": 264.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/6Cp6mKbRTQY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/6Cp6mKbRTQY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDE2LSu6sqHgdsvEAErG4XY6t8zSg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/6Cp6mKbRTQY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC6TyOxz0RHQeFw9sFUd3UWiZHmCw",
+      "title": "Avicii - Hey Brother",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:bbPGsxX_hjs",
+      "duration": 186.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/bbPGsxX_hjs",
+      "song_coverPath_high": "https://i.ytimg.com/vi/bbPGsxX_hjs/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALQBYoCDAgAEAEYPyBiKGUwDw==&rs=AOn4CLDbzfWf1NXIeWCZX1dcM4XJpgdVUg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/bbPGsxX_hjs/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARg_IGIoZTAP&rs=AOn4CLBW2yyvg1fx2doGqdCEe78VlszByg",
+      "title": "A Hundred Drums - Savannah Sky",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:I41CX0RdmPQ",
+      "duration": 147.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/I41CX0RdmPQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/I41CX0RdmPQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBEs9NAijgunloA2z6TdUlHc8QD-A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/I41CX0RdmPQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAK1VnWCUaM9Ud_6MRoDegl1AaEcg",
+      "title": "DVBBS & Borgeous - TSUNAMI (Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:r2LpOUwca94",
+      "duration": 170.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/r2LpOUwca94",
+      "song_coverPath_high": "https://i.ytimg.com/vi/r2LpOUwca94/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCNvLCEPh9EskuU_nUojyszDHXGmA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/r2LpOUwca94/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLD4UtGWUIZYjilhEcq3Ov1l00mf2Q",
+      "title": "Major Lazer – Light it Up (feat. Nyla & Fuse ODG) (Remix) [Official 4K Music Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:PVzljDmoPVs",
+      "duration": 238.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/PVzljDmoPVs",
+      "song_coverPath_high": "https://i.ytimg.com/vi/PVzljDmoPVs/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAMOElYT8nC2sSEYc9sFQihhWZUWw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/PVzljDmoPVs/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBjRQiveuhaqujO7R83p01_BtZybw",
+      "title": "David Guetta - She Wolf (Falling To Pieces) ft. Sia (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:yWEK4v9AVKQ",
+      "duration": 214.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/yWEK4v9AVKQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/yWEK4v9AVKQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCHYciO0Rsug6-vQ_T2RycS2WtvfA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/yWEK4v9AVKQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAjrcLGMAYCB8KcwTIePW788avRjA",
+      "title": "Zedd, Alessia Cara - Stay (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:IrpAOQT-JqA",
+      "duration": 164.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/IrpAOQT-JqA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/IrpAOQT-JqA/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4Af4JgALOBYoCDAgAEAEYMiBbKHIwDw==&rs=AOn4CLAX2qzL5KawGNUD5yeULlrhOsYg0A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/IrpAOQT-JqA/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAs4FigIMCAAQARgyIFsocjAP&rs=AOn4CLBn6DDEl0VPjhSLGZS2zTEygAc4ZA",
+      "title": "Ian Asher & Jade LeMac - Constellations (Official Audio)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:btrzs54s1Rc",
+      "duration": 219.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/btrzs54s1Rc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/btrzs54s1Rc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDETFtjz02oV--SaZ-ci7xJOnT4-g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/btrzs54s1Rc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBUFzkdtBDsazVaqA8MzOi3oPGEPg",
+      "title": "Jonas Blue - Rise ft. Jack & Jack (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:2Y6Nne8RvaA",
+      "duration": 198.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/2Y6Nne8RvaA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/2Y6Nne8RvaA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBXrCy2wAXcTsBOa1J9pq_eb6mI6A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/2Y6Nne8RvaA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCmK7cK2MjZJoOPJ4E9uikyJzVhXw",
+      "title": "Kungs vs Cookin’ on 3 Burners - This Girl",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Tx1sqYc3qas",
+      "duration": 203.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Tx1sqYc3qas",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Tx1sqYc3qas/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDk4-icuIfbM3msIWfU2EO1bAwklQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Tx1sqYc3qas/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAR-8tzomMtk0Kyg1mDtU6-emHQQw",
+      "title": "Marshmello - Silence Ft. Khalid (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:GTyN-DB_v5M",
+      "duration": 243.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/GTyN-DB_v5M",
+      "song_coverPath_high": "https://i.ytimg.com/vi/GTyN-DB_v5M/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCeiRk2kA371Ki1w1j_2hOjMOm4sQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/GTyN-DB_v5M/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDhl_P_SXT_Oe5P1WdaU9WiwazghA",
+      "title": "Zara Larsson, MNEK - Never Forget You",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:U34U2qYi1R8",
+      "duration": 185.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/U34U2qYi1R8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/U34U2qYi1R8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBN8RCJUdY1wp7yhVlXCttjWUAOPA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/U34U2qYi1R8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCOLdKsqGdMaqAoFcSqcQGnbZcLsA",
+      "title": "I’m Happy - Tito Ice, Deny Nice (official video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:b4Bj7Zb-YD4",
+      "duration": 245.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/b4Bj7Zb-YD4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/b4Bj7Zb-YD4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAOkw3f-Nc5XgK-30eo1XvU1r0-DQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/b4Bj7Zb-YD4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCC4HxATH81EJNTd00SCUEdx4HheQ",
+      "title": "Calvin Harris - My Way (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:RqcjBLMaWCg",
+      "duration": 195.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/RqcjBLMaWCg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/RqcjBLMaWCg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDzGo0uaSHie2WX7j50lrnvzTCphw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/RqcjBLMaWCg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLD2vmxqd7n16fklmEK9omOPl6-O-A",
+      "title": "David Guetta ft Justin Bieber - 2U (The Victoria’s Secret Angels Lip Sync)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:pjTj-_55WZ8",
+      "duration": 232.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/pjTj-_55WZ8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/pjTj-_55WZ8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLApwzpmkrRFOxETVrqKrB7POwHilw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/pjTj-_55WZ8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBEPgNGtN4OXZylySkYu742_11AaQ",
+      "title": "Rudimental - These Days (feat. Jess Glynne, Macklemore & Dan Caplen) [Official Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:SeIJmciN8mo",
+      "duration": 262.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/SeIJmciN8mo",
+      "song_coverPath_high": "https://i.ytimg.com/vi/SeIJmciN8mo/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLATmLKLkEtI6Sxg6jM_9SdKBWtVKA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/SeIJmciN8mo/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAZkXnS9rSP1cJOrHkoKqj4HAvBlw",
+      "title": "Nicki Minaj - Starships (Explicit) (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:9xtEK1PrMEk",
+      "duration": 158.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/9xtEK1PrMEk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/9xtEK1PrMEk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBqq5EFuX385DxnXnmBo-g2heqGJA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/9xtEK1PrMEk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCHLkOu-n5Z4XsuyewDqgT48XJyJA",
+      "title": "Gabby B - Playboy Bunny (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:BgfcToAjfdc",
+      "duration": 326.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/BgfcToAjfdc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/BgfcToAjfdc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCb64NfPu_Dtd4yBOWdh4RC1j-Iig",
+      "song_coverPath_low": "https://i.ytimg.com/vi/BgfcToAjfdc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAeIECRWknIRz2uGLVG0H00uK5QEA",
+      "title": "Kygo - Stole The Show feat. Parson James [Official Music Video - YTMAs]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:5XR7naZ_zZA",
+      "duration": 264.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/5XR7naZ_zZA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/5XR7naZ_zZA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDlPo4MUyZueYxAd7QSk1CDtatKOQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/5XR7naZ_zZA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC0WwngeeRgp1uPvdiuJeoF7t1R9Q",
+      "title": "Galantis - Runaway (U & I) (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:jUe8uoKdHao",
+      "duration": 210.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/jUe8uoKdHao",
+      "song_coverPath_high": "https://i.ytimg.com/vi/jUe8uoKdHao/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCabsWBQ9bYqHjZ15hqN470QYM2mQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/jUe8uoKdHao/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDNnv7AUi9EbSBQEWUJDXAciAzGzA",
+      "title": "David Guetta - Without You ft. Usher (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:fRNkQH4DVg8",
+      "duration": 223.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/fRNkQH4DVg8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/fRNkQH4DVg8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCKud2BiYhwbua1icZsf1fP32UZCg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/fRNkQH4DVg8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDIJTbJwhsPipmS8qCY9MSHY1fadA",
+      "title": "The Chainsmokers - Paris (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:mn5GKCZMnrk",
+      "duration": 187.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/mn5GKCZMnrk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/mn5GKCZMnrk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAT2MvDxomNCOWLyZHbXXctzUQKMA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/mn5GKCZMnrk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBEYw3cF4K3_CrltZ_R2MCwCJr6yw",
+      "title": "The Chooches  - Accident",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:fDrTbLXHKu8",
+      "duration": 242.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/fDrTbLXHKu8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/fDrTbLXHKu8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCzyXoDNT77fMc7MIG0GDFYi9ycqw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/fDrTbLXHKu8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC0sQTQX_n7-xlJhR9ELDlneL-zKQ",
+      "title": "Skrillex & Diplo - \"Mind\" feat. Kai (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:dzHdo4yxidc",
+      "duration": 190.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/dzHdo4yxidc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/dzHdo4yxidc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC_ydRLGspHKm1k74GOsEbkvTgAew",
+      "song_coverPath_low": "https://i.ytimg.com/vi/dzHdo4yxidc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCkYvDpFKvmzNxpmLvzcv78tOLW1A",
+      "title": "Afrojack & Martin Garrix - Turn Up The Speakers (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:IvPT2QuCIOA",
+      "duration": 301.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/IvPT2QuCIOA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/IvPT2QuCIOA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCzgtbURGGyhxYEeMKV4y2V9RG4pw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/IvPT2QuCIOA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBQyaWyz8FLU9jJL1Tz-2BdDjtlBg",
+      "title": "DJ Snake - Middle ft. Bipolar Sunshine",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:IxxstCcJlsc",
+      "duration": 276.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/IxxstCcJlsc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/IxxstCcJlsc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDoNGuFHGING5dsrnIGkUojZCKekA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/IxxstCcJlsc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBAU3zNMX9A1pmcxgAfFSjq5NlVrg",
+      "title": "Zedd - Clarity ft. Foxes",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:pNNMr5glICM",
+      "duration": 221.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/pNNMr5glICM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/pNNMr5glICM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBdInm8p2_ANj99oRL_YHySyVPDIQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/pNNMr5glICM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCqNGuwDL3bqc2azhNbcuV6y0gxrw",
+      "title": "Martin Garrix & Troye Sivan - There For You (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:3qA2zGAH4jI",
+      "duration": 247.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/3qA2zGAH4jI",
+      "song_coverPath_high": "https://i.ytimg.com/vi/3qA2zGAH4jI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCRAannS7aV-LGN2GpJKO0qmoT0Yg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/3qA2zGAH4jI/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC42Jh5B-wK68yXQBL248WIdRHZ0Q",
+      "title": "Thundercat - 'Children of the Baked Potato (feat. Remi Wolf)'",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:hmwJ2GhYtKY",
+      "duration": 280.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/hmwJ2GhYtKY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/hmwJ2GhYtKY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA5wt3R7lbZas73S5v9ITFC2wWYug",
+      "song_coverPath_low": "https://i.ytimg.com/vi/hmwJ2GhYtKY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAfR55ZQgvH0J6Tw3N04JmcuKnwmw",
+      "title": "Deorro, Chris Brown - Five More Hours (Official Video) (Online Version)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:lEi_XBg2Fpk",
+      "duration": 196.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/lEi_XBg2Fpk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/lEi_XBg2Fpk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD6w_6RgAVWCQMWvREiprFp-yW-ww",
+      "song_coverPath_low": "https://i.ytimg.com/vi/lEi_XBg2Fpk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLADykyF6xwLR7Pq1bI6YAeh3UUy0Q",
+      "title": "The Chainsmokers - All We Know (Audio) ft. Phoebe Ryan",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:bek1y2uiQGA",
+      "duration": 286.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/bek1y2uiQGA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/bek1y2uiQGA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLADD8s_oReVbrtehwLQ7pDAakXErQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/bek1y2uiQGA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBVBOTTv3ATcPL84gHjQqGMfykw2w",
+      "title": "Avicii vs Nicky Romero - I Could Be The One (Nicktim)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:90RLzVUuXe4",
+      "duration": 178.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/90RLzVUuXe4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/90RLzVUuXe4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBWiOY2hglavUdm_bwoRO5GRm5PGQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/90RLzVUuXe4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC3KSCiGmDaxYN7egLMDyxKBxfTqA",
+      "title": "David Guetta & Bebe Rexha - I'm Good (Blue) [Official Music Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:dGghkjpNCQ8",
+      "duration": 247.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/dGghkjpNCQ8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/dGghkjpNCQ8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCoLcjK-46Br9Zo45gLor5SyJljBg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/dGghkjpNCQ8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBRn-nt7sXZMsbFj7YjF0371sQb_Q",
+      "title": "Calvin Harris - Feel So Close (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:3mC2ixOAivA",
+      "duration": 257.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/3mC2ixOAivA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/3mC2ixOAivA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCOWYtAOyfImQ3VtUSjcLECUpIr6g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/3mC2ixOAivA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCMGvzXzNLnDbs0EX5yJ2hIorJgyA",
+      "title": "Chris Brown - Yeah 3x (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:ir6nk2zrMG0",
+      "duration": 235.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/ir6nk2zrMG0",
+      "song_coverPath_high": "https://i.ytimg.com/vi/ir6nk2zrMG0/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCobn1xpsORzA201cXShD8LPDSSXQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/ir6nk2zrMG0/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBZbOozxzpa0miO4y5LNwqynnJxLw",
+      "title": "Calvin Harris, Rag'n'Bone Man - Giant (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:xwjwCFZpdns",
+      "duration": 185.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/xwjwCFZpdns",
+      "song_coverPath_high": "https://i.ytimg.com/vi/xwjwCFZpdns/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDc8E5UVwIe6eidIUXTxVydml28SQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/xwjwCFZpdns/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDvavYfAoR04sV1A5ltLkkAZ8LkWw",
+      "title": "Hailee Steinfeld, Grey - Starving ft. Zedd (Official Video) ft. Zedd",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:G5Mv2iV0wkU",
+      "duration": 241.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/G5Mv2iV0wkU",
+      "song_coverPath_high": "https://i.ytimg.com/vi/G5Mv2iV0wkU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCcfxNcz3L1vevDkASyKCq0uwJ32w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/G5Mv2iV0wkU/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDvStL4YCXuRmEHvPBf1iD_nEydfg",
+      "title": "The Chainsmokers - Roses ft. ROZES",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:mkCaf6tuhGM",
+      "duration": 147.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/mkCaf6tuhGM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/mkCaf6tuhGM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCNPtxqgd_L58RVzJqwS2Md_nH5QA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/mkCaf6tuhGM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDG-JNAoL7SlqLmYe6mMhh0jx7OiQ",
+      "title": "MIRA - Ring, Ring | Official Video",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:sJXZ9Dok7u8",
+      "duration": 219.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/sJXZ9Dok7u8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/sJXZ9Dok7u8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC0CNsE96yCK3L8aC8i9dXx-kx5Dg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/sJXZ9Dok7u8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBbLyLgui0Ht66h0NudBhPeanpZSA",
+      "title": "Alan Walker - Diamond Heart (feat. Sophia Somajo)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:CRuOOxF-ENQ",
+      "duration": 168.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/CRuOOxF-ENQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/CRuOOxF-ENQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAqH5XvkZgWS4dC55oZQzDqECB14A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/CRuOOxF-ENQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCvgr0Qk4ce_JmnzgmBwUonuGCGkQ",
+      "title": "Joel Corry x MNEK - Head & Heart [Official Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Dr1nN__-2Po",
+      "duration": 220.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Dr1nN__-2Po",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Dr1nN__-2Po/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCypTQGa_fh2OUhCj6NPvOW-UhjIQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Dr1nN__-2Po/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLD6RD2jbkS55YJ6Y9Q7q1COyliFjQ",
+      "title": "Tiësto & KSHMR feat. Vassy - Secrets (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:6RLLOEzdxsM",
+      "duration": 221.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/6RLLOEzdxsM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/6RLLOEzdxsM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCHxdf66Y23aDq52TQ9dQxU9kXTpA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/6RLLOEzdxsM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCGmDPe4b2uXtVuvAt4BRSzVLNPfQ",
+      "title": "Alan Walker - All Falls Down (feat. Noah Cyrus with Digital Farm Animals)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:i-gyZ35074k",
+      "duration": 217.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/i-gyZ35074k",
+      "song_coverPath_high": "https://i.ytimg.com/vi/i-gyZ35074k/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB1ynqrZcjxzEI9DtrP2I-687dDxQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/i-gyZ35074k/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDseRYYzKijAbpRgCRYsCYslyIBlg",
+      "title": "Zedd - Stay The Night ft. Hayley Williams",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:o7iL2KzDh38",
+      "duration": 184.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/o7iL2KzDh38",
+      "song_coverPath_high": "https://i.ytimg.com/vi/o7iL2KzDh38/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCu9kLqNCyl-E1syaHgoo4xA3hYsw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/o7iL2KzDh38/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAZNjb3akwRvO2_E0tdy8asgY-UUw",
+      "title": "Martin Garrix & David Guetta - So Far Away (Official Video) feat. Jamie Scott & Romy Dya",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:qBB_QOZNEdc",
+      "duration": 238.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/qBB_QOZNEdc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/qBB_QOZNEdc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCBE0DsJUJxuxqQ5R8mPE2taEPdPQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/qBB_QOZNEdc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLA-da50TMHvZiVHpxyvkylgBEGkhw",
+      "title": "Hailee Steinfeld - Most Girls (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:zudbz4hOcbc",
+      "duration": 193.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/zudbz4hOcbc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/zudbz4hOcbc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBv8RE11s7Zxw9VyVn6MqLEpV0vdw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/zudbz4hOcbc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLApUxrPaeXShI-pZlht4lkY3erFXA",
+      "title": "David Guetta Feat. Kelly Rowland - When Love Takes Over (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:qj5zT4t7S6c",
+      "duration": 214.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/qj5zT4t7S6c",
+      "song_coverPath_high": "https://i.ytimg.com/vi/qj5zT4t7S6c/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBSHJR-ndl9bmVulqzMSD62H0wRJw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/qj5zT4t7S6c/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLA1yRyct8uqeJVhNv46x4Uh37Lsnw",
+      "title": "Sigala - Sweet Lovin' (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:iXYroDymuMk",
+      "duration": 185.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/iXYroDymuMk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/iXYroDymuMk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCxpufYd_ZD2OEfdSsIORUTLMfAGg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/iXYroDymuMk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCEXMVsNIq7PUkEvOog0RnqyodAew",
+      "title": "MIRA - Ladida | Lyric Video",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:Lpjcm1F8tY8",
+      "duration": 227.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/Lpjcm1F8tY8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/Lpjcm1F8tY8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCJp8sfIGNeHtQVvwKQuGOkgc2nzw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/Lpjcm1F8tY8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCOpjHq1CpYyN97h1X2Nri3Srz_2w",
+      "title": "Martin Garrix feat. Bonn - High On Life (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:a7SouU3ECpU",
+      "duration": 295.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/a7SouU3ECpU",
+      "song_coverPath_high": "https://i.ytimg.com/vi/a7SouU3ECpU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAWJQWS-angysteVb1cErS-bxTUFA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/a7SouU3ECpU/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCIc80uMw55FUaxfU8FW39i2AXnPw",
+      "title": "Alesso - Heroes (we could be) ft. Tove Lo",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:QOowQeKyNkQ",
+      "duration": 226.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/QOowQeKyNkQ",
+      "song_coverPath_high": "https://i.ytimg.com/vi/QOowQeKyNkQ/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCMEmC3HsJNzVGo8yN5AFMb6ddlgQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/QOowQeKyNkQ/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCMVVIZHPixcwJNrIa3dFh3UUDM3Q",
+      "title": "Chris Brown - Don't Wake Me Up (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:zaIsVnmwdqg",
+      "duration": 244.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/zaIsVnmwdqg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/zaIsVnmwdqg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD6ToU9XASAwm6Yh29Ie8w07a_Z6w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/zaIsVnmwdqg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC4alrvDbwBGW9gPo2SMv5_kYJw7g",
+      "title": "Kygo - Happy Now ft. Sandro Cavazza (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:BPiW0tkWfeg",
+      "duration": 224.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/BPiW0tkWfeg",
+      "song_coverPath_high": "https://i.ytimg.com/vi/BPiW0tkWfeg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLApAdIRyBnlv7n9oEt2jiLs2iMIPQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/BPiW0tkWfeg/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAvTY-m8oBa2d0bdmYSF8EhY31tRA",
+      "title": "David Guetta - Lovers On The Sun (Official Video) ft Sam Martin",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:P9-4xHVc7uk",
+      "duration": 216.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/P9-4xHVc7uk",
+      "song_coverPath_high": "https://i.ytimg.com/vi/P9-4xHVc7uk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB3IwsOsNQS52cT1Kc509GAs-PjAg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/P9-4xHVc7uk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLA6nR7wk9xVG8QFSh-mqihID6t8qw",
+      "title": "Robin Schulz – OK (feat. James Blunt) (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:KnL2RJZTdA4",
+      "duration": 218.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/KnL2RJZTdA4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/KnL2RJZTdA4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDfdjHrJuTYOfEFHzGFXYH33X1_Gw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/KnL2RJZTdA4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCF5WnRRjAHQLV3gZAnxFMBoBJgaA",
+      "title": "Martin Garrix & Jay Hardway - Wizard (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:X46t8ZFqUB4",
+      "duration": 247.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/X46t8ZFqUB4",
+      "song_coverPath_high": "https://i.ytimg.com/vi/X46t8ZFqUB4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDXFPb0FBkxNbBkN8bEjoBX7aXPEA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/X46t8ZFqUB4/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLAgfgvBMFTi9mX5in7D6Wp1QME8nw",
+      "title": "Zedd - I Want You To Know ft. Selena Gomez",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:n1a7o44WxNo",
+      "duration": 253.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/n1a7o44WxNo",
+      "song_coverPath_high": "https://i.ytimg.com/vi/n1a7o44WxNo/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBsPsoO264vQrW9nCuU1eG7k1DVGQ",
+      "song_coverPath_low": "https://i.ytimg.com/vi/n1a7o44WxNo/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLD-uEKxDUT3QhwtxbioCGsCU-JFNQ",
+      "title": "Zedd - Beautiful Now ft. Jon Bellion (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:AqBwSkn5n18",
+      "duration": 173.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/AqBwSkn5n18",
+      "song_coverPath_high": "https://i.ytimg.com/vi/AqBwSkn5n18/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDrf6qR9coGKtfZ4mWoVNKmjN8Y5Q",
+      "song_coverPath_low": "https://i.ytimg.com/vi/AqBwSkn5n18/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBi0FY7oDtWD7V0WBzdcfSbv-moTg",
+      "title": "TOESUP, Smiley - Two Feet (Official Visualizer)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:I-VsisgVkHw",
+      "duration": 198.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/I-VsisgVkHw",
+      "song_coverPath_high": "https://i.ytimg.com/vi/I-VsisgVkHw/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCZjSgyRuZz8Yge-xS4ypOnQS2x3w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/I-VsisgVkHw/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBC6TldY7LYXY8ZGchAkYE0traQow",
+      "title": "Starley - Call On Me (Ryan Riback Remix)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:jn40gqhxoSY",
+      "duration": 225.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/jn40gqhxoSY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/jn40gqhxoSY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCzAs9UNyMbVEPeFwGQ8vEJD9vEPw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/jn40gqhxoSY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCCS_GusAlxfEdvvhIBd-Nle757AA",
+      "title": "Cheat Codes - No Promises ft. Demi Lovato [Official Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:0tHH0BNH0Sc",
+      "duration": 190.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/0tHH0BNH0Sc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/0tHH0BNH0Sc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDknRQ19EwtcAwVo4EAWnyUzKdjUg",
+      "song_coverPath_low": "https://i.ytimg.com/vi/0tHH0BNH0Sc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCleIbrM-v_Y-f6GIDV10BG7TA38Q",
+      "title": "Yellow Claw - Till It Hurts ft. Ayden [Official Music Video]",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:ontU9cOg354",
+      "duration": 198.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/ontU9cOg354",
+      "song_coverPath_high": "https://i.ytimg.com/vi/ontU9cOg354/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDJfL6E3HMB6BWncvkMBpF0u5NslA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/ontU9cOg354/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLA4bv2UOJMqtNCqwScJwgu46Wp1PQ",
+      "title": "Tiësto, Jonas Blue & Rita Ora - Ritual (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:lzkKzZmRZk8",
+      "duration": 229.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/lzkKzZmRZk8",
+      "song_coverPath_high": "https://i.ytimg.com/vi/lzkKzZmRZk8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCWRe0C_zVVy1IJ-BclrIBpwVtvkA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/lzkKzZmRZk8/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCjDlbHoSLWefUQ0GHPv5VmfSiukg",
+      "title": "The Chainsmokers, ILLENIUM - Takeaway (Official Video) ft. Lennon Stella",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:NOubzHCUt48",
+      "duration": 213.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/NOubzHCUt48",
+      "song_coverPath_high": "https://i.ytimg.com/vi/NOubzHCUt48/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBYVDC1EqcqG9C9NpjCZZNvyVB8_g",
+      "song_coverPath_low": "https://i.ytimg.com/vi/NOubzHCUt48/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDyXOdOkOOyMKxsZDhXpCnwP6bTFQ",
+      "title": "Ke$ha - Die Young (Official Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:CFF0mV24WCY",
+      "duration": 213.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/CFF0mV24WCY",
+      "song_coverPath_high": "https://i.ytimg.com/vi/CFF0mV24WCY/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCvHZn_iTctZ_gWKM77a_liwpH9Zw",
+      "song_coverPath_low": "https://i.ytimg.com/vi/CFF0mV24WCY/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCGmedNet4nb7X9D2ydx0JEKuA-wg",
+      "title": "Tiësto - Red Lights",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:vQ3XgMKAgxc",
+      "duration": 185.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/vQ3XgMKAgxc",
+      "song_coverPath_high": "https://i.ytimg.com/vi/vQ3XgMKAgxc/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCER3HS3Ruh36jEEk233KzNcpGW4Q",
+      "song_coverPath_low": "https://i.ytimg.com/vi/vQ3XgMKAgxc/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLABrqX-N2Q42ZeddCwvaL96onjsVg",
+      "title": "Avicii - Lonely Together ft. Rita Ora",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:TL1ByAIf8Ck",
+      "duration": 190.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/TL1ByAIf8Ck",
+      "song_coverPath_high": "https://i.ytimg.com/vi/TL1ByAIf8Ck/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCRai3hSxwd_3WAx72s9ZnYXna4mA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/TL1ByAIf8Ck/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLC91NVbgbbb5H_m08TeuXPOAAwSqw",
+      "title": "R3HAB & VINAI - How We Party (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:bVhFIowlmwA",
+      "duration": 183.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/bVhFIowlmwA",
+      "song_coverPath_high": "https://i.ytimg.com/vi/bVhFIowlmwA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDPiaT7pg-W3hthqstefUxUCyD37A",
+      "song_coverPath_low": "https://i.ytimg.com/vi/bVhFIowlmwA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDmiH-VKUJUe5kP7nWus3Potgo9Qw",
+      "title": "TOESUP x Che Ree - Ice Cream (Official Lyric Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:vB67ddBhO1c",
+      "duration": 287.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/vB67ddBhO1c",
+      "song_coverPath_high": "https://i.ytimg.com/vi/vB67ddBhO1c/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC3ZyCeg8wUv53C3B1PE67NvCDq2w",
+      "song_coverPath_low": "https://i.ytimg.com/vi/vB67ddBhO1c/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBXONUVawe_jxJW8-Ks6VHZNXRigg",
+      "title": "Alesso - REMEDY (Official Music Video)",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:5JxgDJvqGmM",
+      "duration": 185.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/5JxgDJvqGmM",
+      "song_coverPath_high": "https://i.ytimg.com/vi/5JxgDJvqGmM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDXM-ju0PR5PiXD4gUE6VUYWNRpUA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/5JxgDJvqGmM/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBXgu6Nu5OcxUq0GSMJUoqw-HaN3w",
+      "title": "Mike Perry - The Ocean ft. Shy Martin",
+      "type": "URL"
+    },
+    {
+      "_id": "moosync.youtubedl:WRz2MxhAdJo",
+      "duration": 184.0,
+      "genre": [],
+      "playbackUrl": "extension://moosync.youtubedl/WRz2MxhAdJo",
+      "song_coverPath_high": "https://i.ytimg.com/vi/WRz2MxhAdJo/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA1Eohfnitmej9wHl_9Bm0zuaq1IA",
+      "song_coverPath_low": "https://i.ytimg.com/vi/WRz2MxhAdJo/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLDkXSoDs4PAj0jLFeHNXD_v19sviQ",
+      "title": "Avicii, Sandro Cavazza - Without You “Audio”",
+      "type": "URL"
+    }
+  ]
+}
+
+
+Legend: 
+"+" - Present in expected but not in received
+"-" - Present in received but not in expected

@@ -2,7 +2,7 @@ use std::sync::Mutex;
 
 use futures::executor::block_on;
 use moosync_edk::{
-    AccountLoginArgs, ExtensionProviderScope, PreferenceArgs, PreferenceData, PreferenceTypes, PreferenceUIData, QueryableAlbum, QueryableArtist, QueryablePlaylist, Result, Result as MoosyncResult, SearchResult, Song, SongsWithPageTokenReturnType, api::{
+    AccountLoginArgs, ExtensionProviderScope, PreferenceArgs, PreferenceData, PreferenceTypes, PreferenceUIData, Album, Artist, Playlist, Result, Result as MoosyncResult, SearchResult, Song, SongsWithPageTokenReturnType, api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
     }, handler::register_extension, info
 };
@@ -117,7 +117,7 @@ impl Provider for YoutubeExtension {
         ])
     }
 
-    fn get_playlists(&self) -> Result<Vec<QueryablePlaylist>> {
+    fn get_playlists(&self) -> Result<Vec<Playlist>> {
         if let Some(api_client) = self.api_client.lock().unwrap().as_ref() {
             if api_client.account_details.logged_in {
                 return Ok(
@@ -159,7 +159,7 @@ impl Provider for YoutubeExtension {
 
     fn get_album_songs(
         &self,
-        album: QueryableAlbum,
+        album: Album,
         _next_page_token: Option<String>,
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let scraper = no_api::YoutubeScraper::default();
@@ -174,7 +174,7 @@ impl Provider for YoutubeExtension {
 
     fn get_artist_songs(
         &self,
-        artist: QueryableArtist,
+        artist: Artist,
         _next_page_token: Option<String>,
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let scraper = no_api::YoutubeScraper::default();
