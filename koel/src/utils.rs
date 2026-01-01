@@ -1,4 +1,4 @@
-use moosync_edk::{QueryableAlbum, QueryableArtist, QueryablePlaylist, QueryableSong};
+use moosync_edk::{Album, Artist, Playlist, InnerSong};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -36,13 +36,13 @@ pub fn make_next_page_token_json(page: u64, has_more: bool) -> Option<Value> {
     }
 }
 
-/// Parse a vector of QueryableAlbum from a serde_json::Value (usually from API response)
-pub fn parse_albums(value: &Value) -> Vec<QueryableAlbum> {
+/// Parse a vector of Album from a serde_json::Value (usually from API response)
+pub fn parse_albums(value: &Value) -> Vec<Album> {
     value
         .as_array()
         .unwrap_or(&vec![])
         .iter()
-        .map(|ka| QueryableAlbum {
+        .map(|ka| Album {
             album_id: ka.get("id").and_then(|v| v.as_str().map(|s| s.to_string())),
             album_name: ka
                 .get("name")
@@ -56,13 +56,13 @@ pub fn parse_albums(value: &Value) -> Vec<QueryableAlbum> {
         .collect()
 }
 
-/// Parse a vector of QueryableArtist from a serde_json::Value (usually from API response)
-pub fn parse_artists(value: &Value) -> Vec<QueryableArtist> {
+/// Parse a vector of Artist from a serde_json::Value (usually from API response)
+pub fn parse_artists(value: &Value) -> Vec<Artist> {
     value
         .as_array()
         .unwrap_or(&vec![])
         .iter()
-        .map(|ka| QueryableArtist {
+        .map(|ka| Artist {
             artist_id: ka.get("id").and_then(|v| v.as_str().map(|s| s.to_string())),
             artist_name: ka
                 .get("name")
@@ -75,13 +75,13 @@ pub fn parse_artists(value: &Value) -> Vec<QueryableArtist> {
         .collect()
 }
 
-/// Parse a vector of QueryablePlaylist from a serde_json::Value (usually from API response)
-pub fn parse_playlists(value: &Value) -> Vec<QueryablePlaylist> {
+/// Parse a vector of Playlist from a serde_json::Value (usually from API response)
+pub fn parse_playlists(value: &Value) -> Vec<Playlist> {
     value
         .as_array()
         .unwrap_or(&vec![])
         .iter()
-        .map(|pl| QueryablePlaylist {
+        .map(|pl| Playlist {
             playlist_id: pl.get("id").map(|v| v.to_string().replace('"', "")),
             playlist_name: pl
                 .get("name")
@@ -99,13 +99,13 @@ pub fn parse_playlists(value: &Value) -> Vec<QueryablePlaylist> {
         .collect()
 }
 
-/// Parse a vector of QueryableSong from a serde_json::Value (for search results)
-pub fn parse_queryable_songs(value: &Value) -> Vec<QueryableSong> {
+/// Parse a vector of InnerSong from a serde_json::Value (for search results)
+pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
     value
         .as_array()
         .unwrap_or(&vec![])
         .iter()
-        .map(|ks| QueryableSong {
+        .map(|ks| InnerSong {
             _id: ks.get("id").and_then(|v| v.as_str().map(|s| s.to_string())),
             title: ks
                 .get("title")

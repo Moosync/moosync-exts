@@ -27,8 +27,7 @@ impl LastFMExtension {
             value: None,
             default_value: None,
         }) {
-            let session = session.get("value");
-            if let Some(session) = session {
+            if let Some(session) = session.value {
                 if let Ok(parsed_session) = serde_json::from_value(session.clone()) {
                     let mut client = self.client.lock().unwrap();
                     client.set_session(parsed_session);
@@ -71,7 +70,7 @@ impl PlayerEvents for LastFMExtension {
 impl Provider for LastFMExtension {
     fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
         Ok(vec![
-            ExtensionProviderScope::Scrobbles,
+            ExtensionProviderScope::Scrobble,
             ExtensionProviderScope::Accounts,
         ])
     }

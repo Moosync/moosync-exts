@@ -2,12 +2,12 @@ use std::str::FromStr;
 
 use rusty_ytdl::{
     reqwest::Url,
-    search::{Channel, Playlist, PlaylistSearchOptions, SearchOptions, SearchType, YouTube},
+    search::{Channel, PlaylistSearchOptions, SearchOptions, SearchType, YouTube},
 };
 
 use moosync_edk::{
-    EntityInfo, QueryablePlaylist,
-    MoosyncError, Result,QueryableAlbum, QueryableArtist, SearchResult, QueryableSong, Song, SongType
+    EntityInfo, Playlist,
+    MoosyncError, Result,Album, Artist, SearchResult, InnerSong, Song, SongType
 };
 
 use crate::utils::Pagination;
@@ -28,7 +28,7 @@ impl Default for YoutubeScraper {
 impl YoutubeScraper {
     fn parse_song(&self, v: &rusty_ytdl::search::Video) -> Song {
         Song {
-            song: QueryableSong {
+            song: InnerSong {
                 _id: Some(format!("youtube:{}", v.id.clone())),
                 deviceno: None,
                 title: Some(v.title.clone()),
@@ -41,11 +41,11 @@ impl YoutubeScraper {
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
             },
-            album: Some(QueryableAlbum {
+            album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![QueryableArtist {
+            artists: Some(vec![Artist {
                 artist_id: Some(format!("youtube-artist:{}", v.channel.id)),
                 artist_name: Some(v.channel.name.clone()),
                 ..Default::default()
@@ -57,7 +57,7 @@ impl YoutubeScraper {
     fn parse_video_info(&self, v: &rusty_ytdl::VideoInfo) -> Song {
         let details = &v.video_details;
         Song {
-            song: QueryableSong {
+            song: InnerSong {
                 _id: Some(format!("youtube:{}", details.video_id.clone())),
                 deviceno: None,
                 title: Some(details.title.clone()),
@@ -70,11 +70,11 @@ impl YoutubeScraper {
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
             },
-            album: Some(QueryableAlbum {
+            album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![QueryableArtist {
+            artists: Some(vec![Artist {
                 artist_id: Some(format!("youtube-artist:{}", details.channel_id)),
                 artist_name: Some(details.owner_channel_name.clone()),
                 ..Default::default()
@@ -83,8 +83,8 @@ impl YoutubeScraper {
         }
     }
 
-    fn parse_playlist(&self, playlist: &Playlist) -> QueryablePlaylist {
-        QueryablePlaylist {
+    fn parse_playlist(&self, playlist: &rusty_ytdl::search::Playlist) -> Playlist {
+        Playlist {
             playlist_id: Some(format!("youtube-playlist:{}", playlist.id)),
             playlist_name: playlist.name.clone(),
             playlist_coverpath: playlist.thumbnails.first().map(|v| v.url.clone()),
@@ -94,8 +94,8 @@ impl YoutubeScraper {
         }
     }
 
-    fn parse_artist(&self, artist: &Channel) -> QueryableArtist {
-        QueryableArtist {
+    fn parse_artist(&self, artist: &Channel) -> Artist {
+        Artist {
             artist_id: Some(format!("youtube-artist:{}", artist.id)),
             artist_name: Some(artist.name.clone()),
             artist_extra_info: Some(EntityInfo(format!(
@@ -130,8 +130,8 @@ impl YoutubeScraper {
         Ok(self.parse_video_info(&info))
     }
 
-    pub async fn get_playlist_from_url(&self, url: String) -> Result<QueryablePlaylist> {
-        let res = Playlist::get(
+    pub async fn get_playlist_from_url(&self, url: String) -> Result<Playlist> {
+        let res = rusty_ytdl::search::Playlist::get(
             url,
             Some(&PlaylistSearchOptions {
                 limit: 1,
@@ -163,8 +163,8 @@ impl YoutubeScraper {
             .map_err(|e| MoosyncError::String(e.to_string()))?;
 
         let mut songs: Vec<Song> = vec![];
-        let mut playlists: Vec<QueryablePlaylist> = vec![];
-        let mut artists: Vec<QueryableArtist> = vec![];
+        let mut playlists: Vec<Playlist> = vec![];
+        let mut artists: Vec<Artist> = vec![];
         for item in res {
             match item {
                 rusty_ytdl::search::SearchResult::Video(v) => songs.push(self.parse_song(&v)),

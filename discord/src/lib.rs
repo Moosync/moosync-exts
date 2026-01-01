@@ -1,19 +1,17 @@
-use std::{collections::HashMap, fmt::format, sync::Mutex};
+use std::sync::Mutex;
 
 use bytes::BytesMut;
 use moosync_edk::{
+    ExtensionProviderScope, PlayerState, Result as MoosyncResult, Song, SongType,
     api::{
-        extension_api::{
-            self, get_current_song, get_secure, get_system_time, open_sock, read_sock,
-            register_oauth, set_secure, update_accounts, write_sock,
-        },
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        extension_api::{self, get_system_time, open_sock, read_sock, write_sock},
     },
-    config, error,
+    config,
     handler::register_extension,
-    info, ExtensionProviderScope, PlayerState, Result as MoosyncResult, Song, SongType,
+    info,
 };
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use serde_json::Value;
 
 const CLIENT_ID: &str = "867757838679670784";
@@ -328,7 +326,9 @@ impl DiscordRPC {
 
         let mut buttons = vec![];
         if song.song.playback_url.is_some() {
-            if let SongType::YOUTUBE = song.song.type_ {
+            if let SongType::URL = song.song.type_
+                && song.song._id.map_or(false, |id| id.contains("youtube"))
+            {
                 buttons.push(ActivityButton {
                     label: "Show on YouTube".into(),
                     url: format!(
@@ -431,10 +431,21 @@ impl PlayerEvents for DiscordRPC {
 
         Ok(())
     }
+
+    fn on_queue_changed(&self, _: Value) -> MoosyncResult<()> {
+        Ok(())
+    }
+
+    fn on_volume_changed(&self) -> MoosyncResult<()> {
+        Ok(())
+    }
 }
 impl Provider for DiscordRPC {
     fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![])
+        Ok(vec![
+            ExtensionProviderScope::PlayerUiEvents,
+            ExtensionProviderScope::PlayerDataEvents,
+        ])
     }
 }
 impl DatabaseEvents for DiscordRPC {}
@@ -443,7 +454,7 @@ impl Extension for DiscordRPC {}
 impl ContextMenu for DiscordRPC {}
 impl Accounts for DiscordRPC {}
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn init() {
     info!("Initializing discord rpc");
 

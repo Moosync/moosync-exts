@@ -4,6 +4,7 @@ DIST_DIR := dist
 all: build copy pack
 
 build:
+	@cargo update moosync-edk
 	@cargo build --quiet --target wasm32-wasip1 --release
 
 opt:

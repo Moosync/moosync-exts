@@ -1,4 +1,4 @@
-use moosync_edk::{ExtensionAccountDetail, PreferenceData, info};
+use moosync_edk::{Album, Artist, ExtensionAccountDetail, InnerSong, Playlist, PreferenceData, info};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -39,7 +39,7 @@ pub struct PlaylistItem {
     // Add more fields as needed
 }
 
-impl From<PlaylistItem> for moosync_edk::QueryablePlaylist {
+impl From<PlaylistItem> for Playlist {
     fn from(item: PlaylistItem) -> Self {
         let coverpath = item
             .snippet
@@ -53,7 +53,7 @@ impl From<PlaylistItem> for moosync_edk::QueryablePlaylist {
                     .or_else(|| thumbs.high.as_ref().map(|t| t.url.clone()))
                     .or_else(|| thumbs.medium.as_ref().map(|t| t.url.clone()))
             });
-        moosync_edk::QueryablePlaylist {
+        Playlist {
             playlist_id: item
                 .id
                 .as_ref()
@@ -148,7 +148,7 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
         };
 
         moosync_edk::Song {
-            song: moosync_edk::QueryableSong {
+            song: InnerSong {
                 _id: video_id.as_ref().map(|id| format!("youtube:{}", id)),
                 deviceno: None,
                 title,
@@ -168,11 +168,11 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
             },
-            album: Some(moosync_edk::QueryableAlbum {
+            album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![moosync_edk::QueryableArtist {
+            artists: Some(vec![Artist {
                 artist_id: None,
                 artist_name: channel_title,
                 ..Default::default()
@@ -372,10 +372,10 @@ impl YoutubeAuth {
         Ok(())
     }
 
-    /// Gets a list of all the user's playlists, paginated, as QueryablePlaylist.
+    /// Gets a list of all the user's playlists, paginated, as Playlist.
     pub async fn get_all_playlists(
         &self,
-    ) -> Result<Vec<moosync_edk::QueryablePlaylist>, Box<dyn Error>> {
+    ) -> Result<Vec<Playlist>, Box<dyn Error>> {
         if self.access_token.is_none() {
             return Err("Not authenticated".into());
         }
@@ -409,7 +409,7 @@ impl YoutubeAuth {
 
             let playlists: PlaylistListResponse = resp.json().await?;
             if let Some(items) = playlists.items {
-                all_playlists.extend(items.into_iter().map(moosync_edk::QueryablePlaylist::from));
+                all_playlists.extend(items.into_iter().map(Playlist::from));
             }
 
             if let Some(next_token) = playlists.next_page_token {

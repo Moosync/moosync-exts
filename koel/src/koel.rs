@@ -1,7 +1,7 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    AccountLoginArgs, ExtensionAccountDetail, PreferenceData, QueryableAlbum, QueryableArtist,
-    QueryableGenre, QueryablePlaylist, QueryableSong, SearchResult, Song,
+    AccountLoginArgs, ExtensionAccountDetail, PreferenceData, Album, Artist,
+    Genre, Playlist, InnerSong, SearchResult, Song,
     SongsWithPageTokenReturnType,
     api::extension_api::{get_preference, get_secure, set_preference, set_secure, update_accounts},
     info,
@@ -71,7 +71,7 @@ impl KoelClient {
 
     fn map_koel_song(&self, ks: &KoelSong) -> Song {
         Song {
-            song: QueryableSong {
+            song: InnerSong {
                 _id: ks.id.clone(),
                 title: ks.title.clone(),
                 lyrics: ks.lyrics.clone(),
@@ -86,21 +86,21 @@ impl KoelClient {
                     .map(|id| format!("extension://moosync.koel/{id}")),
                 ..Default::default()
             },
-            album: Some(QueryableAlbum {
+            album: Some(Album {
                 album_id: ks.album_id.clone(),
                 album_name: ks.album_name.clone(),
                 album_coverpath_high: ks.album_cover.clone(),
                 year: ks.year.clone().map(|v| v.to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![QueryableArtist {
+            artists: Some(vec![Artist {
                 artist_id: ks.artist_id.clone(),
                 artist_name: ks.artist_name.clone(),
                 ..Default::default()
             }]),
             genre: if let Some(genre) = ks.genre.clone() {
                 if !genre.is_empty() {
-                    Some(vec![QueryableGenre {
+                    Some(vec![Genre {
                         genre_name: Some(genre),
                         ..Default::default()
                     }])
@@ -274,7 +274,7 @@ impl KoelClient {
         Ok("".into())
     }
 
-    pub fn get_playlists(&mut self) -> Result<Vec<QueryablePlaylist>, KoelError> {
+    pub fn get_playlists(&mut self) -> Result<Vec<Playlist>, KoelError> {
         let v: serde_json::Value = self.send_json_request(
             reqwest::Method::GET,
             "api/playlists",
@@ -288,11 +288,11 @@ impl KoelClient {
             .or(Some(&v))
             .ok_or(KoelError::Other("Missing playlists field".into()))?;
 
-        let mut result: Vec<QueryablePlaylist> = parse_playlists(playlists);
+        let mut result: Vec<Playlist> = parse_playlists(playlists);
 
         result.insert(
             0,
-            QueryablePlaylist {
+            Playlist {
                 playlist_id: Some("all_songs".into()),
                 playlist_name: "All songs".into(),
                 ..Default::default()
