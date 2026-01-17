@@ -1,10 +1,13 @@
 use std::sync::Mutex;
 
 use moosync_edk::{
-    CustomRequestReturnType, ExtensionProviderScope, InputType, PreferenceTypes, PreferenceUIData,
-    Playlist, Result, SearchResult, Song, SongsWithPageTokenReturnType,
+    ExtensionProviderScope, InputType, MoosyncResult, Playlist, PreferenceTypes, PreferenceUiData,
+    RequestedAlbumSongsRequest, RequestedArtistSongsRequest, RequestedPlaylistSongsRequest,
+    RequestedPlaylistsRequest, RequestedSearchResultRequest, RequestedSongFromUrlRequest,
+    SearchResult, Song,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        Accounts, ContextMenu, CustomRequest, CustomRequestReturnType, DatabaseEvents, Extension,
+        PlayerEvents, PreferenceEvents, Provider, SongsWithPageTokenReturnType,
         extension_api::register_user_preferences,
     },
     handler::register_extension,
@@ -35,7 +38,7 @@ impl KoelExtension {
 
 impl PlayerEvents for KoelExtension {}
 impl Provider for KoelExtension {
-    fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
+    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
         Ok(vec![
             ExtensionProviderScope::Playlists,
             ExtensionProviderScope::PlaylistSongs,
@@ -48,59 +51,65 @@ impl Provider for KoelExtension {
         ])
     }
 
-    fn search(&self, term: String) -> Result<SearchResult> {
+    fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         let mut inner = self.inner.lock().unwrap();
-        Ok(inner.search(term)?)
+        Ok(inner.search(req.query)?)
     }
 
-    fn get_song_from_url(&self, url: String) -> Result<Option<Song>> {
+    fn get_song_from_url(&self, req: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
         let mut inner = self.inner.lock().unwrap();
-        Ok(inner.get_song_from_url(url)?)
+        Ok(inner.get_song_from_url(req.url)?)
     }
 
-    fn get_playlists(&self) -> Result<Vec<Playlist>> {
+    fn get_playlists(&self, _: RequestedPlaylistsRequest) -> MoosyncResult<Vec<Playlist>> {
         let mut inner = self.inner.lock().unwrap();
         Ok(inner.get_playlists()?)
     }
 
     fn get_playlist_content(
         &self,
-        id: String,
-        next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType> {
+        req: RequestedPlaylistSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let mut inner = self.inner.lock().unwrap();
-        let id = id.replace("moosync.koel:", "");
-        Ok(inner.get_playlist_content(&id, next_page_token)?)
+        let id = req.id.replace("moosync.koel:", "");
+        Ok(inner.get_playlist_content(&id, req.page_token)?)
     }
 
     fn get_artist_songs(
         &self,
-        artist: moosync_edk::Artist,
-        next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType> {
+        req: RequestedArtistSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
+        let artist = req.artist.ok_or("No artist provided")?;
         let artist_name = artist.artist_name;
         if let Some(artist_name) = artist_name {
             let mut inner = self.inner.lock().unwrap();
-            return Ok(inner.get_songs_by_artist_name(&artist_name, next_page_token)?);
+            return Ok(inner.get_songs_by_artist_name(&artist_name, req.page_token)?);
         }
         Err("Artist not found".into())
     }
 
     fn get_album_songs(
         &self,
-        album: moosync_edk::Album,
-        next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType> {
+        req: RequestedAlbumSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
+        let album = req.album.ok_or("No album provided")?;
         let album_name = album.album_name;
         if let Some(album_name) = album_name {
             let mut inner = self.inner.lock().unwrap();
-            return Ok(inner.get_songs_by_album_name(&album_name, next_page_token)?);
+            return Ok(inner.get_songs_by_album_name(&album_name, req.page_token)?);
         }
         Err("Album not found".into())
     }
 
-    fn handle_custom_request(&self, url: String) -> Result<CustomRequestReturnType> {
+    fn handle_custom_request(&self, req: CustomRequest) -> MoosyncResult<CustomRequestReturnType> {
         let inner = self.inner.lock().unwrap();
+        let payload = req.payload.ok_or("No payload provided")?;
+        let url_val = utils::google_struct_to_serde(payload);
+        let url = url_val
+            .get("url")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string())
+            .ok_or("Invalid payload")?;
         Ok(CustomRequestReturnType {
             mime_type: None,
             data: None,
@@ -112,15 +121,15 @@ impl DatabaseEvents for KoelExtension {}
 impl PreferenceEvents for KoelExtension {}
 impl ContextMenu for KoelExtension {}
 impl Accounts for KoelExtension {
-    fn get_accounts(&self) -> moosync_edk::Result<Vec<moosync_edk::ExtensionAccountDetail>> {
+    fn get_accounts(&self) -> MoosyncResult<Vec<moosync_edk::ExtensionAccountDetail>> {
         let inner = self.inner.lock().unwrap();
         Ok(inner.get_accounts()?)
     }
 
     fn perform_account_login(
         &self,
-        args: moosync_edk::AccountLoginArgs,
-    ) -> moosync_edk::Result<String> {
+        args: moosync_edk::api::AccountLoginArgs,
+    ) -> MoosyncResult<String> {
         let mut inner = self.inner.lock().unwrap();
         let resp = inner.perform_account_login(args);
         info!("Got resp {:?}", resp);
@@ -135,30 +144,32 @@ pub extern "C" fn init() {
     register_extension(Box::new(KoelExtension::new())).unwrap();
 
     let _ = register_user_preferences(vec![
-        PreferenceUIData {
-            _type: PreferenceTypes::EditText,
+        PreferenceUiData {
+            r#type: PreferenceTypes::EditText.into(),
             title: "Instance URL".into(),
             key: "koel_instance_url".into(),
             description: "Full URL to your koel instance".into(),
-            input_type: Some(InputType::Text),
+            input_type: Some(InputType::Text.into()),
             ..Default::default()
         },
-        PreferenceUIData {
-            _type: PreferenceTypes::EditText,
+        PreferenceUiData {
+            r#type: PreferenceTypes::EditText.into(),
             title: "Email".into(),
             key: "koel_username".into(),
             description: "Email for your koel account".into(),
-            input_type: Some(InputType::Text),
+            input_type: Some(InputType::Text.into()),
             ..Default::default()
         },
-        PreferenceUIData {
-            _type: PreferenceTypes::EditText,
+        PreferenceUiData {
+            r#type: PreferenceTypes::EditText.into(),
             title: "Password".into(),
             key: "koel_password".into(),
             description: "Password for your koel account".into(),
-            input_type: Some(InputType::SecureText),
+            input_type: Some(InputType::Text.into()),
             ..Default::default()
         },
     ]);
     info!("Initialized KoelExtension");
 }
+
+fn main() {}

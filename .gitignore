@@ -2,4 +2,6 @@
 target
 dist
 node_modules
-.venv
+*.*venv
+bazel-*
+rust-project.json

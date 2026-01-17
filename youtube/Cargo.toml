@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 futures = "0.3.31"
-moosync-edk = { git = "https://github.com/Moosync/wasm-extension-runner.git" }
 rusty_ytdl = { git = "https://github.com/Ovenoboyo/rusty_ytdl", default-features = false, features = ["search"] }
 serde = "1.0.228"
 serde_json = "1.0.148"
@@ -14,6 +13,7 @@ reqwest = "=0.12.23"
 
 [lib]
 crate-type = ["cdylib"]
+path = "src/main.rs"
 
 [patch.crates-io]
 reqwest = { git = "https://github.com/Ovenoboyo/reqwest_extism", branch = "0.12.x" }

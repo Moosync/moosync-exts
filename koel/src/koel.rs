@@ -1,19 +1,20 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    AccountLoginArgs, ExtensionAccountDetail, PreferenceData, Album, Artist,
-    Genre, Playlist, InnerSong, SearchResult, Song,
-    SongsWithPageTokenReturnType,
-    api::extension_api::{get_preference, get_secure, set_preference, set_secure, update_accounts},
+    Album, Artist, Genre, InnerSong, Playlist, SearchResult, Song,
+    api::{
+        AccountLoginArgs, ExtensionAccountDetail, PreferenceData, SongsWithPageTokenReturnType,
+        extension_api::{get_preference, get_secure, set_preference, set_secure, update_accounts},
+    },
     info,
 };
 use serde_json::{Value, json};
 use std::default::Default;
 
+use crate::error::KoelError;
 use crate::utils::{
-    KoelSong, make_next_page_token_json, parse_albums, parse_artists, parse_playlists,
-    parse_queryable_songs,
+    KoelSong, make_next_page_token, parse_albums, parse_artists, parse_next_page_token,
+    parse_playlists, parse_queryable_songs,
 };
-use crate::{error::KoelError, utils::parse_next_page_token_json};
 
 #[derive(Debug, Clone, serde::Deserialize)]
 struct SongsResponse {
@@ -71,8 +72,8 @@ impl KoelClient {
 
     fn map_koel_song(&self, ks: &KoelSong) -> Song {
         Song {
-            song: InnerSong {
-                _id: ks.id.clone(),
+            song: Some(InnerSong {
+                id: ks.id.clone(),
                 title: ks.title.clone(),
                 lyrics: ks.lyrics.clone(),
                 duration: ks.length,
@@ -85,7 +86,7 @@ impl KoelClient {
                     .clone()
                     .map(|id| format!("extension://moosync.koel/{id}")),
                 ..Default::default()
-            },
+            }),
             album: Some(Album {
                 album_id: ks.album_id.clone(),
                 album_name: ks.album_name.clone(),
@@ -93,22 +94,22 @@ impl KoelClient {
                 year: ks.year.clone().map(|v| v.to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![Artist {
+            artists: vec![Artist {
                 artist_id: ks.artist_id.clone(),
                 artist_name: ks.artist_name.clone(),
                 ..Default::default()
-            }]),
+            }],
             genre: if let Some(genre) = ks.genre.clone() {
                 if !genre.is_empty() {
-                    Some(vec![Genre {
+                    vec![Genre {
                         genre_name: Some(genre),
                         ..Default::default()
-                    }])
+                    }]
                 } else {
-                    None
+                    vec![]
                 }
             } else {
-                None
+                vec![]
             },
             ..Default::default()
         }
@@ -117,10 +118,9 @@ impl KoelClient {
         let koel_url = get_preference(PreferenceData {
             key: "koel_instance_url".to_string(),
             value: None,
-            default_value: None,
         })
         .ok()
-        .and_then(|v| v.value.and_then(|v| v.as_str().map(|s| s.to_string())))
+        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string))
         .unwrap_or("http://localhost:8000".into());
         let mut s = Self {
             token: None,
@@ -142,17 +142,15 @@ impl KoelClient {
         let email = get_preference(PreferenceData {
             key: "koel_username".to_string(),
             value: None,
-            default_value: None,
         })
         .ok()
-        .and_then(|v| v.value.and_then(|v| v.as_str().map(|s| s.to_string())));
+        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string));
         let password = get_secure(PreferenceData {
             key: "koel_password".to_string(),
             value: None,
-            default_value: None,
         })
         .ok()
-        .and_then(|v| v.value.and_then(|v| v.as_str().map(|s| s.to_string())));
+        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string));
 
         info!("Loggnig in {:?}, {:?}", email, password);
         if email.is_none() || password.is_none() {
@@ -195,7 +193,7 @@ impl KoelClient {
                 parse_queryable_songs(s)
                     .into_iter()
                     .map(|qs| Song {
-                        song: qs,
+                        song: Some(qs),
                         ..Default::default()
                     })
                     .collect()
@@ -260,12 +258,10 @@ impl KoelClient {
             set_preference(PreferenceData {
                 key: "koel_username".to_string(),
                 value: None,
-                default_value: None,
             })?;
             set_secure(PreferenceData {
                 key: "koel_password".to_string(),
                 value: None,
-                default_value: None,
             })?;
             return Ok("".into());
         }
@@ -331,7 +327,7 @@ impl KoelClient {
         next_page_token: Option<String>,
     ) -> Result<SongsWithPageTokenReturnType, KoelError> {
         // Extract current page from next_page_token, default to 1
-        let page = parse_next_page_token_json(&next_page_token, 1);
+        let page = parse_next_page_token(&next_page_token, 1);
 
         info!("Got page {}, {:?}", page, next_page_token);
 
@@ -348,7 +344,7 @@ impl KoelClient {
             .iter()
             .map(|ks| self.map_koel_song(ks))
             .collect();
-        let next_page_token = make_next_page_token_json(page, !songs.is_empty());
+        let next_page_token = make_next_page_token(page, !songs.is_empty());
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token,
@@ -389,7 +385,7 @@ impl KoelClient {
         };
 
         // 2. Fetch songs for the album using the documented endpoint
-        let page = parse_next_page_token_json(&next_page_token, 1);
+        let page = parse_next_page_token(&next_page_token, 1);
 
         let url = format!("api/albums/{album_id}/songs?page={page}");
         let koel_songs: Vec<KoelSong> = self.send_json_request(
@@ -400,7 +396,7 @@ impl KoelClient {
             KoelError::SearchFailure,
         )?;
         let songs: Vec<Song> = koel_songs.iter().map(|ks| self.map_koel_song(ks)).collect();
-        let next_page_token = make_next_page_token_json(page, !songs.is_empty());
+        let next_page_token = make_next_page_token(page, !songs.is_empty());
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token,
@@ -432,7 +428,7 @@ impl KoelClient {
         };
 
         // 2. Fetch songs for the artist using the documented endpoint
-        let page = parse_next_page_token_json(&next_page_token, 1);
+        let page = parse_next_page_token(&next_page_token, 1);
 
         let url = format!("api/artists/{artist_id}/songs?page={page}");
         let koel_koel_songs: Vec<KoelSong> = self.send_json_request(
@@ -446,7 +442,7 @@ impl KoelClient {
             .iter()
             .map(|ks| self.map_koel_song(ks))
             .collect();
-        let next_page_token = make_next_page_token_json(page, !songs.is_empty());
+        let next_page_token = make_next_page_token(page, !songs.is_empty());
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token,

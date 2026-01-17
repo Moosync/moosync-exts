@@ -1,4 +1,5 @@
-use moosync_edk::{Album, Artist, Playlist, InnerSong};
+use moosync_edk::extensions_proto::struct_proto::google::protobuf::Value as ProtoValue;
+use moosync_edk::{Album, Artist, InnerSong, Playlist};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -18,19 +19,18 @@ pub struct KoelSong {
     pub year: Option<serde_json::Value>,
 }
 
-/// Parse next_page_token from Option<String> using JSON, with a default value if parsing fails.
-pub fn parse_next_page_token_json(token: &Option<String>, default: u64) -> u64 {
+/// Parse next_page_token from Option<String>, with a default value if parsing fails.
+pub fn parse_next_page_token(token: &Option<String>, default: u64) -> u64 {
     token
         .as_ref()
-        .and_then(|v| serde_json::from_str::<serde_json::Value>(v).ok())
-        .and_then(|val| val.as_u64())
+        .and_then(|v| v.parse::<u64>().ok())
         .unwrap_or(default)
 }
 
-/// Generate a next_page_token as JSON string, or None if there are no more pages.
-pub fn make_next_page_token_json(page: u64, has_more: bool) -> Option<Value> {
+/// Generate a next_page_token as String, or None if there are no more pages.
+pub fn make_next_page_token(page: u64, has_more: bool) -> Option<String> {
     if has_more {
-        Some(serde_json::json!(page + 1))
+        Some((page + 1).to_string())
     } else {
         None
     }
@@ -106,7 +106,7 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
         .unwrap_or(&vec![])
         .iter()
         .map(|ks| InnerSong {
-            _id: ks.get("id").and_then(|v| v.as_str().map(|s| s.to_string())),
+            id: ks.get("id").and_then(|v| v.as_str().map(|s| s.to_string())),
             title: ks
                 .get("title")
                 .and_then(|v| v.as_str().map(|s| s.to_string())),
@@ -128,4 +128,38 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
             ..Default::default()
         })
         .collect()
+}
+pub fn google_value_to_serde(v: ProtoValue) -> serde_json::Value {
+    use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
+    match v.kind {
+        Some(Kind::NullValue(_)) => serde_json::Value::Null,
+        Some(Kind::NumberValue(n)) => serde_json::Value::Number(
+            serde_json::Number::from_f64(n).unwrap_or(serde_json::Number::from(0)),
+        ),
+        Some(Kind::StringValue(s)) => serde_json::Value::String(s),
+        Some(Kind::BoolValue(b)) => serde_json::Value::Bool(b),
+        Some(Kind::StructValue(s)) => google_struct_to_serde(s),
+        Some(Kind::ListValue(l)) => {
+            serde_json::Value::Array(l.values.into_iter().map(google_value_to_serde).collect())
+        }
+        None => serde_json::Value::Null,
+    }
+}
+
+pub fn google_value_to_string(val: ProtoValue) -> Option<String> {
+    use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
+    match val.kind {
+        Some(Kind::StringValue(s)) => Some(s),
+        _ => None,
+    }
+}
+
+pub fn google_struct_to_serde(
+    s: moosync_edk::extensions_proto::struct_proto::google::protobuf::Struct,
+) -> serde_json::Value {
+    let mut map = serde_json::Map::new();
+    for (k, v) in s.fields {
+        map.insert(k, google_value_to_serde(v));
+    }
+    serde_json::Value::Object(map)
 }

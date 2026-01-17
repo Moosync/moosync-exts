@@ -6,12 +6,12 @@ use rusty_ytdl::{
 };
 
 use moosync_edk::{
-    EntityInfo, Playlist,
-    MoosyncError, Result,Album, Artist, SearchResult, InnerSong, Song, SongType
+    Album, Artist, InnerSong, MoosyncError, MoosyncResult, Playlist, SearchResult, Song, SongType,
 };
 
-use crate::utils::Pagination;
+pub type Result<T> = MoosyncResult<T>;
 
+use crate::utils::Pagination;
 
 pub struct YoutubeScraper {
     youtube: YouTube,
@@ -28,58 +28,58 @@ impl Default for YoutubeScraper {
 impl YoutubeScraper {
     fn parse_song(&self, v: &rusty_ytdl::search::Video) -> Song {
         Song {
-            song: InnerSong {
-                _id: Some(format!("youtube:{}", v.id.clone())),
+            song: Some(InnerSong {
+                id: Some(format!("youtube:{}", v.id.clone())),
                 deviceno: None,
                 title: Some(v.title.clone()),
                 duration: Some((v.duration / 1000) as f64),
-                type_: SongType::URL,
+                r#type: SongType::Url.into(),
                 url: Some(v.id.clone()),
                 song_cover_path_high: v.thumbnails.first().map(|d| d.url.clone()),
                 song_cover_path_low: v.thumbnails.get(1).map(|d| d.url.clone()),
                 playback_url: Some(format!("extension://moosync.youtubedl/{}", v.id)),
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
-            },
+            }),
             album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![Artist {
+            artists: vec![Artist {
                 artist_id: Some(format!("youtube-artist:{}", v.channel.id)),
                 artist_name: Some(v.channel.name.clone()),
                 ..Default::default()
-            }]),
-            genre: Some(vec![]),
+            }],
+            genre: vec![],
         }
     }
 
     fn parse_video_info(&self, v: &rusty_ytdl::VideoInfo) -> Song {
         let details = &v.video_details;
         Song {
-            song: InnerSong {
-                _id: Some(format!("youtube:{}", details.video_id.clone())),
+            song: Some(InnerSong {
+                id: Some(format!("youtube:{}", details.video_id.clone())),
                 deviceno: None,
                 title: Some(details.title.clone()),
                 duration: Some(details.length_seconds.parse().unwrap_or_default()),
-                type_: SongType::URL,
+                r#type: SongType::Url.into(),
                 url: Some(details.video_id.clone()),
                 song_cover_path_high: details.thumbnails.first().map(|d| d.url.clone()),
                 song_cover_path_low: details.thumbnails.get(1).map(|d| d.url.clone()),
                 playback_url: Some(details.video_id.clone()),
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
-            },
+            }),
             album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![Artist {
+            artists: vec![Artist {
                 artist_id: Some(format!("youtube-artist:{}", details.channel_id)),
                 artist_name: Some(details.owner_channel_name.clone()),
                 ..Default::default()
-            }]),
-            genre: Some(vec![]),
+            }],
+            genre: vec![],
         }
     }
 
@@ -98,14 +98,6 @@ impl YoutubeScraper {
         Artist {
             artist_id: Some(format!("youtube-artist:{}", artist.id)),
             artist_name: Some(artist.name.clone()),
-            artist_extra_info: Some(EntityInfo(format!(
-                r#"{{
-                "youtube": {{
-                    "channel_id": "{}"
-                }}
-            }}"#,
-                artist.id
-            ))),
             artist_coverpath: artist.icon.first().map(|v| v.url.clone()),
             ..Default::default()
         }
@@ -195,7 +187,7 @@ impl YoutubeScraper {
         let info = video
             .get_info()
             .await
-           .map_err(|e| MoosyncError::String(e.to_string()))?;
+            .map_err(|e| MoosyncError::String(e.to_string()))?;
 
         moosync_edk::info!("Got formats {:?}", info.formats);
 

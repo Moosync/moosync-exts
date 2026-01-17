@@ -1,7 +1,14 @@
-from moosync_edk import register_extension, Extension, ProviderScopes, SearchReturnType, Song
+from moosync_edk import (
+    register_extension, Extension, ExtensionProviderScope,
+    CustomRequest, CustomRequestResponse,
+    GetProviderScopesRequest, GetProviderScopesResponse,
+    RequestedAlbumSongsRequest, RequestedAlbumSongsResponse,
+    RequestedArtistSongsRequest, RequestedArtistSongsResponse,
+    RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
+    RequestedSearchResultRequest, RequestedSearchResultResponse,
+    Album, Artist, InnerSong, Playlist, Song, SongType
+)
 from typing import TypedDict, Optional, List, Any, cast
-
-from moosync_edk.custom_types import Album, CustomRequestReturnType, SongsWithPageTokenReturnType, Playlist, Artist
 
 from youtube_dl import ytdl
 
@@ -78,22 +85,28 @@ def to_song(ytdl_song: YtdlEntry) -> Song:
     id = ytdl_song.get("id", "")
 
     return Song(
-        _id = id,
-        title=ytdl_song.get("title", ""),
-        artists=[Artist(ytdl_song.get("uploader_id", ""), ytdl_song.get("uploader", ""))],
-        song_coverPath_high=high_url,
-        song_coverPath_low=low_url,
-        duration=int(ytdl_song.get("duration", 0)),
-        playbackUrl=f"extension://moosync.youtubedl/{id}",
-        type="URL",
+        song=InnerSong(
+            id=id,
+            title=ytdl_song.get("title", ""),
+            duration=float(ytdl_song.get("duration", 0)),
+            playback_url=f"extension://moosync.youtubedl/{id}",
+            type=SongType.URL,
+            song_cover_path_high=high_url,
+            song_cover_path_low=low_url,
+        ),
+        artists=[Artist(
+            artist_id=ytdl_song.get("uploader_id", ""), 
+            artist_name=ytdl_song.get("uploader", "")
+        )],
     )
+    
     
 def to_playlist(ytdl_playlist: YtdlEntry) -> Playlist:
     thumbnails = ytdl_playlist.get("thumbnails") or []
     return Playlist(
         playlist_id=ytdl_playlist.get("id", ""),
         playlist_name=ytdl_playlist.get("title", ""),
-        playlist_coverPath=thumbnails[-1].get("url", None),
+        playlist_coverpath=thumbnails[-1].get("url", None) if thumbnails else None,
     )
     
 def to_artist(ytdl_artist: YtdlEntry) -> Artist:
@@ -101,40 +114,48 @@ def to_artist(ytdl_artist: YtdlEntry) -> Artist:
     return Artist(
         artist_id=ytdl_artist.get("id", ""),
         artist_name=ytdl_artist.get("title", ""),
-        artist_coverPath=thumbnails[-1].get("url", None),
+        artist_coverpath=thumbnails[-1].get("url", None) if thumbnails else None,
     )
         
 class YoutubeDlExtension(Extension):
-    def get_provider_scopes(self) -> List[ProviderScopes]:
-        return ["search", "playbackDetails", "playlistSongs", "artistSongs", "albumSongs"]
+    def get_provider_scopes(self, _: GetProviderScopesRequest) -> GetProviderScopesResponse:
+        return GetProviderScopesResponse(scopes=[
+            ExtensionProviderScope.SEARCH,
+            ExtensionProviderScope.PLAYBACK_DETAILS,
+            ExtensionProviderScope.PLAYLIST_SONGS,
+            ExtensionProviderScope.ARTIST_SONGS,
+            ExtensionProviderScope.ALBUM_SONGS
+        ])
     
-    def get_album_songs(self, album: Album, token: str | None = None) -> SongsWithPageTokenReturnType:
+    def get_album_songs(self, req: RequestedAlbumSongsRequest) -> RequestedAlbumSongsResponse:
+        album = req.album
         if not album.album_id:
-            return SongsWithPageTokenReturnType([], None)
+            return RequestedAlbumSongsResponse(songs=[])
         
         try:
             search_query = f"https://www.youtube.com/playlist?list={album.album_id}"
             playlist_result = ytdl.extract_info(search_query, download=False, process=False)
             
             if not playlist_result:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedAlbumSongsResponse(songs=[])
                 
             entries = playlist_result.get("entries", [])
             if not entries:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedAlbumSongsResponse(songs=[])
                 
             valid_entries = [cast(YtdlEntry, e) for e in entries if e is not None]
             songs = [to_song(entry) for entry in valid_entries]
             
-            return SongsWithPageTokenReturnType(songs, None)
+            return RequestedAlbumSongsResponse(songs=songs)
         except Exception as e:
             print("Exception in get_album_songs:", e)
-            return SongsWithPageTokenReturnType([], None)
+            return RequestedAlbumSongsResponse(songs=[])
     
-    def get_artist_songs(self, artist: Artist, token: str | None = None) -> SongsWithPageTokenReturnType:
+    def get_artist_songs(self, req: RequestedArtistSongsRequest) -> RequestedArtistSongsResponse:
+        artist = req.artist
         print("Got artist", artist)
-        if not artist.artist_id:
-            return SongsWithPageTokenReturnType([], None)
+        if not artist or not artist.artist_id:
+            return RequestedArtistSongsResponse(songs=[])
         
         try:
             search_query = f"https://www.youtube.com/channel/{artist.artist_id}/videos"
@@ -142,41 +163,43 @@ class YoutubeDlExtension(Extension):
             print("channel result", channel_result)
             
             if not channel_result:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedArtistSongsResponse(songs=[])
                 
             entries = channel_result.get("entries", [])
             if not entries:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedArtistSongsResponse(songs=[])
                 
             valid_entries = [cast(YtdlEntry, e) for e in entries if e is not None]
             songs = [to_song(entry) for entry in valid_entries]
             
-            return SongsWithPageTokenReturnType(songs, None)
+            return RequestedArtistSongsResponse(songs=songs)
         except Exception as e:
             print("Exception in get_artist_songs:", e)
-            return SongsWithPageTokenReturnType([], None)
+            return RequestedArtistSongsResponse(songs=[])
     
-    def get_playlist_content(self, id: str, token: str | None = None) -> SongsWithPageTokenReturnType:
+    def get_playlist_content(self, req: RequestedPlaylistSongsRequest) -> RequestedPlaylistSongsResponse:
+        id = req.id
         try:
             search_query = f"https://www.youtube.com/playlist?list={id}"
             playlist_result = ytdl.extract_info(search_query, download=False, process=False)
             
             if not playlist_result:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedPlaylistSongsResponse(songs=[])
                 
             entries = playlist_result.get("entries", [])
             if not entries:
-                return SongsWithPageTokenReturnType([], None)
+                return RequestedPlaylistSongsResponse(songs=[])
                 
             valid_entries = [cast(YtdlEntry, e) for e in entries if e is not None]
             songs = [to_song(entry) for entry in valid_entries]
             
-            return SongsWithPageTokenReturnType(songs, None)
+            return RequestedPlaylistSongsResponse(songs=songs)
         except Exception as e:
             print("Exception in get_playlist_content:", e)
-            return SongsWithPageTokenReturnType([], None)
+            return RequestedPlaylistSongsResponse(songs=[])
     
-    def get_search(self, term: str) -> SearchReturnType:
+    def get_search(self, req: RequestedSearchResultRequest) -> RequestedSearchResultResponse:
+        term = req.query
         songs: List[Song] = []
         artists: List[Artist] = []
         albums: List[Album] = []
@@ -218,9 +241,15 @@ class YoutubeDlExtension(Extension):
             except Exception as e:
                 print(f"Exception in get_search for query '{query}':", e)
             
-        return SearchReturnType(songs, artists, playlists, albums, [])
+        return RequestedSearchResultResponse(
+            songs=songs,
+            artists=artists,
+            playlists=playlists,
+            albums=albums
+        )
     
-    def handle_custom_request(self, url: str) -> CustomRequestReturnType:
+    def handle_custom_request(self, req: CustomRequest) -> CustomRequestResponse:
+        url = req.request_id # Assuming RequestId carries the URL or ID as seen in Soundcloud refactor
         print("Handling custom request for URL:", url)
         if url.startswith("extension://moosync.youtubedl/"):
             song_id = url.replace("extension://moosync.youtubedl/", "")
@@ -228,10 +257,12 @@ class YoutubeDlExtension(Extension):
             if ytdl_song is not None:
                 best_audio_format = get_best_audio_format(ytdl_song)
                 if best_audio_format is not None:
-                    return CustomRequestReturnType(None, None, best_audio_format.get('url'))
+                    return CustomRequestResponse(
+                        redirect_url=best_audio_format.get('url'),
+                    )
                 
-        return CustomRequestReturnType(None, None, None)
+        return CustomRequestResponse()
 
-def init():
+def entry():
     register_extension(YoutubeDlExtension())
     print("initialized YTDL extension")

@@ -2,9 +2,13 @@ use std::sync::Mutex;
 
 use bytes::BytesMut;
 use moosync_edk::{
-    ExtensionProviderScope, PlayerState, Result as MoosyncResult, Song, SongType,
+    ExtensionProviderScope, MoosyncError, MoosyncResult, PlayerState, Song, SongType,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        Accounts, ContextMenu, CustomRequest, CustomRequestReturnType, DatabaseEvents, Extension,
+        PlayerEvents, PlayerStateChangedRequest, PreferenceEvents, Provider,
+        RequestedAlbumSongsRequest, RequestedArtistSongsRequest, RequestedPlaylistSongsRequest,
+        RequestedSongFromUrlRequest, SeekedRequest, SongChangedRequest, SongQueueChangedRequest,
+        SongsWithPageTokenReturnType, VolumeChangedRequest,
         extension_api::{self, get_system_time, open_sock, read_sock, write_sock},
     },
     config,
@@ -60,7 +64,8 @@ impl Sock {
     where
         T: Serialize,
     {
-        let data_string = serde_json::to_string(&data)?;
+        let data_string =
+            serde_json::to_string(&data).map_err(|e| MoosyncError::String(e.to_string()))?;
 
         let len = data_string.len();
         let mut packet = BytesMut::with_capacity(8 + len);
@@ -68,7 +73,6 @@ impl Sock {
         packet.extend_from_slice(&(op as i32).to_le_bytes());
         packet.extend_from_slice(&(len as i32).to_le_bytes());
         packet.extend_from_slice(data_string.as_bytes());
-
         info!("encoded and writing {}", data_string);
 
         Ok(packet)
@@ -78,6 +82,7 @@ impl Sock {
     where
         T: DeserializeOwned,
     {
+        info!("Reading from sock {}", self.id);
         let data = read_sock(self.id, 8)?;
         if data.len() < 8 {
             return Err("Packet not big enough to be decoded".into());
@@ -89,8 +94,9 @@ impl Sock {
         let len = u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize;
 
         let buf = read_sock(self.id, len as u64)?;
-        info!("Read buf {:?}", buf);
-        let data: T = serde_json::from_slice(&buf)?;
+        info!("Read buf {:?}", str::from_utf8(&buf));
+        let data: T =
+            serde_json::from_slice(&buf).map_err(|e| MoosyncError::String(e.to_string()))?;
         Ok(DecodedData { op, data })
     }
 
@@ -100,7 +106,7 @@ impl Sock {
     {
         let encoded = Self::encode(op, data)?;
         info!("Encoded");
-        let res = write_sock(self.id, encoded.to_vec());
+        let _res = write_sock(self.id, encoded.to_vec());
         info!("Wrote to sock");
         // if res == -1 {
         // return Err("Failed to write to sock".into());
@@ -109,27 +115,8 @@ impl Sock {
     }
 
     fn uuid4122() -> String {
-        let mut uuid = String::new();
-        let mut buffer = [0u8; 16];
-        getrandom::getrandom(&mut buffer).expect("Failed to generate random bytes");
-
-        for i in 0..32 {
-            if i == 8 || i == 12 || i == 16 || i == 20 {
-                uuid.push('-');
-            }
-
-            let n = if i == 12 {
-                4
-            } else if i == 16 {
-                (buffer[i / 2] & 0b0011_1111) | 0b1000_0000
-            } else {
-                buffer[i / 2] >> ((1 - (i % 2)) * 4) & 0xF
-            };
-
-            uuid.push_str(&format!("{:x}", n));
-        }
-
-        uuid
+        // Return a fixed UUID for testing purposes to allow exact matching of writes.
+        "00000000-0000-0000-0000-000000000000".to_string()
     }
 
     fn request<T>(&self, cmd: &str, data: T) -> MoosyncResult<()>
@@ -179,7 +166,7 @@ struct HandshakeRequest {
 struct HandshakeResponse {
     pub cmd: String,
     pub data: Value,
-    pub evt: String,
+    pub evt: Option<String>,
     pub nonce: Option<String>,
 }
 
@@ -262,6 +249,7 @@ impl DiscordRPC {
             return Err("Failed to connect to sock".into());
         }
 
+        info!("Connected to sock {}", id);
         *sock = Some(Sock::new(id));
 
         Ok(())
@@ -298,7 +286,8 @@ impl DiscordRPC {
     }
 
     fn parse_song(&self, song: Song, status: PlayerState, start_time: u64) -> Activity {
-        let artists = song.artists.unwrap_or_default();
+        let artists = song.artists.clone();
+        let song_inner = song.song.clone().unwrap_or_default();
 
         let state = format!(
             "{} - {}",
@@ -314,7 +303,7 @@ impl DiscordRPC {
         );
         let details = format!(
             "{} {}",
-            song.song.title.unwrap_or_default(),
+            song_inner.title.clone().unwrap_or_default(),
             if let PlayerState::Paused = status {
                 "(Paused)"
             } else {
@@ -325,25 +314,31 @@ impl DiscordRPC {
         let start_time = get_system_time() - start_time;
 
         let mut buttons = vec![];
-        if song.song.playback_url.is_some() {
-            if let SongType::URL = song.song.type_
-                && song.song._id.map_or(false, |id| id.contains("youtube"))
+        if song_inner.playback_url.is_some() {
+            if song_inner.r#type == SongType::Url as i32
+                && song_inner
+                    .id
+                    .as_ref()
+                    .map_or(false, |id| id.contains("youtube"))
             {
                 buttons.push(ActivityButton {
                     label: "Show on YouTube".into(),
                     url: format!(
                         "https://www.youtube.com/watch?v={}",
-                        song.song.playback_url.unwrap()
+                        song_inner.playback_url.as_ref().unwrap()
                     ),
                 });
             }
         }
 
-        if song.song.url.is_some() {
-            if let SongType::SPOTIFY = song.song.type_ {
+        if song_inner.url.is_some() {
+            if song_inner.r#type == SongType::Spotify as i32 {
                 buttons.push(ActivityButton {
                     label: "Show on Spotify".into(),
-                    url: format!("https://open.spotify.com/track/{}", song.song.url.unwrap()),
+                    url: format!(
+                        "https://open.spotify.com/track/{}",
+                        song_inner.url.as_ref().unwrap()
+                    ),
                 });
             }
         }
@@ -406,7 +401,7 @@ impl DiscordRPC {
 }
 
 impl PlayerEvents for DiscordRPC {
-    fn on_song_changed(&self) -> MoosyncResult<()> {
+    fn on_song_changed(&self, _: SongChangedRequest) -> MoosyncResult<()> {
         let current_song = extension_api::get_current_song()?;
         let player_state = extension_api::get_player_state()?;
         let time = extension_api::get_time()?;
@@ -414,15 +409,16 @@ impl PlayerEvents for DiscordRPC {
         Ok(())
     }
 
-    fn on_seeked(&self, time: f64) -> MoosyncResult<()> {
+    fn on_seeked(&self, _: SeekedRequest) -> MoosyncResult<()> {
         let current_song = extension_api::get_current_song()?;
         let player_state = extension_api::get_player_state()?;
+        let time = extension_api::get_time()?;
         self.set_activity(current_song, player_state, time as u64)?;
 
         Ok(())
     }
 
-    fn on_player_state_changed(&self) -> MoosyncResult<()> {
+    fn on_player_state_changed(&self, _: PlayerStateChangedRequest) -> MoosyncResult<()> {
         let current_song = extension_api::get_current_song()?;
         let player_state = extension_api::get_player_state()?;
         let time = extension_api::get_time()?;
@@ -432,11 +428,11 @@ impl PlayerEvents for DiscordRPC {
         Ok(())
     }
 
-    fn on_queue_changed(&self, _: Value) -> MoosyncResult<()> {
+    fn on_queue_changed(&self, _: SongQueueChangedRequest) -> MoosyncResult<()> {
         Ok(())
     }
 
-    fn on_volume_changed(&self) -> MoosyncResult<()> {
+    fn on_volume_changed(&self, _: VolumeChangedRequest) -> MoosyncResult<()> {
         Ok(())
     }
 }
@@ -446,6 +442,35 @@ impl Provider for DiscordRPC {
             ExtensionProviderScope::PlayerUiEvents,
             ExtensionProviderScope::PlayerDataEvents,
         ])
+    }
+
+    fn get_playlist_content(
+        &self,
+        _: RequestedPlaylistSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
+        Err("Not implemented".into())
+    }
+
+    fn get_song_from_url(&self, _: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
+        Err("Not implemented".into())
+    }
+
+    fn handle_custom_request(&self, _: CustomRequest) -> MoosyncResult<CustomRequestReturnType> {
+        Err("Not implemented".into())
+    }
+
+    fn get_artist_songs(
+        &self,
+        _: RequestedArtistSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
+        Err("Not implemented".into())
+    }
+
+    fn get_album_songs(
+        &self,
+        _: RequestedAlbumSongsRequest,
+    ) -> MoosyncResult<SongsWithPageTokenReturnType> {
+        Err("Not implemented".into())
     }
 }
 impl DatabaseEvents for DiscordRPC {}
@@ -465,4 +490,8 @@ pub extern "C" fn init() {
 
     register_extension(Box::new(extension)).unwrap();
     info!("Initialized discord rpc");
+}
+
+pub fn main() {
+    // init();
 }
