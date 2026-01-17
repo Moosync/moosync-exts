@@ -1,0 +1,56 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Moosync/moodriver/refs/heads/main/schema.json",
+    "commands": [
+        // {
+        //     "type": "requestedSearchResult",
+        //     "data": [
+        //         "imagine dragons"
+        //     ],
+        //     "expected": "ignore"
+        // },
+        // {
+        //     "type": "requestedPlaylists",
+        //     "data": [
+        //         false
+        //     ],
+        //     "expected": "ignore"
+        // },
+        // {
+        //     "type": "requestedPlaylistSongs",
+        //     "data": [
+        //         "moosync.spotify:spotify:playlist:1YfTwDfA8RBOfswonR7u9f",
+        //         false,
+        //         null
+        //     ],
+        //     "expected": "ignore"
+        // }
+    ],
+    "requests": [
+        {
+            "type": "getSecure",
+            "data": {
+                "key": "client_id",
+                "value": "e2a60dbeffd34cc7b1bd76a84ad6c1b2"
+            }
+        },
+        {
+            "type": "getSecure",
+            "data": {
+                "key": "client_secret",
+                "value": "8922002dadae481ca783a4752de96970"
+            }
+        },
+        {
+            "type": "getSecure",
+            "data": {
+                "key": "tokens",
+                "value": {
+                    "access_token": "BQBxUepdnvtXg5BiYCsHduHw2WXcaZrEtxmkICDqT3zsSWXRN2jrzQXYF_571CztHNOwFcohj7M2Cl5KkiN2dk--0kU0AjDcYVMaq8zXeeWSPlMH01DvzK70wXIUBH9tM9QaiLZgFDk2aQA0nuckHjjJBFXQMQOHfmUE99BC5isBBrw95MYA5zsD5T9cK7QvnQc9OcnENvLG40-9qvVcxASrvyZ1-zYRSyNZLhbXvQvlfBnf13Omczh4K4nmhF4tWbSPsoKlJWT_GZ2jjlbCdsvwMm29cR4",
+                    "expires_at": 1767261519000,
+                    "expires_in": 3600,
+                    "refresh_token": "AQC3uEbAi2p3ENIjJsdIwVK7CZFhD7GAs2kgNvEptnUcBmAKMyeNLaXn3_x88CHO05QRbIK6wElUDrtVsapNSiWwMfHjZBVo4Gakb6GJ-RlbHJTpyVMtBFYMUHWwzNtf5L4"
+                }
+            }
+        }
+    ]
+}

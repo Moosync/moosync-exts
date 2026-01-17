@@ -6,12 +6,13 @@ use moosync_edk::{
         extension_api::{
             self, get_current_song, get_secure, register_oauth, set_secure, update_accounts,
         },
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        AccountLoginArgs, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents,
+        PreferenceEvents, Provider, SongChangedRequest,
     },
     error,
     handler::register_extension,
-    info, warn, ExtensionAccountDetail, ExtensionProviderScope, PreferenceData, Result,
-    Result as MoosyncResult, Song,
+    info, warn, ExtensionAccountDetail, ExtensionProviderScope, MoosyncResult,
+    OauthCallbackRequest, PreferenceData, ScrobbleRequest, Song,
 };
 
 mod client;
@@ -25,16 +26,17 @@ impl LastFMExtension {
         if let Ok(session) = get_secure(PreferenceData {
             key: "session".to_string(),
             value: None,
-            default_value: None,
         }) {
             if let Some(session) = session.value {
-                if let Ok(parsed_session) = serde_json::from_value(session.clone()) {
-                    let mut client = self.client.lock().unwrap();
-                    client.set_session(parsed_session);
-                    update_accounts(Some("moosync.lastfm".into())).unwrap();
-                } else {
-                    error!("Failed to parse existing sessions {:?}", session);
-                }
+                if let Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(session_str)) = session.kind {
+                     if let Ok(parsed_session) = serde_json::from_str(&session_str) {
+                         let mut client = self.client.lock().unwrap();
+                         client.set_session(parsed_session);
+                         update_accounts(Some("moosync.lastfm".into())).unwrap();
+                     } else {
+                         error!("Failed to parse existing sessions {:?}", session_str);
+                     }
+                 }
             } else {
                 warn!("Session could not be retrieved");
             }
@@ -58,7 +60,7 @@ impl LastFMExtension {
 }
 
 impl PlayerEvents for LastFMExtension {
-    fn on_song_changed(&self) -> MoosyncResult<()> {
+    fn on_song_changed(&self, _: SongChangedRequest) -> MoosyncResult<()> {
         let client = self.client.lock().unwrap();
         if let Ok(Some(current_song)) = get_current_song() {
             client.set_now_playing(current_song);
@@ -68,16 +70,18 @@ impl PlayerEvents for LastFMExtension {
     }
 }
 impl Provider for LastFMExtension {
-    fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
+    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
         Ok(vec![
             ExtensionProviderScope::Scrobble,
             ExtensionProviderScope::Accounts,
         ])
     }
 
-    fn scrobble(&self, song: Song) -> Result<()> {
+    fn scrobble(&self, req: ScrobbleRequest) -> MoosyncResult<()> {
         let client = self.client.lock().unwrap();
-        client.scrobble(song);
+        if let Some(song) = req.song {
+            client.scrobble(song);
+        }
         Ok(())
     }
 }
@@ -100,7 +104,7 @@ impl Accounts for LastFMExtension {
         }])
     }
 
-    fn perform_account_login(&self, args: moosync_edk::AccountLoginArgs) -> MoosyncResult<String> {
+    fn perform_account_login(&self, args: AccountLoginArgs) -> MoosyncResult<String> {
         info!("Performing account login {}", args.login_status);
         let mut client = self.client.lock().unwrap();
         if args.login_status {
@@ -113,22 +117,22 @@ impl Accounts for LastFMExtension {
             set_secure(PreferenceData {
                 key: "session".to_string(),
                 value: None,
-                default_value: None,
             })?;
             update_accounts(Some("moosync.lastfm".into()))?;
             Ok(String::new())
         }
     }
 
-    fn oauth_callback(&self, code: String) -> MoosyncResult<()> {
-        info!("Got oauth callback {}", code);
+    fn oauth_callback(&self, req: OauthCallbackRequest) -> MoosyncResult<()> {
+        info!("Got oauth callback {:?}", req);
         let mut client = self.client.lock().unwrap();
-        match client.authorize(code) {
+        match client.authorize(req.callback_uri) {
             Ok(s) => {
                 if let Err(e) = set_secure(PreferenceData {
                     key: "session".to_string(),
-                    value: Some(serde_json::to_value(&s).unwrap()),
-                    default_value: None,
+                    value: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                         kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(serde_json::to_string(&s).unwrap())),
+                    }),
                 }) {
                     error!("Failed to set lastfm token in secure store {}", e);
                 }
@@ -162,3 +166,5 @@ pub extern "C" fn init() {
 
     info!("Initialized SampleExtension");
 }
+
+fn main() {}

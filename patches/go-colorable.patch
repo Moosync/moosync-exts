@@ -1,0 +1,16 @@
+--- /dev/null
++++ b/BUILD.bazel
+@@ -0,0 +1,13 @@
++load("@io_bazel_rules_go//go:def.bzl", "go_library")
++
++go_library(
++    name = "go-colorable",
++    srcs = glob(["*.go"]),
++    importpath = "github.com/mattn/go-colorable",
++    visibility = ["//visibility:public"],
++    deps = [
++        "@com_github_mattn_go_isatty//:go_default_library",
++    ],
++)
++
++alias(name = "go_default_library", actual = ":go-colorable", visibility = ["//visibility:public"])

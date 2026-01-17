@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use md5::{Digest, Md5};
 use moosync_edk::{
-    api::extension_api::get_system_time, error, http, info, HttpRequest, Result, Song,
+    api::extension_api::get_system_time, error, http, info, HttpRequest, MoosyncResult, Song,
 };
 use regex::Regex;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -60,9 +60,9 @@ impl fmt::Display for ApiMethod {
 }
 
 impl Client {
-    fn get_method<T>(&self, method: ApiMethod) -> Result<T>
+    fn get_method<T>(&self, method: ApiMethod) -> MoosyncResult<T>
     where
-        T: DeserializeOwned,
+        T: DeserializeOwned + for<'de> Deserialize<'de>,
     {
         let http_method = match method {
             ApiMethod::GetSession(_) => "GET",
@@ -128,14 +128,11 @@ impl Client {
         match http::request(&request, body) {
             Ok(resp) => {
                 // info!("Got response {:?}", str::from_utf8(&resp.body()));
-                if let Ok(parsed) = resp.json() {
+                let body = resp.body();
+                if let Ok(parsed) = serde_json::from_slice(&body) {
                     return Ok(parsed);
                 }
-                Err(format!(
-                    "Failed to parse response {:?}",
-                    str::from_utf8(&resp.body())
-                )
-                .into())
+                Err(format!("Failed to parse response {:?}", str::from_utf8(&body)).into())
             }
             Err(e) => Err(format!("Error calling lastfm API {:?}", e).into()),
         }
@@ -178,7 +175,7 @@ impl Client {
         self.session = None;
     }
 
-    pub fn authorize(&mut self, code: String) -> Result<Session> {
+    pub fn authorize(&mut self, code: String) -> MoosyncResult<Session> {
         let re = Regex::new(r"(?i)[?&]token=([^&]+)").unwrap();
         if let Some(token) = re.captures(&code) {
             let token = &token[1];
@@ -208,18 +205,23 @@ impl Client {
         self.session = Some(session);
     }
 
-    fn get_scrobble_data(&self, song: Song) -> Result<ScrobbleData> {
+    fn get_scrobble_data(&self, song: Song) -> MoosyncResult<ScrobbleData> {
         if let Some(session) = &self.session {
             let artist = song
                 .artists
-                .and_then(|a| a.first().map(|a| a.artist_name.clone()))
+                .first()
+                .map(|a| a.artist_name.clone())
                 .flatten()
                 .unwrap_or("unknown".to_string());
-            let track = song.song.title.unwrap_or("unknown".to_string());
+            let track = song
+                .song
+                .clone()
+                .and_then(|s| s.title)
+                .unwrap_or("unknown".to_string());
             let timestamp = get_system_time() - 20;
             let sk = session.key.clone();
             let album = song.album.clone().and_then(|a| a.album_name);
-            let duration = song.song.duration;
+            let duration = song.song.clone().and_then(|s| s.duration);
             let album_artist = song.album.and_then(|a| a.album_artist);
 
             return Ok(ScrobbleData {

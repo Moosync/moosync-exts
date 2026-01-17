@@ -1,6 +1,6 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    ExtensionProviderScope, MoosyncError, InnerSong, Result, SearchResult, Song, SongType,
+    ExtensionProviderScope, InnerSong, MoosyncError, MoosyncResult, SearchResult, Song, SongType,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
     },
@@ -21,16 +21,18 @@ struct ParsedSearchTokens {
 }
 
 struct RadioExtension {
-    rb: RadioBrowserAPI,
+    rb: Option<RadioBrowserAPI>,
 }
 
 impl RadioExtension {
     fn new() -> Self {
-        if let Ok(rb) = block_on(RadioBrowserAPI::new()) {
-            Self { rb }
-        } else {
-            error!("Failed to initialize radiobrowser instance");
-            panic!("Failed to initialize radiobrowser instance")
+        match block_on(RadioBrowserAPI::new()) {
+            Ok(rb) => Self { rb: Some(rb) },
+            Err(e) => {
+                error!("Failed to initialize radiobrowser instance: {:?}", e);
+                // Continue without radiobrowser instance, search will fail gracefully
+                Self { rb: None }
+            }
         }
     }
 
@@ -77,18 +79,18 @@ impl RadioExtension {
         stations
             .into_iter()
             .map(|s| Song {
-                song: InnerSong {
-                    _id: Some(format!("radio-{}", s.serveruuid.unwrap_or(s.url.clone()))),
+                song: Some(InnerSong {
+                    id: Some(format!("radio-{}", s.serveruuid.unwrap_or(s.url.clone()))),
                     title: Some(s.name),
                     bitrate: Some(s.bitrate as f64),
                     codec: Some(s.codec),
                     duration: Some(0f64),
-                    type_: SongType::URL,
+                    r#type: SongType::Url.into(),
                     url: Some(s.url),
                     playback_url: Some(s.url_resolved),
                     song_cover_path_low: Some(s.favicon),
                     ..Default::default()
-                },
+                }),
                 ..Default::default()
             })
             .collect()
@@ -97,13 +99,21 @@ impl RadioExtension {
 
 impl PlayerEvents for RadioExtension {}
 impl Provider for RadioExtension {
-    fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
+    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
         Ok(vec![ExtensionProviderScope::Search])
     }
 
-    fn search(&self, term: String) -> Result<SearchResult> {
-        let data = self.parse_search_input(term);
-        let mut builder = self.rb.get_stations();
+    fn search(
+        &self,
+        req: moosync_edk::api::RequestedSearchResultRequest,
+    ) -> MoosyncResult<SearchResult> {
+        let rb = self
+            .rb
+            .as_ref()
+            .ok_or(MoosyncError::String("Radio browser not initialized".into()))?;
+
+        let data = self.parse_search_input(req.query);
+        let mut builder = rb.get_stations();
         if let Some(country) = data.country {
             builder = builder.country(capitalize_first(&country));
         }
@@ -133,8 +143,11 @@ impl Provider for RadioExtension {
         })
     }
 
-    fn get_song_from_url(&self, url: String) -> Result<Option<Song>> {
-        info!("Got URL {}", url);
+    fn get_song_from_url(
+        &self,
+        req: moosync_edk::api::RequestedSongFromUrlRequest,
+    ) -> MoosyncResult<Option<Song>> {
+        info!("Got URL {}", req.url);
         Ok(None)
     }
 }
@@ -160,3 +173,5 @@ pub extern "C" fn init() {
 
     info!("Initialized RadioExtension");
 }
+
+fn main() {}

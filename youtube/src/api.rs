@@ -1,4 +1,6 @@
-use moosync_edk::{Album, Artist, ExtensionAccountDetail, InnerSong, Playlist, PreferenceData, info};
+use moosync_edk::{
+    Album, Artist, ExtensionAccountDetail, InnerSong, Playlist, PreferenceData, info,
+};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -23,6 +25,125 @@ pub struct OAuthTokenResponse {
     pub refresh_token: Option<String>,
     pub scope: Option<String>,
     pub token_type: Option<String>,
+}
+
+impl From<OAuthTokenResponse>
+    for moosync_edk::extensions_proto::struct_proto::google::protobuf::Value
+{
+    fn from(token: OAuthTokenResponse) -> Self {
+        let mut fields = std::collections::HashMap::new();
+        fields.insert(
+            "access_token".to_string(),
+            moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(
+                    token.access_token,
+                )),
+            },
+        );
+        if let Some(expires_in) = token.expires_in {
+            fields.insert(
+                "expires_in".to_string(),
+                moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                    kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::NumberValue(
+                        expires_in as f64,
+                    )),
+                },
+            );
+        }
+        if let Some(refresh_token) = token.refresh_token {
+            fields.insert(
+                "refresh_token".to_string(),
+                moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                    kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(
+                        refresh_token,
+                    )),
+                },
+            );
+        }
+        if let Some(scope) = token.scope {
+            fields.insert(
+                "scope".to_string(),
+                moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                    kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(
+                        scope,
+                    )),
+                },
+            );
+        }
+        if let Some(token_type) = token.token_type {
+            fields.insert(
+                "token_type".to_string(),
+                moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                    kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(
+                        token_type,
+                    )),
+                },
+            );
+        }
+        moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+            kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StructValue(
+                moosync_edk::extensions_proto::struct_proto::google::protobuf::Struct { fields },
+            )),
+        }
+    }
+}
+
+impl TryFrom<moosync_edk::extensions_proto::struct_proto::google::protobuf::Value>
+    for OAuthTokenResponse
+{
+    type Error = &'static str;
+
+    fn try_from(
+        val: moosync_edk::extensions_proto::struct_proto::google::protobuf::Value,
+    ) -> Result<Self, Self::Error> {
+        if let Some(
+            moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StructValue(
+                s,
+            ),
+        ) = val.kind
+        {
+            let access_token = s
+                .fields
+                .get("access_token")
+                .and_then(|v| match &v.kind {
+                    Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(s)) => {
+                        Some(s.clone())
+                    }
+                    _ => None,
+                })
+                .ok_or("Missing access_token")?;
+
+            let expires_in = s.fields.get("expires_in").and_then(|v| match &v.kind {
+                Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::NumberValue(n)) => Some(*n as u64),
+                _ => None,
+            });
+
+            let refresh_token = s.fields.get("refresh_token").and_then(|v| match &v.kind {
+                Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(s)) => Some(s.clone()),
+                _ => None,
+            });
+
+            let scope = s.fields.get("scope").and_then(|v| match &v.kind {
+                Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(s)) => Some(s.clone()),
+                _ => None,
+            });
+
+            let token_type = s.fields.get("token_type").and_then(|v| match &v.kind {
+                Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(s)) => Some(s.clone()),
+                _ => None,
+            });
+
+            Ok(OAuthTokenResponse {
+                access_token,
+                expires_in,
+                refresh_token,
+                scope,
+                token_type,
+            })
+        } else {
+            Err("Expected StructValue")
+        }
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -99,27 +220,34 @@ pub struct PlaylistItemsListResponse {
 #[derive(Deserialize, Debug)]
 pub struct PlaylistVideoItem {
     pub snippet: Option<PlaylistVideoSnippet>,
-    pub contentDetails: Option<PlaylistVideoContentDetails>,
+    #[serde(rename = "contentDetails")]
+    pub content_details: Option<PlaylistVideoContentDetails>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PlaylistVideoSnippet {
     pub title: Option<String>,
-    pub resourceId: Option<PlaylistVideoResourceId>,
+    #[serde(rename = "resourceId")]
+    pub resource_id: Option<PlaylistVideoResourceId>,
     pub thumbnails: Option<PlaylistThumbnails>,
-    pub channelTitle: Option<String>,
-    pub videoOwnerChannelTitle: Option<String>,
-    pub videoOwnerChannelId: Option<String>,
+    #[serde(rename = "channelTitle")]
+    pub channel_title: Option<String>,
+    #[serde(rename = "videoOwnerChannelTitle")]
+    pub video_owner_channel_title: Option<String>,
+    #[serde(rename = "videoOwnerChannelId")]
+    pub video_owner_channel_id: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PlaylistVideoResourceId {
-    pub videoId: Option<String>,
+    #[serde(rename = "videoId")]
+    pub video_id: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PlaylistVideoContentDetails {
-    pub videoId: Option<String>,
+    #[serde(rename = "videoId")]
+    pub video_id: Option<String>,
 }
 
 impl From<PlaylistVideoItem> for moosync_edk::Song {
@@ -127,20 +255,26 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
         let (video_id, title, thumbnails, channel_title) = if let Some(snippet) = &item.snippet {
             (
                 snippet
-                    .resourceId
+                    .resource_id
                     .as_ref()
-                    .and_then(|r| r.videoId.clone())
-                    .or_else(|| item.contentDetails.as_ref().and_then(|c| c.videoId.clone())),
+                    .and_then(|r| r.video_id.clone())
+                    .or_else(|| {
+                        item.content_details
+                            .as_ref()
+                            .and_then(|c| c.video_id.clone())
+                    }),
                 snippet.title.clone(),
                 snippet.thumbnails.as_ref(),
                 snippet
-                    .channelTitle
+                    .channel_title
                     .clone()
-                    .or(snippet.videoOwnerChannelTitle.clone()),
+                    .or(snippet.video_owner_channel_title.clone()),
             )
         } else {
             (
-                item.contentDetails.as_ref().and_then(|c| c.videoId.clone()),
+                item.content_details
+                    .as_ref()
+                    .and_then(|c| c.video_id.clone()),
                 None,
                 None,
                 None,
@@ -148,12 +282,12 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
         };
 
         moosync_edk::Song {
-            song: InnerSong {
-                _id: video_id.as_ref().map(|id| format!("youtube:{}", id)),
+            song: Some(InnerSong {
+                id: video_id.as_ref().map(|id| format!("youtube:{}", id)),
                 deviceno: None,
                 title,
                 duration: None, // Not available from playlistItems API
-                type_: moosync_edk::SongType::URL,
+                r#type: moosync_edk::SongType::Url.into(),
                 url: video_id.clone(),
                 song_cover_path_high: thumbnails
                     .and_then(|thumbs| thumbs.high.as_ref().map(|t| t.url.clone()))
@@ -167,17 +301,17 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
                     .map(|id| format!("extension://moosync.youtubedl/{}", id)),
                 provider_extension: Some("youtube".into()),
                 ..Default::default()
-            },
+            }),
             album: Some(Album {
                 album_name: Some("Misc".to_string()),
                 ..Default::default()
             }),
-            artists: Some(vec![Artist {
+            artists: vec![Artist {
                 artist_id: None,
                 artist_name: channel_title,
                 ..Default::default()
-            }]),
-            genre: Some(vec![]),
+            }],
+            genre: vec![],
         }
     }
 }
@@ -250,7 +384,7 @@ impl YoutubeAuth {
 
         moosync_edk::api::extension_api::set_secure(PreferenceData {
             key: "tokens".to_string(),
-            value: Some(serde_json::to_value(token_response).unwrap()),
+            value: Some(token_response.into()),
             ..Default::default()
         })
         .unwrap();
@@ -295,8 +429,8 @@ impl YoutubeAuth {
             ..Default::default()
         }) {
             Ok(data) => {
-                if let Some(data) = data.value {
-                    match serde_json::from_value::<OAuthTokenResponse>(data) {
+                if let Some(data_val) = data.value {
+                    match OAuthTokenResponse::try_from(data_val) {
                         Ok(token_response) => {
                             self.access_token = Some(token_response.access_token);
                             self.refresh_token = token_response.refresh_token;
@@ -364,7 +498,7 @@ impl YoutubeAuth {
 
         moosync_edk::api::extension_api::set_secure(PreferenceData {
             key: "tokens".to_string(),
-            value: Some(serde_json::to_value(token_response).unwrap()),
+            value: Some(token_response.into()),
             ..Default::default()
         })
         .unwrap();
@@ -373,9 +507,7 @@ impl YoutubeAuth {
     }
 
     /// Gets a list of all the user's playlists, paginated, as Playlist.
-    pub async fn get_all_playlists(
-        &self,
-    ) -> Result<Vec<Playlist>, Box<dyn Error>> {
+    pub async fn get_all_playlists(&self) -> Result<Vec<Playlist>, Box<dyn Error>> {
         if self.access_token.is_none() {
             return Err("Not authenticated".into());
         }
@@ -480,19 +612,17 @@ impl YoutubeAuth {
                 .await?;
 
             let status = user_resp.status();
-            info!("Got response {:?}", user_resp.status());
-            let text = user_resp.text().await?;
-            info!("User info response body: {}", text);
-
+            info!("Got response {:?}", status);
             if status.is_success() {
                 #[derive(Deserialize)]
                 struct UserInfo {
                     name: Option<String>,
                 }
-                let user_info: UserInfo = serde_json::from_str(&text)?;
+                let user_info: UserInfo = user_resp.json().await?;
                 self.account_details.username = user_info.name;
                 self.account_details.logged_in = true;
             } else {
+                let text = user_resp.text().await?;
                 moosync_edk::error!("Failed to fetch user info: {}", text);
             }
         }

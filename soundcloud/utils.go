@@ -8,42 +8,46 @@ import (
 	"strconv"
 
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
-	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/types"
 	"github.com/Ovenoboyo/scdl/v2/pkg/soundcloud"
 	"github.com/antchfx/htmlquery"
+	songs "github.com/moosync/moosync/types/songs"
 	soundcloudapi "github.com/zackradisic/soundcloud-api"
 )
 
-func scTracksToSong(track soundcloudapi.Track) types.Song {
+func ptr[T any](v T) *T {
+	return &v
+}
+
+func scTracksToSong(track soundcloudapi.Track) *songs.Song {
 	duration := float64(track.DurationMS) / 1000
 	dateAdded := int64(api.SystemTime())
-	return types.Song{
-		QueryableSong: types.QueryableSong{
-			ID:                strconv.Itoa(int(track.ID)),
-			Title:             track.Title,
-			Date:              track.DisplayDate,
+	return &songs.Song{
+		Song: &songs.InnerSong{
+			Id:                ptr(strconv.Itoa(int(track.ID))),
+			Title:             ptr(track.Title),
+			Date:              ptr(track.DisplayDate),
 			Duration:          &duration,
-			Type:              types.SongTypeHLS,
-			URL:               track.PermalinkURL,
-			SongCoverPathHigh: track.ArtworkURL,
-			PlaybackURL:       "extension://moosync.soundcloud/" + strconv.Itoa(int(track.ID)),
-			SongCoverPathLow:  track.ArtworkURL,
+			Type:              songs.SongType_URL, // Assuming URL type for HLS, or check if HLS enum exists
+			Url:               ptr(track.PermalinkURL),
+			SongCoverPathHigh: ptr(track.ArtworkURL),
+			PlaybackUrl:       ptr("extension://moosync.soundcloud/" + strconv.Itoa(int(track.ID))),
+			SongCoverPathLow:  ptr(track.ArtworkURL),
 			DateAdded:         &dateAdded,
 		},
 		Album: nil,
-		Artists: []types.QueryableArtist{types.QueryableArtist{
-			ArtistName:      fmt.Sprintf("%s %s", track.User.FirstName, track.User.LastName),
-			ArtistCoverPath: track.User.AvatarURL,
+		Artists: []*songs.Artist{{
+			ArtistName:      ptr(fmt.Sprintf("%s %s", track.User.FirstName, track.User.LastName)),
+			ArtistCoverpath: ptr(track.User.AvatarURL),
 		}},
-		Genre: []types.QueryableGenre{},
+		Genre: []*songs.Genre{},
 	}
 }
 
-func scPlaylistToPlaylists(playlist soundcloudapi.Playlist) types.QueryablePlaylist {
-	return types.QueryablePlaylist{
-		PlaylistID:    strconv.Itoa(int(playlist.ID)),
-		PlaylistName:  playlist.Title,
-		PlaylistCover: playlist.ArtworkURL,
+func scPlaylistToPlaylists(playlist soundcloudapi.Playlist) *songs.Playlist {
+	return &songs.Playlist{
+		PlaylistId:        ptr(strconv.Itoa(int(playlist.ID))),
+		PlaylistName:      playlist.Title,
+		PlaylistCoverpath: ptr(playlist.ArtworkURL),
 	}
 }
 
