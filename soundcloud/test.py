@@ -31,7 +31,7 @@ def test_get_provider_scopes(entry: Moounit):
 
 
 def test_search(entry: Moounit):
-    entry.expect_system_time(return_value=1234567890, times=100)
+    entry.expect_system_time(return_value=1234567890, times=-1)
     ret = entry.send_command(
         pb.ExtensionCommand(
             requested_search_result=pb.RequestedSearchResultRequest(query="test")

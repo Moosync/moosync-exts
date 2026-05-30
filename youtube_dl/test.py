@@ -3,6 +3,8 @@ from core.types.protos.extensions_pb2 import GetProviderScopesRequest
 from core.types.protos.extensions_pb2 import ExtensionCommand
 from moounit import Moounit
 import pytest
+
+
 @pytest.fixture
 def entry(moounit: Moounit):
     moounit.call_entry()
