@@ -1,0 +1,36 @@
+go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps", dev_dependency = True)
+go_deps.from_file(
+    go_mod = "//soundcloud:go.mod",
+)
+go_deps.module_override(
+    patch_strip = 1,
+    patches = ["//soundcloud:go-colorable.patch"],
+    path = "github.com/mattn/go-colorable",
+)
+go_deps.gazelle_override(
+    build_file_generation = "off",
+    path = "github.com/mattn/go-colorable",
+)
+
+
+
+use_repo(
+    go_deps,
+    "com_github_antchfx_htmlquery",
+    "com_github_antchfx_xpath",
+    "com_github_bogem_id3v2",
+    "com_github_extism_go_pdk",
+    "com_github_fatih_color",
+    "com_github_golang_groupcache",
+    "com_github_grafov_m3u8",
+    "com_github_mattn_go_colorable",
+    "com_github_mattn_go_isatty",
+    "com_github_moosync_extensions_sdk_wasm_extension_go",
+    "com_github_ovenoboyo_scdl_v2",
+    "com_github_pkg_errors",
+    "com_github_zackradisic_soundcloud_api",
+    "org_golang_google_protobuf",
+    "org_golang_x_net",
+    "org_golang_x_sys",
+    "org_golang_x_text",
+)

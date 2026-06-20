@@ -1,35 +1,70 @@
 module(
-    name = "sample_ext",
+    name = "moosync_ext",
     version = "0.0.1",
 )
 
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
 
-git_override(
+local_path_override(
     module_name = "extensions_sdk",
-    branch = "main",
-    remote = "https://github.com/Moosync/extensions-sdk.git",
+    path = "../extensions-sdk",
 )
 
-git_override(
+local_path_override(
     module_name = "moosync",
-    commit = "11c5eab2037a51a1e5aab6ad7cedcfa9e980eebe",
-    remote = "https://github.com/Moosync/Moosync.git",
+    path = "../Moosync",
 )
+
 bazel_dep(name = "rules_go", version = "0.59.0")
-bazel_dep(name = "gazelle", version = "0.40.0")
+bazel_dep(name = "gazelle", version = "0.47.0")
 bazel_dep(name = "rules_python", version = "1.7.0")
+bazel_dep(name = "rules_cc", version = "0.2.16")
 bazel_dep(name = "rules_rust", version = "0.68.1")
+bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
+
+
 single_version_override(
-    module_name = "rules_rust",
-    version = "0.68.1",
+    module_name = "protobuf",
+    version = "33.2",
 )
+
 bazel_dep(name = "rules_rust_prost", version = "0.68.1")
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "aspect_rules_js", version = "3.1.2")
+single_version_override(
+    module_name = "aspect_rules_js",
+    patch_strip = 1,
+    patches = ["//patches:aspect_rules_js_virtual_store_prefix.patch"],
+)
+
 bazel_dep(name = "aspect_rules_ts", version = "3.8.10")
 bazel_dep(name = "aspect_rules_py", version = "1.11.5")
 bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "rules_nodejs", version = "6.2.0")
+
+
+# npm packages for JS/TS sample extension (mirrors extensions_sdk sdk_npm)
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "moosync_ext_npm",
+    pnpm_lock = "@extensions_sdk//wasm-extension-js:pnpm-lock.yaml",
+)
+use_repo(npm, "moosync_ext_npm")
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+use_repo(node, "nodejs_toolchains")
+
+register_toolchains("@nodejs_toolchains//:all")
+
+# TypeScript toolchain for JS sample extension
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext.deps(
+    name = "sdk_npm_typescript",
+    ts_version_from = "@extensions_sdk//wasm-extension-js:package.json",
+)
+use_repo(rules_ts_ext, npm_typescript = "sdk_npm_typescript")
+
+register_toolchains("@npm_typescript//:all")
 
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
@@ -42,89 +77,26 @@ rust.toolchain(
         "wasm32-wasip1",
         "x86_64-pc-windows-gnu",
     ],
-    versions = ["1.92.0"],
+    versions = [
+        "1.95.0",
+        "nightly/2025-12-16",
+    ],
 )
 use_repo(rust, "rust_toolchains")
 
-# Go Dependencies
-go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
-go_deps.from_file(go_mod = "//soundcloud:go.mod")
-use_repo(
-    go_deps,
-    "com_github_antchfx_htmlquery",
-)
-
-go_deps.module_override(
-    patch_strip = 1,
-    patches = ["//patches:go-colorable.patch"],
-    path = "github.com/mattn/go-colorable",
-)
-go_deps.gazelle_override(
-    build_file_generation = "off",
-    path = "github.com/mattn/go-colorable",
-)
-use_repo(
-    go_deps,
-    "com_github_extism_go_pdk",
-    "com_github_moosync_extensions_sdk_wasm_extension_go",
-    "com_github_ovenoboyo_scdl_v2",
-    "com_github_zackradisic_soundcloud_api",
-)
-
-# Python Dependencies
-pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
-pip.parse(
-    hub_name = "pypi",
-    python_version = "3.11",
-    requirements_lock = "//youtube_dl:requirements_lock.txt",
-)
-use_repo(pip, "pypi")
-
-# Rust Dependencies
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
-    name = "discord_crates",
-    cargo_lockfile = "//discord:Cargo.lock",
-    manifests = ["//discord:Cargo.toml"],
-)
-use_repo(crate, "discord_crates")
-
-crate.from_cargo(
-    name = "koel_crates",
-    cargo_lockfile = "//koel:Cargo.lock",
-    manifests = ["//koel:Cargo.toml"],
-)
-use_repo(crate, "koel_crates")
-
-crate.from_cargo(
-    name = "lastfm_crates",
-    cargo_lockfile = "//lastfm:Cargo.lock",
-    manifests = ["//lastfm:Cargo.toml"],
-)
-use_repo(crate, "lastfm_crates")
-
-crate.from_cargo(
-    name = "radio_crates",
-    cargo_lockfile = "//radio:Cargo.lock",
-    manifests = ["//radio:Cargo.toml"],
-)
-use_repo(crate, "radio_crates")
-
-crate.from_cargo(
-    name = "spotify_crates",
-    cargo_lockfile = "//spotify:Cargo.lock",
-    manifests = ["//spotify:Cargo.toml"],
-)
-use_repo(crate, "spotify_crates")
-
-crate.from_cargo(
-    name = "youtube_crates",
-    cargo_lockfile = "//youtube:Cargo.lock",
-    manifests = ["//youtube:Cargo.toml"],
-)
-use_repo(crate, "youtube_crates")
+include("//:dependencies.MODULE.bazel")
 
 register_toolchains(
     "@rules_rust//rust/private/dummy_cc_toolchain:dummy_cc_wasm32_toolchain",
     "@rust_toolchains//:all",
+    "@rules_foreign_cc//toolchains:preinstalled_pkgconfig_toolchain",
+    "@extensions_sdk//prost_toolchain:prost_toolchain_wasi",
+)
+
+# Configure a hermetic Python toolchain using rules_python.
+# This ensures that no system_python is used during protobuf or other target evaluation.
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.11",
 )

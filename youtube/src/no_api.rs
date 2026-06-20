@@ -32,7 +32,7 @@ impl YoutubeScraper {
                 id: Some(format!("youtube:{}", v.id.clone())),
                 deviceno: None,
                 title: Some(v.title.clone()),
-                duration: Some((v.duration / 1000) as f64),
+                duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_millis(v.duration))),
                 r#type: SongType::Url.into(),
                 url: Some(v.id.clone()),
                 song_cover_path_high: v.thumbnails.first().map(|d| d.url.clone()),
@@ -61,7 +61,9 @@ impl YoutubeScraper {
                 id: Some(format!("youtube:{}", details.video_id.clone())),
                 deviceno: None,
                 title: Some(details.title.clone()),
-                duration: Some(details.length_seconds.parse().unwrap_or_default()),
+                duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_secs(
+                    details.length_seconds.parse().unwrap_or_default()
+                ))),
                 r#type: SongType::Url.into(),
                 url: Some(details.video_id.clone()),
                 song_cover_path_high: details.thumbnails.first().map(|d| d.url.clone()),

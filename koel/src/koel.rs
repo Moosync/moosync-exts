@@ -76,7 +76,7 @@ impl KoelClient {
                 id: ks.id.clone(),
                 title: ks.title.clone(),
                 lyrics: ks.lyrics.clone(),
-                duration: ks.length,
+                duration: crate::utils::f64_to_duration(ks.length),
                 track_no: ks.track.map(|t| t as f64),
                 year: ks.year.clone().map(|v| v.to_string()),
                 song_cover_path_high: ks.album_cover.clone(),

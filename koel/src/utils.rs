@@ -113,7 +113,7 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
             lyrics: ks
                 .get("lyrics")
                 .and_then(|v| v.as_str().map(|s| s.to_string())),
-            duration: ks.get("length").and_then(|v| v.as_f64()),
+            duration: f64_to_duration(ks.get("length").and_then(|v| v.as_f64())),
             track_no: ks.get("track").and_then(|v| v.as_u64().map(|t| t as f64)),
             year: ks.get("year").map(|v| v.to_string()),
             provider_extension: Some("koel".to_string()),
@@ -129,6 +129,13 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
         })
         .collect()
 }
+
+pub fn f64_to_duration(secs: Option<f64>) -> Option<moosync_edk::duration_proto::google::protobuf::Duration> {
+    secs.map(|s| {
+        moosync_edk::duration_to_proto(std::time::Duration::from_secs_f64(s))
+    })
+}
+
 pub fn google_value_to_serde(v: ProtoValue) -> serde_json::Value {
     use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
     match v.kind {

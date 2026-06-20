@@ -5,3 +5,5 @@ node_modules
 *.*venv
 bazel-*
 rust-project.json
+go.work
+go.work.sum

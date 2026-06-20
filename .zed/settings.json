@@ -1,0 +1,45 @@
+{
+  "file_scan_exclusions": [
+    "bazel-out",
+    "bazel-bin",
+    "bazel-testlogs",
+    "bazel-moosync-exts"
+  ],
+  "lsp": {
+    "gopls": {
+      "binary": {
+        "env": {
+          "GOPACKAGESDRIVER": "./tools/gopackagesdriver.sh"
+        }
+      }
+    },
+    "pyright": {
+      "settings": {
+        "python": {
+          "analysis": {
+            "extraPaths": [
+              "youtube_dl/.venv/lib/python3.11/site-packages",
+              "sample_extensions/py/.venv/lib/python3.11/site-packages"
+            ]
+          }
+        }
+      }
+    },
+    "rust-analyzer": {
+      "initialization_options": {
+        "linkedProjects": [
+          "discord/Cargo.toml",
+          "koel/Cargo.toml",
+          "lastfm/Cargo.toml",
+          "radio/Cargo.toml",
+          "spotify/Cargo.toml",
+          "youtube/Cargo.toml",
+          "sample_extensions/rs/Cargo.toml"
+        ],
+        "cargo": {
+          "target": "wasm32-wasip1"
+        }
+      }
+    }
+  }
+}

@@ -84,7 +84,7 @@ impl RadioExtension {
                     title: Some(s.name),
                     bitrate: Some(s.bitrate as f64),
                     codec: Some(s.codec),
-                    duration: Some(0f64),
+                    duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_secs(0))),
                     r#type: SongType::Url.into(),
                     url: Some(s.url),
                     playback_url: Some(s.url_resolved),

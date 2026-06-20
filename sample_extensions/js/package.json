@@ -1,0 +1,7 @@
+{
+    "name": "sample-extension",
+    "version": "0.1.0",
+    "dependencies": {
+        "wasm-extension-js": "workspace:*"
+    }
+}

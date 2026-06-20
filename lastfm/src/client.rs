@@ -221,7 +221,9 @@ impl Client {
             let timestamp = get_system_time() - 20;
             let sk = session.key.clone();
             let album = song.album.clone().and_then(|a| a.album_name);
-            let duration = song.song.clone().and_then(|s| s.duration);
+            let duration = song.song.clone().and_then(|s| s.duration).map(|d| {
+                d.seconds as f64 + (d.nanos as f64 / 1e9)
+            });
             let album_artist = song.album.and_then(|a| a.album_artist);
 
             return Ok(ScrobbleData {

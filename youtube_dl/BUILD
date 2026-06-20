@@ -1,7 +1,9 @@
 load("@extensions_sdk//:defs.bzl", "py_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
-load("@pypi//:requirements.bzl", "requirement")
+load("@pypi_youtube_dl//:requirements.bzl", "requirement")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+
+package(default_visibility = ["//visibility:public"])
 
 compile_pip_requirements(
     name = "requirements",
