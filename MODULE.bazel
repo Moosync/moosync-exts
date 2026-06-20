@@ -5,14 +5,16 @@ module(
 
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
 
-local_path_override(
+git_override(
     module_name = "extensions_sdk",
-    path = "../extensions-sdk",
+    remote = "/home/ovenoboyo/projects/extensions-sdk",
+    branch = "main",
 )
 
-local_path_override(
+git_override(
     module_name = "moosync",
-    path = "../Moosync",
+    remote = "/home/ovenoboyo/projects/Moosync",
+    branch = "slint",
 )
 
 bazel_dep(name = "rules_go", version = "0.59.0")
