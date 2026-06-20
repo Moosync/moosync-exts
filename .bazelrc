@@ -1,2 +1,2 @@
 common --experimental_isolated_extension_usages
-build --local_resources=memory=HOST_RAM*.5 --local_resources=cpu=HOST_CPUS-1
+common --@aspect_rules_ts//ts:default_to_tsc_transpiler

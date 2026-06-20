@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 	"github.com/Ovenoboyo/scdl/v2/pkg/soundcloud"
@@ -19,14 +20,14 @@ func ptr[T any](v T) *T {
 }
 
 func scTracksToSong(track soundcloudapi.Track) *songs.Song {
-	duration := float64(track.DurationMS) / 1000
+	duration := api.DurationToProto(time.Duration(track.DurationMS) * time.Millisecond)
 	dateAdded := int64(api.SystemTime())
 	return &songs.Song{
 		Song: &songs.InnerSong{
 			Id:                ptr(strconv.Itoa(int(track.ID))),
 			Title:             ptr(track.Title),
 			Date:              ptr(track.DisplayDate),
-			Duration:          &duration,
+			Duration:          duration,
 			Type:              songs.SongType_URL, // Assuming URL type for HLS, or check if HLS enum exists
 			Url:               ptr(track.PermalinkURL),
 			SongCoverPathHigh: ptr(track.ArtworkURL),

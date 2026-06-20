@@ -1,0 +1,11 @@
+# Project-specific dependencies split into individual packages
+include("//discord:discord.MODULE.bazel")
+include("//koel:koel.MODULE.bazel")
+include("//lastfm:lastfm.MODULE.bazel")
+include("//radio:radio.MODULE.bazel")
+include("//spotify:spotify.MODULE.bazel")
+include("//youtube:youtube.MODULE.bazel")
+include("//soundcloud:soundcloud.MODULE.bazel")
+include("//sample_extensions/rs:rs.MODULE.bazel")
+include("//youtube_dl:youtube_dl.MODULE.bazel")
+include("//sample_extensions/py:py.MODULE.bazel")

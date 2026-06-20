@@ -60,14 +60,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: install mopack
-        run: npm install -g @moosync/packer
-
       - name: build extensions
-        run: make
+        run: |
+          bazel build //:all
+          mkdir -p dist
+          cp bazel-bin/*.msxt dist/
+          for dir in discord koel lastfm radio soundcloud spotify youtube youtube_dl; do
+            cp bazel-bin/$dir/package.json $dir/package.json
+          done
 
       - name: Generate manifest
-        run: python3 gen-manifest.py
+        run: |
+          python3 gen-manifest.py
+          for dir in discord koel lastfm radio soundcloud spotify youtube youtube_dl; do
+            rm -f $dir/package.json
+          done
 
       - name: Get release name
         id: date

@@ -1,0 +1,7 @@
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+crate.from_cargo(
+    name = "koel_crates",
+    cargo_lockfile = "//koel:Cargo.lock",
+    manifests = ["//koel:Cargo.toml"],
+)
+use_repo(crate, "koel_crates")

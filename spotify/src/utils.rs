@@ -163,7 +163,9 @@ pub fn parse_track(item: FullTrack) -> Song {
         song: Some(InnerSong {
             id: Some(id.clone()),
             title: Some(item.name),
-            duration: Some(item.duration.num_seconds() as f64),
+            duration: Some(moosync_edk::duration_to_proto(
+                item.duration.to_std().unwrap_or(std::time::Duration::from_secs(0))
+            )),
             r#type: SongType::Spotify as i32,
             url: Some(id.clone()),
             song_cover_path_high: item.album.images.first().map(|i| i.url.clone()),

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "outDir": "./sample_extension_lib",
+    "module": "commonjs",
+    "lib": [
+      "es2020"
+    ],
+    "moduleResolution": "Node",
+    "declaration": true,
+    "paths": {
+      "wasm-extension-js": [
+        "../../bazel-bin/external/extensions_sdk+/wasm-extension-js/src/index.ts",
+        "../../bazel-bin/external/extensions_sdk+/wasm-extension-js/lib/src/index.d.ts",
+        "../../bazel-bin/external/extensions_sdk+/wasm-extension-js/src/index.d.ts"
+      ]
+    },
+    "typeRoots": [
+      "../../bazel-bin/external/extensions_sdk+/wasm-extension-js/node_modules",
+      "node_modules/@types"
+    ],
+    "types": [
+      "@extism/js-pdk"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

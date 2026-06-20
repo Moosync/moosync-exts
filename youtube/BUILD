@@ -1,6 +1,8 @@
 load("@extensions_sdk//:defs.bzl", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
+package(default_visibility = ["//visibility:public"])
+
 rust_extension(
     name = "youtube",
     package_name = "moosync.youtube",

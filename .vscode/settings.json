@@ -38,4 +38,31 @@
     "go.buildOnSave": "off",
     "go.lintOnSave": "off",
     "go.vetOnSave": "off",
+    "rust-analyzer.linkedProjects": [
+        "discord/Cargo.toml",
+        "koel/Cargo.toml",
+        "lastfm/Cargo.toml",
+        "radio/Cargo.toml",
+        "spotify/Cargo.toml",
+        "youtube/Cargo.toml",
+        "sample_extensions/rs/Cargo.toml"
+    ],
+    "rust-analyzer.cargo.target": "wasm32-wasip1",
+    "files.exclude": {
+        "bazel-bin": true,
+        "bazel-out": true,
+        "bazel-testlogs": true,
+        "bazel-${workspaceFolderBasename}": true
+    },
+    "search.exclude": {
+        "bazel-bin": true,
+        "bazel-out": true,
+        "bazel-testlogs": true,
+        "bazel-${workspaceFolderBasename}": true
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/youtube_dl/.venv/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/youtube_dl/.venv/lib/python3.11/site-packages",
+        "${workspaceFolder}/sample_extensions/py/.venv/lib/python3.11/site-packages"
+    ]
 }
