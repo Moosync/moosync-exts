@@ -7,3 +7,4 @@ bazel-*
 rust-project.json
 go.work
 go.work.sum
+.bazelrc.local
