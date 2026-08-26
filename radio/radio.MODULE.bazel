@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+radio_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+radio_crate.from_cargo(
     name = "radio_crates",
     cargo_lockfile = "//radio:Cargo.lock",
+    lockfile = "//radio:Cargo.Bazel.lock",
     manifests = ["//radio:Cargo.toml"],
 )
-use_repo(crate, "radio_crates")
+use_repo(radio_crate, "radio_crates")

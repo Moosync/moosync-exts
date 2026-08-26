@@ -1,19 +1,18 @@
 use moosync_edk::MoosyncError;
-use std::error::Error;
 use std::fmt;
 
 /// Custom error type for the Koel extension.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum KoelError {
-    Http(Box<dyn Error + Send + Sync>),
-    Json(Box<dyn Error + Send + Sync>),
+    Http(String),
+    Json(String),
     MissingToken,
     NoUsername,
     NoPassword,
     PlaylistError,
     PlaylistContentError,
     SearchFailure,
-    Other(Box<dyn Error + Send + Sync>),
+    Other(String),
 }
 
 impl fmt::Display for KoelError {
@@ -43,24 +42,24 @@ impl From<KoelError> for MoosyncError {
 // Convenience conversions for common error types
 impl From<reqwest::Error> for KoelError {
     fn from(e: reqwest::Error) -> Self {
-        KoelError::Http(Box::new(e))
+        KoelError::Http(e.to_string())
     }
 }
 
 impl From<serde_json::Error> for KoelError {
     fn from(e: serde_json::Error) -> Self {
-        KoelError::Json(Box::new(e))
+        KoelError::Json(e.to_string())
     }
 }
 
 impl From<std::io::Error> for KoelError {
     fn from(e: std::io::Error) -> Self {
-        KoelError::Other(Box::new(e))
+        KoelError::Other(e.to_string())
     }
 }
 
 impl From<moosync_edk::MoosyncError> for KoelError {
     fn from(e: moosync_edk::MoosyncError) -> Self {
-        KoelError::Other(Box::new(e))
+        KoelError::Other(e.to_string())
     }
 }

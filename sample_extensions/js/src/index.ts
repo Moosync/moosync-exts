@@ -118,6 +118,27 @@ export function entry(): number {
       api.registerUserPreferences([]);
       api.unregisterUserPreferences([]);
     }
+    if (req.requestId === "http_get_test") {
+      api.fetch("https://example.com");
+    }
+    if (req.requestId === "http_request_test") {
+      api.fetch({
+        url: "https://example.com",
+        method: "POST",
+        headers: { "X-Test": "Value" },
+        body: new Uint8Array([1, 2, 3]),
+        timeoutMs: 5000,
+      });
+    }
+    if (req.requestId === "http_batch_get_test") {
+      api.batchFetch(["https://example.com/1", "https://example.com/2"]);
+    }
+    if (req.requestId === "http_batch_request_test") {
+      api.batchFetch([
+        { url: "https://example.com/1", method: "GET" },
+        { url: "https://example.com/2", method: "POST", body: new Uint8Array([4, 5, 6]) },
+      ]);
+    }
     return new CustomRequestResponse();
   });
 

@@ -53,20 +53,22 @@ impl KoelClient {
                 endpoint.trim_start_matches('/')
             )
         };
-        let mut req = self.client.request(method, &url);
+        let mut req = moosync_edk::http::HttpRequest::new(url).method(method.as_str());
         if use_auth {
             let token = self.token.as_ref().ok_or(KoelError::MissingToken)?;
-            req = req.bearer_auth(token);
+            req = req.header("Authorization", format!("Bearer {token}"));
         }
         if let Some(json_body) = body {
-            req = req.json(json_body);
+            let body_bytes = serde_json::to_vec(json_body)?;
+            req = req
+                .header("Content-Type", "application/json")
+                .body(body_bytes);
         }
-        let resp = futures::executor::block_on(req.send())?;
-        let status = resp.status();
-        if !status.is_success() {
+        let resp = moosync_edk::http::request(&req).map_err(|_| error.clone())?;
+        if !resp.is_success() {
             return Err(error);
         }
-        let data = futures::executor::block_on(resp.json())?;
+        let data: T = serde_json::from_slice(&resp.body)?;
         Ok(data)
     }
 
@@ -80,7 +82,6 @@ impl KoelClient {
                 track_no: ks.track.map(|t| t as f64),
                 year: ks.year.clone().map(|v| v.to_string()),
                 song_cover_path_high: ks.album_cover.clone(),
-                show_in_library: Some(true),
                 playback_url: ks
                     .id
                     .clone()

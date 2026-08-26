@@ -30,7 +30,6 @@ impl YoutubeScraper {
         Song {
             song: Some(InnerSong {
                 id: Some(format!("youtube:{}", v.id.clone())),
-                deviceno: None,
                 title: Some(v.title.clone()),
                 duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_millis(v.duration))),
                 r#type: SongType::Url.into(),
@@ -38,7 +37,6 @@ impl YoutubeScraper {
                 song_cover_path_high: v.thumbnails.first().map(|d| d.url.clone()),
                 song_cover_path_low: v.thumbnails.get(1).map(|d| d.url.clone()),
                 playback_url: Some(format!("extension://moosync.youtubedl/{}", v.id)),
-                provider_extension: Some("youtube".into()),
                 ..Default::default()
             }),
             album: Some(Album {
@@ -59,7 +57,6 @@ impl YoutubeScraper {
         Song {
             song: Some(InnerSong {
                 id: Some(format!("youtube:{}", details.video_id.clone())),
-                deviceno: None,
                 title: Some(details.title.clone()),
                 duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_secs(
                     details.length_seconds.parse().unwrap_or_default()
@@ -69,7 +66,6 @@ impl YoutubeScraper {
                 song_cover_path_high: details.thumbnails.first().map(|d| d.url.clone()),
                 song_cover_path_low: details.thumbnails.get(1).map(|d| d.url.clone()),
                 playback_url: Some(details.video_id.clone()),
-                provider_extension: Some("youtube".into()),
                 ..Default::default()
             }),
             album: Some(Album {

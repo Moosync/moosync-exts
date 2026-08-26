@@ -4,46 +4,51 @@ module(
 )
 
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
-
 git_override(
     module_name = "extensions_sdk",
-    remote = "/home/ovenoboyo/projects/extensions-sdk",
     branch = "main",
+    remote = "https://github.com/Moosync/extensions-sdk",
 )
 
+bazel_dep(name = "moosync")
 git_override(
     module_name = "moosync",
-    remote = "/home/ovenoboyo/projects/Moosync",
     branch = "slint",
+    remote = "https://github.com/Moosync/Moosync",
 )
 
-bazel_dep(name = "rules_go", version = "0.59.0")
-bazel_dep(name = "gazelle", version = "0.47.0")
-bazel_dep(name = "rules_python", version = "1.7.0")
-bazel_dep(name = "rules_cc", version = "0.2.16")
-bazel_dep(name = "rules_rust", version = "0.68.1")
-bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
+bazel_dep(name = "rules_go", version = "0.63.0")
+bazel_dep(name = "gazelle", version = "0.53.0")
+bazel_dep(name = "rules_python", version = "2.3.2")
+bazel_dep(name = "rules_cc", version = "0.2.22")
+bazel_dep(name = "rules_rust", version = "0.73.0")
+single_version_override(
+    module_name = "rules_rust",
+    patch_strip = 1,
+    patches = ["//patches:rules_rust_gnu_windows.patch"],
+    version = "0.73.0",
+)
 
+bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
 
 single_version_override(
     module_name = "protobuf",
-    version = "33.2",
+    version = "36.0",
 )
 
-bazel_dep(name = "rules_rust_prost", version = "0.68.1")
-bazel_dep(name = "platforms", version = "1.0.0")
-bazel_dep(name = "aspect_rules_js", version = "3.1.2")
+bazel_dep(name = "rules_rust_prost", version = "0.73.0")
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "aspect_rules_js", version = "3.4.1")
 single_version_override(
     module_name = "aspect_rules_js",
     patch_strip = 1,
     patches = ["//patches:aspect_rules_js_virtual_store_prefix.patch"],
 )
 
-bazel_dep(name = "aspect_rules_ts", version = "3.8.10")
-bazel_dep(name = "aspect_rules_py", version = "1.11.5")
+bazel_dep(name = "aspect_rules_ts", version = "3.10.1")
+bazel_dep(name = "aspect_rules_py", version = "1.12.0")
 bazel_dep(name = "rules_proto", version = "7.1.0")
-bazel_dep(name = "rules_nodejs", version = "6.2.0")
-
+bazel_dep(name = "rules_nodejs", version = "6.7.5")
 
 # npm packages for JS/TS sample extension (mirrors extensions_sdk sdk_npm)
 npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
@@ -59,7 +64,7 @@ use_repo(node, "nodejs_toolchains")
 register_toolchains("@nodejs_toolchains//:all")
 
 # TypeScript toolchain for JS sample extension
-rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "typescript")
 rules_ts_ext.deps(
     name = "sdk_npm_typescript",
     ts_version_from = "@extensions_sdk//wasm-extension-js:package.json",
@@ -89,7 +94,6 @@ use_repo(rust, "rust_toolchains")
 include("//:dependencies.MODULE.bazel")
 
 register_toolchains(
-    "@rules_rust//rust/private/dummy_cc_toolchain:dummy_cc_wasm32_toolchain",
     "@rust_toolchains//:all",
     "@rules_foreign_cc//toolchains:preinstalled_pkgconfig_toolchain",
     "@extensions_sdk//prost_toolchain:prost_toolchain_wasi",

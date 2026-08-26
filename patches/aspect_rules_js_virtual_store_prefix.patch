@@ -1,6 +1,6 @@
 --- a/npm/private/npm_package_store.bzl
 +++ b/npm/private/npm_package_store.bzl
-@@ -190,5 +190,5 @@
+@@ -194,5 +194,5 @@
      package_store_prefix_len = _PACKAGE_STORE_PREFIX_LEN
      if ctx.label.package:
 -        package_store_prefix_len += len(ctx.label.package)

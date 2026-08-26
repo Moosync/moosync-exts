@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+discord_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+discord_crate.from_cargo(
     name = "discord_crates",
     cargo_lockfile = "//discord:Cargo.lock",
+    lockfile = "//discord:Cargo.Bazel.lock",
     manifests = ["//discord:Cargo.toml"],
 )
-use_repo(crate, "discord_crates")
+use_repo(discord_crate, "discord_crates")

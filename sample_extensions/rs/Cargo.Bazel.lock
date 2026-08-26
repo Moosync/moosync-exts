@@ -1,0 +1,810 @@
+{
+  "checksum": "43b2251d1fb8c35e7b8a7a184425c7d892f77da1d22dddf510f83ed24c4442f1",
+  "crates": {
+    "itoa 1.0.18": {
+      "name": "itoa",
+      "version": "1.0.18",
+      "package_url": "https://github.com/dtolnay/itoa",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/itoa/1.0.18/download",
+          "sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "itoa",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "itoa",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "edition": "2021",
+        "version": "1.0.18"
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "memchr 2.8.2": {
+      "name": "memchr",
+      "version": "2.8.2",
+      "package_url": "https://github.com/BurntSushi/memchr",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/memchr/2.8.2/download",
+          "sha256": "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "memchr",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "memchr",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "alloc",
+            "std"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "2.8.2"
+      },
+      "license": "Unlicense OR MIT",
+      "license_ids": [
+        "MIT",
+        "Unlicense"
+      ],
+      "license_file": "LICENSE-MIT"
+    },
+    "proc-macro2 1.0.106": {
+      "name": "proc-macro2",
+      "version": "1.0.106",
+      "package_url": "https://github.com/dtolnay/proc-macro2",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/proc-macro2/1.0.106/download",
+          "sha256": "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "proc_macro2",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "proc_macro2",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "proc-macro"
+          ],
+          "selects": {}
+        },
+        "deps": {
+          "common": [
+            {
+              "id": "unicode-ident 1.0.24",
+              "target": "unicode_ident"
+            }
+          ],
+          "selects": {}
+        },
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.106"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "quote 1.0.45": {
+      "name": "quote",
+      "version": "1.0.45",
+      "package_url": "https://github.com/dtolnay/quote",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/quote/1.0.45/download",
+          "sha256": "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "quote",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "quote",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "proc-macro"
+          ],
+          "selects": {}
+        },
+        "deps": {
+          "common": [
+            {
+              "id": "proc-macro2 1.0.106",
+              "target": "proc_macro2"
+            }
+          ],
+          "selects": {}
+        },
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.45"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "rs-sample 1.0.0": {
+      "name": "rs-sample",
+      "version": "1.0.0",
+      "package_url": null,
+      "repository": null,
+      "targets": [],
+      "library_target_name": null,
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "deps": {
+          "common": [
+            {
+              "id": "serde_json 1.0.150",
+              "target": "serde_json"
+            }
+          ],
+          "selects": {}
+        },
+        "edition": "2024",
+        "version": "1.0.0"
+      },
+      "license": null,
+      "license_ids": [],
+      "license_file": null
+    },
+    "serde 1.0.228": {
+      "name": "serde",
+      "version": "1.0.228",
+      "package_url": "https://github.com/serde-rs/serde",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/serde/1.0.228/download",
+          "sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "serde",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "serde",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "deps": {
+          "common": [
+            {
+              "id": "serde_core 1.0.228",
+              "target": "serde_core"
+            }
+          ],
+          "selects": {}
+        },
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.228"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "serde_core 1.0.228": {
+      "name": "serde_core",
+      "version": "1.0.228",
+      "package_url": "https://github.com/serde-rs/serde",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/serde_core/1.0.228/download",
+          "sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "serde_core",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "serde_core",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "std"
+          ],
+          "selects": {}
+        },
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "proc_macro_deps": {
+          "common": [],
+          "selects": {
+            "cfg(any())": [
+              {
+                "id": "serde_derive 1.0.228",
+                "target": "serde_derive"
+              }
+            ]
+          }
+        },
+        "version": "1.0.228"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "serde_derive 1.0.228": {
+      "name": "serde_derive",
+      "version": "1.0.228",
+      "package_url": "https://github.com/serde-rs/serde",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/serde_derive/1.0.228/download",
+          "sha256": "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
+        }
+      },
+      "targets": [
+        {
+          "ProcMacro": {
+            "crate_name": "serde_derive",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "serde_derive",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "deps": {
+          "common": [
+            {
+              "id": "proc-macro2 1.0.106",
+              "target": "proc_macro2"
+            },
+            {
+              "id": "quote 1.0.45",
+              "target": "quote"
+            },
+            {
+              "id": "syn 2.0.117",
+              "target": "syn"
+            }
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.228"
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "serde_json 1.0.150": {
+      "name": "serde_json",
+      "version": "1.0.150",
+      "package_url": "https://github.com/serde-rs/json",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/serde_json/1.0.150/download",
+          "sha256": "e8014e44b4736ed0538adeecded0fce2a272f22dc9578a7eb6b2d9993c74cfb9"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "serde_json",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "serde_json",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "default",
+            "std"
+          ],
+          "selects": {}
+        },
+        "deps": {
+          "common": [
+            {
+              "id": "itoa 1.0.18",
+              "target": "itoa"
+            },
+            {
+              "id": "memchr 2.8.2",
+              "target": "memchr"
+            },
+            {
+              "id": "serde_core 1.0.228",
+              "target": "serde_core"
+            },
+            {
+              "id": "zmij 1.0.21",
+              "target": "zmij"
+            }
+          ],
+          "selects": {
+            "cfg(any())": [
+              {
+                "id": "serde 1.0.228",
+                "target": "serde"
+              }
+            ]
+          }
+        },
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.150"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "syn 2.0.117": {
+      "name": "syn",
+      "version": "2.0.117",
+      "package_url": "https://github.com/dtolnay/syn",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/syn/2.0.117/download",
+          "sha256": "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "syn",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "syn",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "crate_features": {
+          "common": [
+            "clone-impls",
+            "derive",
+            "parsing",
+            "printing",
+            "proc-macro"
+          ],
+          "selects": {}
+        },
+        "deps": {
+          "common": [
+            {
+              "id": "proc-macro2 1.0.106",
+              "target": "proc_macro2"
+            },
+            {
+              "id": "quote 1.0.45",
+              "target": "quote"
+            },
+            {
+              "id": "unicode-ident 1.0.24",
+              "target": "unicode_ident"
+            }
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "2.0.117"
+      },
+      "license": "MIT OR Apache-2.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "unicode-ident 1.0.24": {
+      "name": "unicode-ident",
+      "version": "1.0.24",
+      "package_url": "https://github.com/dtolnay/unicode-ident",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/unicode-ident/1.0.24/download",
+          "sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "unicode_ident",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "unicode_ident",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "edition": "2021",
+        "version": "1.0.24"
+      },
+      "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "license_ids": [
+        "Apache-2.0",
+        "MIT",
+        "Unicode-3.0"
+      ],
+      "license_file": "LICENSE-APACHE"
+    },
+    "zmij 1.0.21": {
+      "name": "zmij",
+      "version": "1.0.21",
+      "package_url": "https://github.com/dtolnay/zmij",
+      "repository": {
+        "Http": {
+          "url": "https://static.crates.io/crates/zmij/1.0.21/download",
+          "sha256": "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
+        }
+      },
+      "targets": [
+        {
+          "Library": {
+            "crate_name": "zmij",
+            "crate_root": "src/lib.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        },
+        {
+          "BuildScript": {
+            "crate_name": "build_script_build",
+            "crate_root": "build.rs",
+            "srcs": {
+              "allow_empty": true,
+              "include": [
+                "**/*.rs"
+              ]
+            }
+          }
+        }
+      ],
+      "library_target_name": "zmij",
+      "common_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "extra_deps": {
+          "common": [
+            ":build_script_build"
+          ],
+          "selects": {}
+        },
+        "edition": "2021",
+        "version": "1.0.21"
+      },
+      "build_script_attrs": {
+        "compile_data_glob": [
+          "**"
+        ],
+        "compile_data_glob_excludes": [
+          "**/*.rs"
+        ],
+        "data_glob": [
+          "**"
+        ]
+      },
+      "license": "MIT",
+      "license_ids": [
+        "MIT"
+      ],
+      "license_file": "LICENSE-MIT"
+    }
+  },
+  "binary_crates": [],
+  "workspace_members": {
+    "rs-sample 1.0.0": "sample_extensions/rs"
+  },
+  "conditions": {
+    "aarch64-apple-darwin": [
+      "aarch64-apple-darwin"
+    ],
+    "aarch64-unknown-linux-gnu": [
+      "aarch64-unknown-linux-gnu"
+    ],
+    "cfg(any())": [],
+    "wasm32-unknown-unknown": [
+      "wasm32-unknown-unknown"
+    ],
+    "wasm32-wasip1": [
+      "wasm32-wasip1"
+    ],
+    "x86_64-pc-windows-msvc": [
+      "x86_64-pc-windows-msvc"
+    ],
+    "x86_64-unknown-linux-gnu": [
+      "x86_64-unknown-linux-gnu"
+    ],
+    "x86_64-unknown-nixos-gnu": [
+      "x86_64-unknown-nixos-gnu"
+    ]
+  },
+  "direct_deps": [
+    "serde_json 1.0.150"
+  ],
+  "direct_dev_deps": [],
+  "unused_patches": []
+}

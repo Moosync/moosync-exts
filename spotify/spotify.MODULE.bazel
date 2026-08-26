@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+spotify_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+spotify_crate.from_cargo(
     name = "spotify_crates",
     cargo_lockfile = "//spotify:Cargo.lock",
+    lockfile = "//spotify:Cargo.Bazel.lock",
     manifests = ["//spotify:Cargo.toml"],
 )
-use_repo(crate, "spotify_crates")
+use_repo(spotify_crate, "spotify_crates")

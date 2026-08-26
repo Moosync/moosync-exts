@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use md5::{Digest, Md5};
 use moosync_edk::{
-    api::extension_api::get_system_time, error, http, info, HttpRequest, MoosyncResult, Song,
+    api::extension_api::get_system_time, error, http, info, MoosyncResult, Song,
 };
 use regex::Regex;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -121,21 +121,25 @@ impl Client {
         };
 
         info!("Calling URL {}", url);
-        let request = HttpRequest::new(url)
-            .with_method(http_method)
-            .with_header("Content-Type", "application/x-www-form-urlencoded");
-        info!("http body {:?}", body);
-        match http::request(&request, body) {
-            Ok(resp) => {
-                // info!("Got response {:?}", str::from_utf8(&resp.body()));
-                let body = resp.body();
-                if let Ok(parsed) = serde_json::from_slice(&body) {
-                    return Ok(parsed);
-                }
-                Err(format!("Failed to parse response {:?}", str::from_utf8(&body)).into())
-            }
-            Err(e) => Err(format!("Error calling lastfm API {:?}", e).into()),
+        let mut request = http::HttpRequest::new(url.to_string())
+            .method(http_method)
+            .header("Content-Type", "application/x-www-form-urlencoded");
+        if let Some(b) = body {
+            request = request.body(b.into_bytes());
         }
+
+        let resp = http::request(&request)?;
+        if !resp.is_success() {
+            return Err(format!(
+                "Error calling lastfm API: status {} {}",
+                resp.status_code, resp.status_text
+            )
+            .into());
+        }
+
+        let parsed: T = serde_json::from_slice(&resp.body)
+            .map_err(|e| format!("Failed to parse response: {e}"))?;
+        Ok(parsed)
     }
 
     fn get_sig(&self, params: &HashMap<String, String>) -> String {
