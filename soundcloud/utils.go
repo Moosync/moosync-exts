@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -104,22 +102,16 @@ func getStreamUrl(trackInfo *soundcloudapi.Track) (string, error) {
 }
 
 func getDirectURLFromStream(playlistUrl string) (string, error) {
-	playlistUrlResp, err := http.Get(playlistUrl)
+	resp, err := api.HttpGet(playlistUrl, nil)
 	if err != nil {
 		return "", err
 	}
-
-	defer playlistUrlResp.Body.Close()
-
-	body, err := io.ReadAll(playlistUrlResp.Body)
-	if err != nil {
-		return "", err
+	if !resp.OK() {
+		return "", fmt.Errorf("failed to fetch stream URL: %s (%d)", resp.StatusText, resp.StatusCode)
 	}
-
-	api.LogInfo("got resp %s", string(body))
 
 	var audioResp soundcloud.AudioLink
-	err = json.Unmarshal(body, &audioResp)
+	err = resp.JSON(&audioResp)
 	if err != nil {
 		return "", err
 	}

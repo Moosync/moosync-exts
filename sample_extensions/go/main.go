@@ -192,6 +192,31 @@ func (s *SampleExtension) HandleCustomRequest(req *extensions.CustomRequest) (*e
 		_ = api.UnregisterUserPreference([]string{})
 	}
 
+	if requestId == "http_get_test" {
+		_, _ = api.HttpGet("https://example.com", nil)
+	}
+
+	if requestId == "http_request_test" {
+		_, _ = api.SendHttpRequest(api.HttpRequest{
+			URL:       "https://example.com",
+			Method:    "POST",
+			Headers:   map[string]string{"X-Test": "Value"},
+			Body:      []byte{1, 2, 3},
+			TimeoutMs: 5000,
+		})
+	}
+
+	if requestId == "http_batch_get_test" {
+		_, _ = api.BatchHttpGet([]string{"https://example.com/1", "https://example.com/2"}, nil)
+	}
+
+	if requestId == "http_batch_request_test" {
+		_, _ = api.BatchHttpRequest([]api.HttpRequest{
+			{URL: "https://example.com/1", Method: "GET"},
+			{URL: "https://example.com/2", Method: "POST", Body: []byte{4, 5, 6}},
+		})
+	}
+
 	return &extensions.CustomRequestResponse{}, nil
 }
 

@@ -284,7 +284,6 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
         moosync_edk::Song {
             song: Some(InnerSong {
                 id: video_id.as_ref().map(|id| format!("youtube:{}", id)),
-                deviceno: None,
                 title,
                 duration: None, // Not available from playlistItems API
                 r#type: moosync_edk::SongType::Url.into(),
@@ -299,7 +298,6 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
                 playback_url: video_id
                     .as_ref()
                     .map(|id| format!("extension://moosync.youtubedl/{}", id)),
-                provider_extension: Some("youtube".into()),
                 ..Default::default()
             }),
             album: Some(Album {

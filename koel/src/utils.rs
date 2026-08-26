@@ -116,11 +116,9 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
             duration: f64_to_duration(ks.get("length").and_then(|v| v.as_f64())),
             track_no: ks.get("track").and_then(|v| v.as_u64().map(|t| t as f64)),
             year: ks.get("year").map(|v| v.to_string()),
-            provider_extension: Some("koel".to_string()),
             song_cover_path_high: ks
                 .get("album_cover")
                 .and_then(|v| v.as_str().map(|s| s.to_string())),
-            show_in_library: Some(true),
             playback_url: ks
                 .get("id")
                 .and_then(|id| id.as_str())

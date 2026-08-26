@@ -236,6 +236,34 @@ impl Provider for SampleExtension {
             let _ = unregister_user_preferences(vec![]);
         }
 
+        if request_id == "http_get_test" {
+            let _ = moosync_edk::http::get("https://example.com", None);
+        }
+
+        if request_id == "http_request_test" {
+            let req = moosync_edk::http::HttpRequest::post("https://example.com")
+                .header("X-Test", "Value")
+                .body(vec![1, 2, 3])
+                .timeout_ms(5000);
+            let _ = moosync_edk::http::request(&req);
+        }
+
+        if request_id == "http_batch_get_test" {
+            let _ = moosync_edk::http::batch_get(
+                &["https://example.com/1", "https://example.com/2"],
+                None,
+            );
+        }
+
+        if request_id == "http_batch_request_test" {
+            let reqs = vec![
+                moosync_edk::http::HttpRequest::get("https://example.com/1"),
+                moosync_edk::http::HttpRequest::post("https://example.com/2")
+                    .body(vec![4, 5, 6]),
+            ];
+            let _ = moosync_edk::http::batch_request(&reqs);
+        }
+
         Ok(CustomRequestReturnType {
             mime_type: None,
             data: None,

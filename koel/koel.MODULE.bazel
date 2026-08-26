@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+koel_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+koel_crate.from_cargo(
     name = "koel_crates",
     cargo_lockfile = "//koel:Cargo.lock",
+    lockfile = "//koel:Cargo.Bazel.lock",
     manifests = ["//koel:Cargo.toml"],
 )
-use_repo(crate, "koel_crates")
+use_repo(koel_crate, "koel_crates")

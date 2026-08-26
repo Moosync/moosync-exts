@@ -80,11 +80,21 @@ class UrllibCustomRH(RequestHandler, InstanceStoreMixin):
         return OpenerDirector()
 
     def _send(self, request):
-        if request.data is not None:
-            response = http_request(url=request.url, headers=request.headers, method=request.method, body=request.data)
-        else:
-            response = http_request(url=request.url, headers=request.headers, method=request.method)
-        return CustomResponse(fp=BytesIO(response.data_bytes()), url=request.url, headers=request.headers)
+        resp = http_request(
+            url=request.url,
+            headers=request.headers,
+            method=request.method,
+            body=request.data,
+        )
+        if not resp.ok:
+            raise Exception(f"HTTP request failed: {resp.error}")
+        return CustomResponse(
+            fp=BytesIO(resp.body),
+            url=request.url,
+            headers=resp.headers,
+            status=resp.status_code,
+            reason=resp.status_text,
+        )
 
 
 @register_preference(UrllibCustomRH)

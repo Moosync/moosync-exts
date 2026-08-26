@@ -38,6 +38,41 @@ class SampleExtension(Extension):
             self.api.unregister_user_preferences([])
             return extensions_pb2.CustomRequestResponse()
 
+        if req.request_id == "http_get_test":
+            from moosync_edk import http_get
+            try:
+                http_get("https://example.com")
+            except Exception:
+                pass
+            return extensions_pb2.CustomRequestResponse()
+
+        if req.request_id == "http_request_test":
+            from moosync_edk import http_request
+            try:
+                http_request("https://example.com", method="POST", headers={"X-Test": "Value"}, body=b"123", timeout_ms=5000)
+            except Exception:
+                pass
+            return extensions_pb2.CustomRequestResponse()
+
+        if req.request_id == "http_batch_get_test":
+            from moosync_edk import http_batch_get
+            try:
+                http_batch_get(["https://example.com/1", "https://example.com/2"])
+            except Exception:
+                pass
+            return extensions_pb2.CustomRequestResponse()
+
+        if req.request_id == "http_batch_request_test":
+            from moosync_edk import http_batch_request, HttpRequest
+            try:
+                http_batch_request([
+                    HttpRequest(url="https://example.com/1", method="GET"),
+                    HttpRequest(url="https://example.com/2", method="POST", body=b"456"),
+                ])
+            except Exception:
+                pass
+            return extensions_pb2.CustomRequestResponse()
+
         return extensions_pb2.CustomRequestResponse()
 
     def get_search(self, req):

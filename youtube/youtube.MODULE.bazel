@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+youtube_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+youtube_crate.from_cargo(
     name = "youtube_crates",
     cargo_lockfile = "//youtube:Cargo.lock",
+    lockfile = "//youtube:Cargo.Bazel.lock",
     manifests = ["//youtube:Cargo.toml"],
 )
-use_repo(crate, "youtube_crates")
+use_repo(youtube_crate, "youtube_crates")

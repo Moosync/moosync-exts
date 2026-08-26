@@ -171,7 +171,6 @@ pub fn parse_track(item: FullTrack) -> Song {
             song_cover_path_high: item.album.images.first().map(|i| i.url.clone()),
             playback_url: Some(id),
             track_no: Some(item.disc_number as f64),
-            provider_extension: Some("spotify".to_string()),
             ..Default::default()
         }),
         album: if item.album.id.is_some() {

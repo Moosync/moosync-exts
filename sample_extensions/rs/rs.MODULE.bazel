@@ -1,7 +1,8 @@
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.from_cargo(
+rs_sample_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+rs_sample_crate.from_cargo(
     name = "rs_sample_crates",
     cargo_lockfile = "//sample_extensions/rs:Cargo.lock",
+    lockfile = "//sample_extensions/rs:Cargo.Bazel.lock",
     manifests = ["//sample_extensions/rs:Cargo.toml"],
 )
-use_repo(crate, "rs_sample_crates")
+use_repo(rs_sample_crate, "rs_sample_crates")

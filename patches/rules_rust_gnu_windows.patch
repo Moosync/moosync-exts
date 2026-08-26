@@ -1,0 +1,77 @@
+diff -urN a_clean/rust/platform/BUILD.bazel b_clean/rust/platform/BUILD.bazel
+--- a/rust/platform/BUILD.bazel	2026-07-31 14:43:46.000000000 -0400
++++ b/rust/platform/BUILD.bazel	2026-08-24 21:16:45.643236456 -0400
+@@ -35,3 +35,18 @@
+     srcs = glob(["**/*.bzl"]),
+     visibility = ["//rust:__subpackages__"],
+ )
++
++constraint_setting(
++    name = "windows_abi",
++    default_constraint_value = ":msvc",
++)
++
++constraint_value(
++    name = "msvc",
++    constraint_setting = ":windows_abi",
++)
++
++constraint_value(
++    name = "gnu",
++    constraint_setting = ":windows_abi",
++)
+diff -urN a_clean/rust/platform/triple_mappings.bzl b_clean/rust/platform/triple_mappings.bzl
+--- a/rust/platform/triple_mappings.bzl	2026-07-31 14:43:46.000000000 -0400
++++ b/rust/platform/triple_mappings.bzl	2026-08-24 21:16:45.643301649 -0400
+@@ -32,6 +32,7 @@
+     "x86_64-pc-windows-msvc": _support(std = True, host_tools = True),
+     "x86_64-unknown-linux-gnu": _support(std = True, host_tools = True),
+     "x86_64-unknown-nixos-gnu": _support(std = True, host_tools = True),  # Same as `x86_64-unknown-linux-gnu` but with `@platforms//os:nixos`.
++    "x86_64-pc-windows-gnu": _support(std = True, host_tools = True),
+     # N.B. These "alternative" envs are not supported, as bazel cannot distinguish between them
+     # and others using existing @platforms// config_values
+     #
+@@ -515,6 +516,18 @@
+             "@platforms//os:osx",
+             "@apple_support//constraints:catalyst",
+         ]
++    if target_triple == "x86_64-pc-windows-gnu":
++        return [
++            "@platforms//cpu:x86_64",
++            "@platforms//os:windows",
++            "@rules_rust//rust/platform:gnu",
++        ]
++    if target_triple == "x86_64-pc-windows-msvc":
++        return [
++            "@platforms//cpu:x86_64",
++            "@platforms//os:windows",
++            "@rules_rust//rust/platform:msvc",
++        ]
+ 
+     triple_struct = triple(target_triple)
+ 
+diff -urN a_clean/rust/private/rustc.bzl b_clean/rust/private/rustc.bzl
+--- a/rust/private/rustc.bzl	2026-07-31 14:43:46.000000000 -0400
++++ b/rust/private/rustc.bzl	2026-08-24 21:16:45.643642222 -0400
+@@ -595,7 +595,7 @@
+             if _is_dylib(lib):
+                 continue
+             artifact = get_preferred_artifact(lib, use_pic)
+-            name = get_lib_name_for_windows(artifact) if toolchain.target_os.startswith("windows") else get_lib_name_default(artifact)
++            name = get_lib_name_for_windows(artifact) if (toolchain.target_os.startswith("windows") and toolchain.target_abi == "msvc") else get_lib_name_default(artifact)
+ 
+             # On Linux-like platforms, normally library base names start with
+             # `lib`, following the pattern `lib[name].(a|lo)` and we pass
+@@ -605,10 +605,10 @@
+             # FIXME: Under the native-link-modifiers unstable rustc feature,
+             # we could use -lstatic:+verbatim instead.
+             needs_symlink_to_standardize_name = (
+-                toolchain.target_os.startswith(("linux", "mac", "darwin")) and
++                (toolchain.target_os.startswith(("linux", "mac", "darwin")) or (toolchain.target_os.startswith("windows") and toolchain.target_abi != "msvc")) and
+                 artifact.basename.endswith(".a") and not artifact.basename.startswith("lib")
+             ) or (
+-                toolchain.target_os.startswith("windows") and not artifact.basename.endswith(".lib")
++                toolchain.target_os.startswith("windows") and toolchain.target_abi == "msvc" and not artifact.basename.endswith(".lib")
+             )
+ 
+             # Detect cases where we need to disambiguate library dependencies
