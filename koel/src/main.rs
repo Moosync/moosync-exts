@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 use moosync_edk::{
-    ExtensionProviderScope, InputType, MoosyncResult, Playlist, PreferenceTypes, PreferenceUiData,
+    ExtensionProviderScope, MoosyncResult, Playlist, PreferenceItem, PreferenceType,
     RequestedAlbumSongsRequest, RequestedArtistSongsRequest, RequestedPlaylistSongsRequest,
     RequestedPlaylistsRequest, RequestedSearchResultRequest, RequestedSongFromUrlRequest,
     SearchResult, Song,
@@ -121,11 +121,6 @@ impl DatabaseEvents for KoelExtension {}
 impl PreferenceEvents for KoelExtension {}
 impl ContextMenu for KoelExtension {}
 impl Accounts for KoelExtension {
-    fn get_accounts(&self) -> MoosyncResult<Vec<moosync_edk::ExtensionAccountDetail>> {
-        let inner = self.inner.lock().unwrap();
-        Ok(inner.get_accounts()?)
-    }
-
     fn perform_account_login(
         &self,
         args: moosync_edk::api::AccountLoginArgs,
@@ -141,31 +136,30 @@ impl Extension for KoelExtension {}
 #[unsafe(no_mangle)]
 pub extern "C" fn init() {
     info!("Initializing KoelExtension");
-    register_extension(Box::new(KoelExtension::new())).unwrap();
+    let extension = KoelExtension::new();
+    let _ = extension.inner.lock().unwrap().sync_account();
+    register_extension(Box::new(extension)).unwrap();
 
     let _ = register_user_preferences(vec![
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Instance URL".into(),
-            key: "koel_instance_url".into(),
-            description: "Full URL to your koel instance".into(),
-            input_type: Some(InputType::Text.into()),
+            id: "koel_instance_url".into(),
+            subtitle: "Full URL to your koel instance".into(),
             ..Default::default()
         },
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Email".into(),
-            key: "koel_username".into(),
-            description: "Email for your koel account".into(),
-            input_type: Some(InputType::Text.into()),
+            id: "koel_username".into(),
+            subtitle: "Email for your koel account".into(),
             ..Default::default()
         },
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Password".into(),
-            key: "koel_password".into(),
-            description: "Password for your koel account".into(),
-            input_type: Some(InputType::Text.into()),
+            id: "koel_password".into(),
+            subtitle: "Password for your koel account".into(),
             ..Default::default()
         },
     ]);

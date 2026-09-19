@@ -31,7 +31,7 @@ py_extension(
     display_name = "Youtube (No API)",
     icon = "assets/icon.svg",
     main = "extension.py",
-    version = "0.0.1",
+    version = "1.0.1",
     deps = [
         requirement("yt-dlp"),
         requirement("yt-dlp-remote-cipher"),

@@ -4,7 +4,7 @@ use client::{Builder, Client};
 use moosync_edk::{
     api::{
         extension_api::{
-            self, get_current_song, get_secure, register_oauth, set_secure, update_accounts,
+            self, get_current_song, get_secure, register_oauth, set_account, set_secure,
         },
         AccountLoginArgs, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents,
         PreferenceEvents, Provider, SongChangedRequest,
@@ -22,6 +22,20 @@ struct LastFMExtension {
 }
 
 impl LastFMExtension {
+    fn sync_account(&self) {
+        let client = self.client.lock().unwrap();
+        let username = client.get_username();
+        let _ = set_account(ExtensionAccountDetail {
+            id: "lastfm".into(),
+            package_name: "lastfm".into(),
+            name: "Last.fm".into(),
+            bg_color: "red".into(),
+            icon: "".into(),
+            logged_in: username.is_some(),
+            username,
+        });
+    }
+
     fn fetch_session(&self) -> MoosyncResult<()> {
         if let Ok(session) = get_secure(PreferenceData {
             key: "session".to_string(),
@@ -32,7 +46,7 @@ impl LastFMExtension {
                      if let Ok(parsed_session) = serde_json::from_str(&session_str) {
                          let mut client = self.client.lock().unwrap();
                          client.set_session(parsed_session);
-                         update_accounts(Some("moosync.lastfm".into())).unwrap();
+                         self.sync_account();
                      } else {
                          error!("Failed to parse existing sessions {:?}", session_str);
                      }
@@ -90,20 +104,6 @@ impl PreferenceEvents for LastFMExtension {}
 impl ContextMenu for LastFMExtension {}
 impl Extension for LastFMExtension {}
 impl Accounts for LastFMExtension {
-    fn get_accounts(&self) -> MoosyncResult<Vec<moosync_edk::ExtensionAccountDetail>> {
-        let client = self.client.lock().unwrap();
-        let username = client.get_username();
-        Ok(vec![ExtensionAccountDetail {
-            id: "lastfm".into(),
-            package_name: "lastfm".into(),
-            name: "Last.fm".into(),
-            bg_color: "red".into(),
-            icon: "".into(),
-            logged_in: username.is_some(),
-            username,
-        }])
-    }
-
     fn perform_account_login(&self, args: AccountLoginArgs) -> MoosyncResult<String> {
         info!("Performing account login {}", args.login_status);
         let mut client = self.client.lock().unwrap();
@@ -118,7 +118,7 @@ impl Accounts for LastFMExtension {
                 key: "session".to_string(),
                 value: None,
             })?;
-            update_accounts(Some("moosync.lastfm".into()))?;
+            self.sync_account();
             Ok(String::new())
         }
     }
@@ -143,7 +143,8 @@ impl Accounts for LastFMExtension {
             }
         }
 
-        update_accounts(Some("moosync.lastfm".into()))
+        self.sync_account();
+        Ok(())
     }
 }
 
@@ -153,6 +154,7 @@ pub extern "C" fn init() {
 
     let extension = LastFMExtension::new();
     extension.fetch_session().unwrap();
+    extension.sync_account();
 
     register_extension(Box::new(extension)).unwrap();
 

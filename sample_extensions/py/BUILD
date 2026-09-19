@@ -10,3 +10,8 @@ py_extension(
     display_name = "Sample Extension (Python)",
     version = "1.0.0",
 )
+
+alias(
+    name = "py",
+    actual = ":sample_extension",
+)

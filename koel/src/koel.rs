@@ -3,7 +3,7 @@ use moosync_edk::{
     Album, Artist, Genre, InnerSong, Playlist, SearchResult, Song,
     api::{
         AccountLoginArgs, ExtensionAccountDetail, PreferenceData, SongsWithPageTokenReturnType,
-        extension_api::{get_preference, get_secure, set_preference, set_secure, update_accounts},
+        extension_api::{get_preference, get_secure, set_account, set_preference, set_secure},
     },
     info,
 };
@@ -77,7 +77,7 @@ impl KoelClient {
             song: Some(InnerSong {
                 id: ks.id.clone(),
                 title: ks.title.clone(),
-                lyrics: ks.lyrics.clone(),
+                lyrics: ks.lyrics.as_deref().and_then(crate::utils::string_to_lyrics),
                 duration: crate::utils::f64_to_duration(ks.length),
                 track_no: ks.track.map(|t| t as f64),
                 year: ks.year.clone().map(|v| v.to_string()),
@@ -170,7 +170,7 @@ impl KoelClient {
         if let Some(token) = v.get("token").and_then(|t| t.as_str()) {
             self.token = Some(token.to_string());
             info!("Setting token {:?}", self.token);
-            update_accounts(Some("moosync.koel".into()))?;
+            self.sync_account()?;
             Ok(())
         } else {
             Err(KoelError::MissingToken)
@@ -242,8 +242,8 @@ impl KoelClient {
         Ok(Some(self.map_koel_song(&ks)))
     }
 
-    pub fn get_accounts(&self) -> Result<Vec<ExtensionAccountDetail>, KoelError> {
-        Ok(vec![ExtensionAccountDetail {
+    pub fn sync_account(&self) -> Result<(), KoelError> {
+        let _ = set_account(ExtensionAccountDetail {
             id: "koel".into(),
             package_name: "koel".into(),
             name: "Koel".into(),
@@ -251,7 +251,8 @@ impl KoelClient {
             icon: "".into(),
             logged_in: self.token.is_some(),
             username: self.username.clone(),
-        }])
+        });
+        Ok(())
     }
 
     pub fn perform_account_login(&mut self, args: AccountLoginArgs) -> Result<String, KoelError> {
@@ -264,6 +265,8 @@ impl KoelClient {
                 key: "koel_password".to_string(),
                 value: None,
             })?;
+            self.token = None;
+            self.sync_account()?;
             return Ok("".into());
         }
 

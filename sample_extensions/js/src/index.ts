@@ -1,10 +1,18 @@
 import {
   ExtensionAccountDetail,
-  GetAccountsResponse,
+  ExtensionProviderScope,
   GetProviderScopesResponse,
   PerformAccountLoginResponse,
   getApi,
   Playlist,
+  Song,
+  InnerSong,
+  Artist,
+  Album,
+  RequestedPlaylistsResponse,
+  RequestedPlaylistSongsResponse,
+  RequestedArtistSongsResponse,
+  RequestedAlbumSongsResponse,
   RequestedSearchResultResponse,
   SongChangedResponse,
   PlayerStateChangedResponse,
@@ -17,7 +25,6 @@ import {
   PreferenceData,
   AddToPlaylistRequest,
   GetProviderScopesRequest,
-  GetAccountsRequest,
   PerformAccountLoginRequest,
   RequestedSearchResultRequest,
   SongChangedRequest,
@@ -32,6 +39,25 @@ import {
 
 export { handle_extension_command } from "wasm-extension-js";
 
+function mockSampleSong(id: string, title: string): Song {
+  return new Song({
+    song: new InnerSong({
+      id,
+      title,
+    }),
+    artists: [
+      new Artist({
+        artistId: `art-${id}`,
+        artistName: `Artist for ${title}`,
+      }),
+    ],
+    album: new Album({
+      albumId: `alb-${id}`,
+      albumName: `Album for ${title}`,
+    }),
+  });
+}
+
 // Initialize extension
 // console.log("Sample extension loaded");
 
@@ -41,37 +67,139 @@ export function entry(): number {
   api.on("getProviderScopes", () => {
     return new GetProviderScopesResponse({
       scopes: [
-        13 as any
+        ExtensionProviderScope.ACCOUNTS,
+        ExtensionProviderScope.SEARCH,
+        ExtensionProviderScope.PLAYLISTS,
+        ExtensionProviderScope.PLAYLIST_SONGS,
+        ExtensionProviderScope.ARTIST_SONGS,
+        ExtensionProviderScope.ALBUM_SONGS,
       ]
     });
   });
 
-  api.on("getAccounts", () => {
-    api.updateAccounts("sample.pkg");
-    const account = new ExtensionAccountDetail({
-      id: "test_account",
-      name: "Test Account",
-      loggedIn: true,
-      username: "User",
-      bgColor: "",
-      icon: ""
-    });
-    return new GetAccountsResponse({
-      accounts: [account]
+  api.on("requestedPlaylists", () => {
+    return new RequestedPlaylistsResponse({
+      playlists: [
+        new Playlist({
+          playlistId: "ext-playlist-1",
+          playlistName: "Extension Playlist 1",
+        }),
+        new Playlist({
+          playlistId: "ext-playlist-2",
+          playlistName: "Extension Playlist 2",
+        }),
+      ]
     });
   });
 
-  api.on("performAccountLogin", () => {
-    api.registerOauth("https://example.com/callback");
-    return new PerformAccountLoginResponse({
-      status: "success"
+  api.on("requestedPlaylistSongs", () => {
+    return new RequestedPlaylistSongsResponse({
+      songs: [
+        mockSampleSong("pl-song-1", "Playlist Song 1"),
+        mockSampleSong("pl-song-2", "Playlist Song 2"),
+      ]
     });
   });
+
+  api.on("requestedArtistSongs", () => {
+    return new RequestedArtistSongsResponse({
+      songs: [
+        mockSampleSong("artist-song-1", "Artist Song 1"),
+        mockSampleSong("artist-song-2", "Artist Song 2"),
+      ]
+    });
+  });
+
+  api.on("requestedAlbumSongs", () => {
+    return new RequestedAlbumSongsResponse({
+      songs: [
+        mockSampleSong("album-song-1", "Album Song 1"),
+        mockSampleSong("album-song-2", "Album Song 2"),
+      ]
+    });
+  });
+
+  api.on("performAccountLogin", (req: PerformAccountLoginRequest) => {
+    api.registerOauth("https://example.com/callback");
+    if (req.loginStatus) {
+      api.setAccount(
+        new ExtensionAccountDetail({
+          id: "test_account",
+          name: "Test Account",
+          loggedIn: true,
+          username: "User",
+          bgColor: "",
+          icon: ""
+        })
+      );
+      return new PerformAccountLoginResponse({
+        status: "success"
+      });
+    } else {
+      api.setAccount(
+        new ExtensionAccountDetail({
+          id: "test_account",
+          name: "Test Account",
+          loggedIn: false,
+          username: "",
+          bgColor: "",
+          icon: ""
+        })
+      );
+      return new PerformAccountLoginResponse({
+        status: "logged_out"
+      });
+    }
+  });
+
+  api.setAccount(
+    new ExtensionAccountDetail({
+      id: "test_account",
+      name: "Test Account",
+      loggedIn: false,
+      username: "",
+      bgColor: "",
+      icon: ""
+    })
+  );
 
   api.on("requestedSearchResult", () => {
     api.openExternalUrl("https://example.com");
     return new RequestedSearchResultResponse({
-      songs: []
+      songs: [
+        mockSampleSong("search-song-1", "Search Song 1"),
+        mockSampleSong("search-song-2", "Search Song 2"),
+      ],
+      playlists: [
+        new Playlist({
+          playlistId: "search-pl-1",
+          playlistName: "Search Playlist 1",
+        }),
+        new Playlist({
+          playlistId: "search-pl-2",
+          playlistName: "Search Playlist 2",
+        }),
+      ],
+      artists: [
+        new Artist({
+          artistId: "search-art-1",
+          artistName: "Search Artist 1",
+        }),
+        new Artist({
+          artistId: "search-art-2",
+          artistName: "Search Artist 2",
+        }),
+      ],
+      albums: [
+        new Album({
+          albumId: "search-alb-1",
+          albumName: "Search Album 1",
+        }),
+        new Album({
+          albumId: "search-alb-2",
+          albumName: "Search Album 2",
+        }),
+      ],
     });
   });
 

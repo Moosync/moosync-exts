@@ -6,7 +6,7 @@ use crate::{
 };
 use futures::executor::block_on;
 use moosync_edk::{
-    Album, Artist, MoosyncResult, Playlist, PreferenceData, PreferenceTypes, PreferenceUiData,
+    Album, Artist, MoosyncResult, Playlist, PreferenceData, PreferenceItem, PreferenceType,
     SearchResult, Song,
     api::{
         AccountLoginArgs, Accounts, ContextMenu, CustomRequest, CustomRequestReturnType,
@@ -16,7 +16,7 @@ use moosync_edk::{
         RequestedPlaylistSongsRequest, RequestedPlaylistsRequest, RequestedRecommendationsRequest,
         RequestedSearchResultRequest, RequestedSongFromIdRequest, RequestedSongFromUrlRequest,
         SongsWithPageTokenReturnType,
-        extension_api::{get_secure, set_secure},
+        extension_api::{get_secure, set_account, set_secure},
     },
     error,
     handler::register_extension,
@@ -32,20 +32,18 @@ struct SpotifyExtension {
 
 fn register_prefs() -> MoosyncResult<()> {
     moosync_edk::api::extension_api::register_user_preferences(vec![
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Client ID".into(),
-            key: "client_id".into(),
-            description: "Client ID for Spotify".into(),
-            mobile: Some(true),
+            id: "client_id".into(),
+            subtitle: "Client ID for Spotify".into(),
             ..Default::default()
         },
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Client Secret".into(),
-            key: "client_secret".into(),
-            description: "Client Secret for Spotify".into(),
-            mobile: Some(true),
+            id: "client_secret".into(),
+            subtitle: "Client Secret for Spotify".into(),
             ..Default::default()
         },
     ])?;
@@ -287,6 +285,28 @@ impl DatabaseEvents for SpotifyExtension {}
 impl PreferenceEvents for SpotifyExtension {}
 impl Extension for SpotifyExtension {}
 impl ContextMenu for SpotifyExtension {}
+impl SpotifyExtension {
+    fn sync_account(&self) {
+        let mut api_client = self.api_client.lock().unwrap();
+        let mut username = None;
+        let mut logged_in = false;
+        if let Some(api_client) = api_client.as_mut() {
+            logged_in = true;
+            username = block_on(api_client.get_username()).ok().flatten();
+        }
+
+        let _ = set_account(ExtensionAccountDetail {
+            id: "spotify".into(),
+            package_name: "moosync.spotify".into(),
+            name: "Spotify".into(),
+            bg_color: "#07C330".into(),
+            logged_in,
+            icon: "".into(),
+            username,
+        });
+    }
+}
+
 impl Accounts for SpotifyExtension {
     fn perform_account_login(&self, args: AccountLoginArgs) -> MoosyncResult<String> {
         let mut api_client = self.api_client.lock().unwrap();
@@ -295,6 +315,8 @@ impl Accounts for SpotifyExtension {
                 return api_client.login();
             } else {
                 api_client.logout();
+                drop(api_client);
+                self.sync_account();
                 return Ok("".into());
             }
         }
@@ -314,29 +336,11 @@ impl Accounts for SpotifyExtension {
             }) {
                 error!("Failed to set tokens in secure storage: {}", e);
             };
+            drop(api_client);
+            self.sync_account();
             return Ok(());
         }
         Err("Missing client credentials".into())
-    }
-
-    fn get_accounts(&self) -> MoosyncResult<Vec<ExtensionAccountDetail>> {
-        let mut api_client = self.api_client.lock().unwrap();
-        let mut username = None;
-        let mut logged_in = false;
-        if let Some(api_client) = api_client.as_mut() {
-            logged_in = true;
-            username = block_on(api_client.get_username())?;
-        }
-
-        Ok(vec![ExtensionAccountDetail {
-            id: "spotify".into(),
-            package_name: "moosync.spotify".into(),
-            name: "Spotify".into(),
-            bg_color: "#07C330".into(),
-            logged_in,
-            icon: "".into(),
-            username,
-        }])
     }
 }
 
@@ -345,6 +349,7 @@ pub extern "C" fn init() {
     info!("Initializing spotify extension");
 
     let extension = SpotifyExtension::new();
+    extension.sync_account();
 
     register_extension(Box::new(extension)).unwrap();
     register_prefs().unwrap();

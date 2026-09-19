@@ -9,3 +9,8 @@ js_extension(
     display_name = "Sample Extension (JS)",
     version = "1.0.0",
 )
+
+alias(
+    name = "js",
+    actual = ":sample_extension",
+)
