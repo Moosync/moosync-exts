@@ -1,5 +1,5 @@
 use moosync_edk::extensions_proto::struct_proto::google::protobuf::Value as ProtoValue;
-use moosync_edk::{Album, Artist, InnerSong, Playlist};
+use moosync_edk::{Album, Artist, InnerSong, LyricLine, Lyrics, Playlist};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -99,6 +99,25 @@ pub fn parse_playlists(value: &Value) -> Vec<Playlist> {
         .collect()
 }
 
+/// Convert plain lyrics string to moosync_edk::Lyrics
+pub fn string_to_lyrics(s: &str) -> Option<Lyrics> {
+    let trimmed = s.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    let lines = trimmed
+        .lines()
+        .map(|line| LyricLine {
+            text: line.to_string(),
+            time_ms: -1,
+        })
+        .collect();
+    Some(Lyrics {
+        lines,
+        is_synced: false,
+    })
+}
+
 /// Parse a vector of InnerSong from a serde_json::Value (for search results)
 pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
     value
@@ -112,7 +131,8 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
                 .and_then(|v| v.as_str().map(|s| s.to_string())),
             lyrics: ks
                 .get("lyrics")
-                .and_then(|v| v.as_str().map(|s| s.to_string())),
+                .and_then(|v| v.as_str())
+                .and_then(string_to_lyrics),
             duration: f64_to_duration(ks.get("length").and_then(|v| v.as_f64())),
             track_no: ks.get("track").and_then(|v| v.as_u64().map(|t| t as f64)),
             year: ks.get("year").map(|v| v.to_string()),

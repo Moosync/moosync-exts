@@ -4,30 +4,111 @@ from core.types.protos import extensions_pb2, songs_pb2
 
 def entry():
     print("calling entry")
-    register_extension(SampleExtension())
+    ext = SampleExtension()
+    register_extension(ext)
+    ext.api.set_account(
+        extensions_pb2.ExtensionAccountDetail(
+            id="test_account",
+            name="Test Account",
+            logged_in=False,
+        )
+    )
+
+
+def mock_sample_song(song_id, title):
+    return songs_pb2.Song(
+        song=songs_pb2.InnerSong(id=song_id, title=title),
+        artists=[songs_pb2.Artist(artist_id=f"art-{song_id}", artist_name=f"Artist for {title}")],
+        album=songs_pb2.Album(album_id=f"alb-{song_id}", album_name=f"Album for {title}"),
+    )
 
 
 class SampleExtension(Extension):
     def get_provider_scopes(self, req):
         return extensions_pb2.GetProviderScopesResponse(
-            scopes=[extensions_pb2.ExtensionProviderScope.ACCOUNTS]
+            scopes=[
+                extensions_pb2.ExtensionProviderScope.ACCOUNTS,
+                extensions_pb2.ExtensionProviderScope.SEARCH,
+                extensions_pb2.ExtensionProviderScope.PLAYLISTS,
+                extensions_pb2.ExtensionProviderScope.PLAYLIST_SONGS,
+                extensions_pb2.ExtensionProviderScope.ARTIST_SONGS,
+                extensions_pb2.ExtensionProviderScope.ALBUM_SONGS,
+            ]
         )
 
-    def get_accounts(self, req):
-        self.api.update_accounts("sample.pkg")
-        return extensions_pb2.GetAccountsResponse(
-            accounts=[
+    def get_playlists(self, req):
+        return extensions_pb2.RequestedPlaylistsResponse(
+            playlists=[
+                songs_pb2.Playlist(playlist_id="ext-playlist-1", playlist_name="Extension Playlist 1"),
+                songs_pb2.Playlist(playlist_id="ext-playlist-2", playlist_name="Extension Playlist 2"),
+            ]
+        )
+
+    def get_playlist_content(self, req):
+        return extensions_pb2.RequestedPlaylistSongsResponse(
+            songs=[
+                mock_sample_song("pl-song-1", "Playlist Song 1"),
+                mock_sample_song("pl-song-2", "Playlist Song 2"),
+            ]
+        )
+
+    def get_artist_songs(self, req):
+        return extensions_pb2.RequestedArtistSongsResponse(
+            songs=[
+                mock_sample_song("artist-song-1", "Artist Song 1"),
+                mock_sample_song("artist-song-2", "Artist Song 2"),
+            ]
+        )
+
+    def get_album_songs(self, req):
+        return extensions_pb2.RequestedAlbumSongsResponse(
+            songs=[
+                mock_sample_song("album-song-1", "Album Song 1"),
+                mock_sample_song("album-song-2", "Album Song 2"),
+            ]
+        )
+
+    def get_search(self, req):
+        self.api.open_external_url("test")
+        return extensions_pb2.RequestedSearchResultResponse(
+            songs=[
+                mock_sample_song("search-song-1", "Search Song 1"),
+                mock_sample_song("search-song-2", "Search Song 2"),
+            ],
+            playlists=[
+                songs_pb2.Playlist(playlist_id="search-pl-1", playlist_name="Search Playlist 1"),
+                songs_pb2.Playlist(playlist_id="search-pl-2", playlist_name="Search Playlist 2"),
+            ],
+            artists=[
+                songs_pb2.Artist(artist_id="search-art-1", artist_name="Search Artist 1"),
+                songs_pb2.Artist(artist_id="search-art-2", artist_name="Search Artist 2"),
+            ],
+            albums=[
+                songs_pb2.Album(album_id="search-alb-1", album_name="Search Album 1"),
+                songs_pb2.Album(album_id="search-alb-2", album_name="Search Album 2"),
+            ],
+        )
+
+    def perform_account_login(self, req):
+        self.api.register_oauth("https://example.com/callback")
+        if req.login_status:
+            self.api.set_account(
                 extensions_pb2.ExtensionAccountDetail(
                     id="test_account",
                     name="Test Account",
                     logged_in=True,
                 )
-            ]
-        )
-
-    def perform_account_login(self, req):
-        self.api.register_oauth("https://example.com/callback")
-        return extensions_pb2.PerformAccountLoginResponse(status="success")
+            )
+            return extensions_pb2.PerformAccountLoginResponse(status="success")
+        else:
+            self.api.set_account(
+                extensions_pb2.ExtensionAccountDetail(
+                    id="test_account",
+                    name="Test Account",
+                    logged_in=False,
+                )
+            )
+            return extensions_pb2.PerformAccountLoginResponse(status="logged_out")
 
     def handle_custom_request(self, req):
         if req.request_id == "hash_test":
@@ -74,10 +155,6 @@ class SampleExtension(Extension):
             return extensions_pb2.CustomRequestResponse()
 
         return extensions_pb2.CustomRequestResponse()
-
-    def get_search(self, req):
-        self.api.open_external_url("test")
-        return extensions_pb2.RequestedSearchResultResponse(songs=[])
 
     def on_context_menu_action(self, req):
         if req.action_id == "add_test":

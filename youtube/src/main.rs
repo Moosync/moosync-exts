@@ -3,8 +3,8 @@ use std::sync::Mutex;
 use futures::executor::block_on;
 use moosync_edk::MoosyncResult as Result;
 use moosync_edk::{
-    Album, Artist, ExtensionProviderScope, MoosyncResult, Playlist, PreferenceData,
-    PreferenceTypes, PreferenceUiData, SearchResult, Song,
+    Album, Artist, ExtensionProviderScope, MoosyncResult, Playlist, PreferenceData, PreferenceItem,
+    PreferenceType, SearchResult, Song,
     api::{
         Accounts, ContextMenu, CustomRequestReturnType, DatabaseEvents, Extension, PlayerEvents,
         PreferenceEvents, Provider, SongsWithPageTokenReturnType,
@@ -28,20 +28,18 @@ struct YoutubeExtension {
 
 fn register_prefs() -> MoosyncResult<()> {
     moosync_edk::api::extension_api::register_user_preferences(vec![
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Client ID".into(),
-            key: "client_id".into(),
-            description: "Client ID for Youtube".into(),
-            mobile: Some(true),
+            id: "client_id".into(),
+            subtitle: "Client ID for Youtube".into(),
             ..Default::default()
         },
-        PreferenceUiData {
-            r#type: PreferenceTypes::EditText.into(),
+        PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
             title: "Client Secret".into(),
-            key: "client_secret".into(),
-            description: "Client Secret for Youtube".into(),
-            mobile: Some(true),
+            id: "client_secret".into(),
+            subtitle: "Client Secret for Youtube".into(),
             ..Default::default()
         },
     ])?;

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	extensions "github.com/moosync/moosync/types/extensions"
+	preferences "github.com/moosync/moosync/types/preferences"
 	songs "github.com/moosync/moosync/types/songs"
-	ui "github.com/moosync/moosync/types/ui"
 
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 )
@@ -12,27 +14,28 @@ type SampleExtension struct {
 	api.DefaultExtension
 }
 
-func (s *SampleExtension) GetAccounts() ([]*extensions.ExtensionAccountDetail, error) {
-	api.LogInfo("get_accounts called")
-	acc := "test_account"
-	_ = api.UpdateAccounts(&acc)
-	return []*extensions.ExtensionAccountDetail{
-		{
-			Id:       "test_account",
-			Name:     "Test Account",
-			LoggedIn: true,
-		},
-	}, nil
+func syncAccount(loggedIn bool) {
+	_ = api.SetAccount(&extensions.ExtensionAccountDetail{
+		Id:       "test_account",
+		Name:     "Test Account",
+		LoggedIn: loggedIn,
+	})
 }
 
 func (s *SampleExtension) PerformAccountLogin(req *extensions.PerformAccountLoginRequest) (string, error) {
 	api.LogInfo("perform_account_login called: %v", req)
-	_ = api.RegisterOAuth("https://example.com/callback")
-	return "success", nil
+	if req.GetLoginStatus() {
+		_ = api.RegisterOAuth("https://example.com/callback")
+		syncAccount(true)
+		return "success", nil
+	}
+	syncAccount(false)
+	return "logged_out", nil
 }
 
 func (s *SampleExtension) OauthCallback(req *extensions.OauthCallbackRequest) error {
 	api.LogInfo("oauth_callback called with code: %s", req.GetCallbackUri())
+	syncAccount(true)
 	return nil
 }
 
@@ -114,19 +117,61 @@ func (s *SampleExtension) OnSeeked(req *extensions.SeekedRequest) error {
 	return nil
 }
 
+func stringPtr(s string) *string {
+	return &s
+}
+
+func mockSampleSong(id string, title string) *songs.Song {
+	return &songs.Song{
+		Song: &songs.InnerSong{
+			Id:    stringPtr(id),
+			Title: stringPtr(title),
+		},
+		Artists: []*songs.Artist{
+			{
+				ArtistId:   stringPtr("art-" + id),
+				ArtistName: stringPtr("Artist for " + title),
+			},
+		},
+		Album: &songs.Album{
+			AlbumId:   stringPtr("alb-" + id),
+			AlbumName: stringPtr("Album for " + title),
+		},
+	}
+}
+
 func (s *SampleExtension) GetProviderScopes() ([]extensions.ExtensionProviderScope, error) {
-	return []extensions.ExtensionProviderScope{extensions.ExtensionProviderScope_ACCOUNTS}, nil
+	return []extensions.ExtensionProviderScope{
+		extensions.ExtensionProviderScope_ACCOUNTS,
+		extensions.ExtensionProviderScope_SEARCH,
+		extensions.ExtensionProviderScope_PLAYLISTS,
+		extensions.ExtensionProviderScope_PLAYLIST_SONGS,
+		extensions.ExtensionProviderScope_ARTIST_SONGS,
+		extensions.ExtensionProviderScope_ALBUM_SONGS,
+	}, nil
 }
 
 func (s *SampleExtension) GetPlaylists(req *extensions.RequestedPlaylistsRequest) ([]*songs.Playlist, error) {
 	api.LogInfo("get_playlists called")
-	return []*songs.Playlist{}, nil
+	return []*songs.Playlist{
+		{
+			PlaylistId:   stringPtr("ext-playlist-1"),
+			PlaylistName: "Extension Playlist 1",
+		},
+		{
+			PlaylistId:   stringPtr("ext-playlist-2"),
+			PlaylistName: "Extension Playlist 2",
+		},
+	}, nil
 }
 
 func (s *SampleExtension) GetPlaylistContent(req *extensions.RequestedPlaylistSongsRequest) (*extensions.RequestedPlaylistSongsResponse, error) {
 	api.LogInfo("get_playlist_content: %s", req.GetId())
 	return &extensions.RequestedPlaylistSongsResponse{
-		Songs:         []*songs.Song{},
+		Songs: []*songs.Song{
+			mockSampleSong("pl-song-1", "Playlist Song 1"),
+			mockSampleSong("pl-song-2", "Playlist Song 2"),
+		},
 		NextPageToken: nil,
 	}, nil
 }
@@ -154,11 +199,41 @@ func (s *SampleExtension) Search(req *extensions.RequestedSearchResultRequest) (
 	_ = api.SystemTime() // Just to use it? Rust code does.
 	_ = api.OpenExternalUrl("https://google.com")
 	return &songs.SearchResult{
-		Songs:     []*songs.Song{},
-		Playlists: []*songs.Playlist{},
-		Artists:   []*songs.Artist{},
-		Albums:    []*songs.Album{},
-		Genres:    []*songs.Genre{},
+		Songs: []*songs.Song{
+			mockSampleSong("search-song-1", "Search Song 1"),
+			mockSampleSong("search-song-2", "Search Song 2"),
+		},
+		Playlists: []*songs.Playlist{
+			{
+				PlaylistId:   stringPtr("search-pl-1"),
+				PlaylistName: "Search Playlist 1",
+			},
+			{
+				PlaylistId:   stringPtr("search-pl-2"),
+				PlaylistName: "Search Playlist 2",
+			},
+		},
+		Artists: []*songs.Artist{
+			{
+				ArtistId:   stringPtr("search-art-1"),
+				ArtistName: stringPtr("Search Artist 1"),
+			},
+			{
+				ArtistId:   stringPtr("search-art-2"),
+				ArtistName: stringPtr("Search Artist 2"),
+			},
+		},
+		Albums: []*songs.Album{
+			{
+				AlbumId:   stringPtr("search-alb-1"),
+				AlbumName: stringPtr("Search Album 1"),
+			},
+			{
+				AlbumId:   stringPtr("search-alb-2"),
+				AlbumName: stringPtr("Search Album 2"),
+			},
+		},
+		Genres: []*songs.Genre{},
 	}, nil
 }
 
@@ -188,7 +263,7 @@ func (s *SampleExtension) HandleCustomRequest(req *extensions.CustomRequest) (*e
 	}
 
 	if requestId == "preferences_test" {
-		_ = api.RegisterUserPreference([]*ui.PreferenceUiData{})
+		_ = api.RegisterUserPreference([]*preferences.PreferenceItem{})
 		_ = api.UnregisterUserPreference([]string{})
 	}
 
@@ -225,7 +300,10 @@ func (s *SampleExtension) GetArtistSongs(req *extensions.RequestedArtistSongsReq
 		api.LogInfo("get_artist_songs: %s", artist.GetArtistName())
 	}
 	return &extensions.RequestedArtistSongsResponse{
-		Songs: []*songs.Song{},
+		Songs: []*songs.Song{
+			mockSampleSong("artist-song-1", "Artist Song 1"),
+			mockSampleSong("artist-song-2", "Artist Song 2"),
+		},
 	}, nil
 }
 
@@ -234,7 +312,10 @@ func (s *SampleExtension) GetAlbumSongs(req *extensions.RequestedAlbumSongsReque
 		api.LogInfo("get_album_songs: %s", album.GetAlbumName())
 	}
 	return &extensions.RequestedAlbumSongsResponse{
-		Songs: []*songs.Song{},
+		Songs: []*songs.Song{
+			mockSampleSong("album-song-1", "Album Song 1"),
+			mockSampleSong("album-song-2", "Album Song 2"),
+		},
 	}, nil
 }
 
@@ -252,13 +333,23 @@ func (s *SampleExtension) Scrobble(req *extensions.ScrobbleRequest) error {
 	return nil
 }
 
-func (s *SampleExtension) GetLyrics(req *extensions.RequestedLyricsRequest) (string, error) {
+func (s *SampleExtension) GetLyrics(req *extensions.RequestedLyricsRequest) (*songs.Lyrics, error) {
 	if song := req.GetSong(); song != nil {
 		if inner := song.GetSong(); inner != nil {
 			api.LogInfo("get_lyrics: %s", inner.GetTitle())
 		}
 	}
-	return "Sample lyrics", nil
+	lines := make([]*songs.LyricLine, 100)
+	for i := 0; i < 100; i++ {
+		lines[i] = &songs.LyricLine{
+			Text:   fmt.Sprintf("Sample Go lyric line %d", i+1),
+			TimeMs: int64(i * 500),
+		}
+	}
+	return &songs.Lyrics{
+		Lines:    lines,
+		IsSynced: true,
+	}, nil
 }
 
 func (s *SampleExtension) GetSongContextMenu(req *extensions.RequestedSongContextMenuRequest) ([]*extensions.ContextMenuReturnType, error) {
@@ -289,6 +380,7 @@ func entry() {
 
 	extension := &SampleExtension{}
 	api.RegisterExtension(extension)
+	syncAccount(false)
 }
 
 func main() {}
