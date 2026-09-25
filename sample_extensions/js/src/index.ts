@@ -119,9 +119,12 @@ export function entry(): number {
     });
   });
 
+  let loggedIn = false;
+
   api.on("performAccountLogin", (req: PerformAccountLoginRequest) => {
     api.registerOauth("https://example.com/callback");
     if (req.loginStatus) {
+      loggedIn = true;
       api.setAccount(
         new ExtensionAccountDetail({
           id: "test_account",
@@ -136,6 +139,7 @@ export function entry(): number {
         status: "success"
       });
     } else {
+      loggedIn = false;
       api.setAccount(
         new ExtensionAccountDetail({
           id: "test_account",
@@ -163,8 +167,16 @@ export function entry(): number {
     })
   );
 
-  api.on("requestedSearchResult", () => {
+  api.on("requestedSearchResult", (req: RequestedSearchResultRequest) => {
     api.openExternalUrl("https://example.com");
+    if (req?.query?.trim().toLowerCase() === "logged in" && !loggedIn) {
+      return new RequestedSearchResultResponse({
+        songs: [],
+        playlists: [],
+        artists: [],
+        albums: [],
+      });
+    }
     return new RequestedSearchResultResponse({
       songs: [
         mockSampleSong("search-song-1", "Search Song 1"),
