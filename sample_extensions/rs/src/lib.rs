@@ -287,6 +287,9 @@ impl Provider for SampleExtension {
         info!("search: {}", req.query);
         let _time = get_system_time();
         let _ = open_external_url("https://google.com".to_string());
+        if req.query.trim().eq_ignore_ascii_case("logged in") && !LOGGED_IN.load(Ordering::SeqCst) {
+            return Ok(SearchResult::default());
+        }
         Ok(SearchResult {
             songs: vec![
                 mock_sample_song("search-song-1", "Search Song 1"),
@@ -459,21 +462,14 @@ impl Provider for SampleExtension {
                 info!("get_lyrics: {:?}", inner.title);
             }
         }
+        let lines = (1..=100)
+            .map(|i| LyricLine {
+                text: format!("Sample lyric line {i}"),
+                time_ms: ((i - 1) * 500) as i64,
+            })
+            .collect();
         Ok(Some(Lyrics {
-            lines: vec![
-                LyricLine {
-                    text: "First line of sample lyrics".to_string(),
-                    time_ms: 1000,
-                },
-                LyricLine {
-                    text: "Second line of sample lyrics".to_string(),
-                    time_ms: 3000,
-                },
-                LyricLine {
-                    text: "Third line of sample lyrics".to_string(),
-                    time_ms: 5000,
-                },
-            ],
+            lines,
             is_synced: true,
         }))
     }

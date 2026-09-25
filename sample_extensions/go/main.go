@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	extensions "github.com/moosync/moosync/types/extensions"
 	preferences "github.com/moosync/moosync/types/preferences"
@@ -10,15 +11,18 @@ import (
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 )
 
+var loggedIn bool = false
+
 type SampleExtension struct {
 	api.DefaultExtension
 }
 
-func syncAccount(loggedIn bool) {
+func syncAccount(isLoggedIn bool) {
+	loggedIn = isLoggedIn
 	_ = api.SetAccount(&extensions.ExtensionAccountDetail{
 		Id:       "test_account",
 		Name:     "Test Account",
-		LoggedIn: loggedIn,
+		LoggedIn: isLoggedIn,
 	})
 }
 
@@ -198,6 +202,15 @@ func (s *SampleExtension) Search(req *extensions.RequestedSearchResultRequest) (
 	api.LogInfo("search: %s", req.GetQuery())
 	_ = api.SystemTime() // Just to use it? Rust code does.
 	_ = api.OpenExternalUrl("https://google.com")
+	if strings.EqualFold(strings.TrimSpace(req.GetQuery()), "logged in") && !loggedIn {
+		return &songs.SearchResult{
+			Songs:     []*songs.Song{},
+			Playlists: []*songs.Playlist{},
+			Artists:   []*songs.Artist{},
+			Albums:    []*songs.Album{},
+			Genres:    []*songs.Genre{},
+		}, nil
+	}
 	return &songs.SearchResult{
 		Songs: []*songs.Song{
 			mockSampleSong("search-song-1", "Search Song 1"),

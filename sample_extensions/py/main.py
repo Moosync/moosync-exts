@@ -24,6 +24,10 @@ def mock_sample_song(song_id, title):
 
 
 class SampleExtension(Extension):
+    def __init__(self):
+        super().__init__()
+        self.logged_in = False
+
     def get_provider_scopes(self, req):
         return extensions_pb2.GetProviderScopesResponse(
             scopes=[
@@ -70,6 +74,8 @@ class SampleExtension(Extension):
 
     def get_search(self, req):
         self.api.open_external_url("test")
+        if req.query.strip().lower() == "logged in" and not self.logged_in:
+            return extensions_pb2.RequestedSearchResultResponse()
         return extensions_pb2.RequestedSearchResultResponse(
             songs=[
                 mock_sample_song("search-song-1", "Search Song 1"),
@@ -92,6 +98,7 @@ class SampleExtension(Extension):
     def perform_account_login(self, req):
         self.api.register_oauth("https://example.com/callback")
         if req.login_status:
+            self.logged_in = True
             self.api.set_account(
                 extensions_pb2.ExtensionAccountDetail(
                     id="test_account",
@@ -101,6 +108,7 @@ class SampleExtension(Extension):
             )
             return extensions_pb2.PerformAccountLoginResponse(status="success")
         else:
+            self.logged_in = False
             self.api.set_account(
                 extensions_pb2.ExtensionAccountDetail(
                     id="test_account",
