@@ -1,0 +1,12 @@
+{
+    "name": "youtube_js",
+    "version": "0.0.1",
+    "type": "module",
+    "dependencies": {
+        "@types/node": "^25.0.3",
+        "youtubei.js": "^18.1.0"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": []
+    }
+}

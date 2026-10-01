@@ -1,0 +1,9 @@
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+
+npm.npm_translate_lock(
+    name = "npm_youtube_js",
+    pnpm_lock = "//youtube_js:pnpm-lock.yaml" if "//youtube_js" else "//:pnpm-lock.yaml",
+    update_pnpm_lock = True,
+    data = ["//youtube_js:package.json" if "//youtube_js" else "//:package.json"],
+)
+use_repo(npm, "npm_youtube_js")
