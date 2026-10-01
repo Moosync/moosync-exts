@@ -17,7 +17,7 @@ use moosync_edk::{
         PlaybackDetailsReturnType, PlayerEvents, PreferenceEvents, Provider,
         SongsWithPageTokenReturnType,
         extension_api::{
-            add_playlist, add_songs, add_to_playlist, gen_hash, get_current_song, get_player_state,
+            add_playlist, add_songs, add_to_playlist, get_current_song, get_player_state,
             get_preference, get_queue, get_secure, get_system_time, get_time, get_volume,
             open_external_url, open_sock, read_sock, register_oauth, register_user_preferences,
             set_account, unregister_user_preferences, write_sock,
@@ -363,10 +363,6 @@ impl Provider for SampleExtension {
                 let _ = write_sock(fd, vec![1, 2, 3]);
                 let _ = read_sock(fd, 3);
             }
-        }
-
-        if request_id == "hash_test" {
-            let _ = gen_hash("sha256".to_string(), vec![1, 2, 3]);
         }
 
         if request_id == "preferences_test" {

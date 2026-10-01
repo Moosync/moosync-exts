@@ -119,9 +119,6 @@ class SampleExtension(Extension):
             return extensions_pb2.PerformAccountLoginResponse(status="logged_out")
 
     def handle_custom_request(self, req):
-        if req.request_id == "hash_test":
-            return extensions_pb2.CustomRequestResponse()
-
         if req.request_id == "preferences_test":
             self.api.register_user_preferences([])
             self.api.unregister_user_preferences([])

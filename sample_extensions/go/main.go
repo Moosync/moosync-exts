@@ -271,10 +271,6 @@ func (s *SampleExtension) HandleCustomRequest(req *extensions.CustomRequest) (*e
 		}
 	}
 
-	if requestId == "hash_test" {
-		_ = api.Hash(api.HashSHA256, []byte{1, 2, 3})
-	}
-
 	if requestId == "preferences_test" {
 		_ = api.RegisterUserPreference([]*preferences.PreferenceItem{})
 		_ = api.UnregisterUserPreference([]string{})
