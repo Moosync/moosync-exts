@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "paths": {
+      "wasm-extension-js": [
+        "../external/extensions_sdk+/wasm-extension-js/lib/src/index.d.ts",
+        "../external/extensions_sdk/wasm-extension-js/lib/src/index.d.ts",
+        "../wasm-extension-js/lib/src/index.d.ts",
+        "../bazel-bin/external/extensions_sdk+/wasm-extension-js/lib/src/index.d.ts",
+        "../bazel-bin/external/extensions_sdk/wasm-extension-js/lib/src/index.d.ts",
+        "../bazel-bin/wasm-extension-js/lib/src/index.d.ts"
+      ]
+    },
+    "typeRoots": [
+      "../bazel-bin/external/extensions_sdk+/wasm-extension-js/node_modules",
+      "../bazel-bin/external/extensions_sdk/wasm-extension-js/node_modules",
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
