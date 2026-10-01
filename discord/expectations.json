@@ -1,0 +1,42 @@
+{
+  "session": [],
+  "tests": {
+    "test_get_provider_scopes": [
+      {
+        "type": "open_clientfd",
+        "request": "/discord-ipc-0",
+        "response": 0
+      },
+      {
+        "type": "write_sock",
+        "request": {
+          "sock_id": 0,
+          "buf": {
+            "__bytes__": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": 48
+      },
+      {
+        "type": "read_sock",
+        "request": {
+          "sock_id": 0,
+          "read_len": 457
+        },
+        "response": {
+          "__bytes__": "AQAAAIABAAB7ImNtZCI6IkRJU1BBVENIIiwiZGF0YSI6eyJ2IjoxLCJjb25maWciOnsiY2RuX2hvc3QiOiJjZG4uZGlzY29yZGFwcC5jb20iLCJhcGlfZW5kcG9pbnQiOiIvL2Rpc2NvcmQuY29tL2FwaSIsImVudmlyb25tZW50IjoicHJvZHVjdGlvbiJ9LCJ1c2VyIjp7ImlkIjoiMjA3ODQwNDQwNTY3NzI2MDgwIiwidXNlcm5hbWUiOiJvdmVub2JveW8iLCJkaXNjcmltaW5hdG9yIjoiMCIsImdsb2JhbF9uYW1lIjoiT3Zlbm9ib3lvIiwiYXZhdGFyIjoiOWQ4Y2NmYjE3YjI3ODE3NzYzM2Q2ZWQ3ZDRkMmY0ZGQiLCJhdmF0YXJfZGVjb3JhdGlvbl9kYXRhIjpudWxsLCJib3QiOmZhbHNlLCJmbGFncyI6MzA0LCJwcmVtaXVtX3R5cGUiOjB9fSwiZXZ0IjoiUkVBRFkiLCJub25jZSI6bnVsbH0="
+        }
+      },
+      {
+        "type": "read_sock",
+        "request": {
+          "sock_id": 0,
+          "read_len": 901
+        },
+        "response": {
+          "__bytes__": ""
+        }
+      }
+    ]
+  }
+}
