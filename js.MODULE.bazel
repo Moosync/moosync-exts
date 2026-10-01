@@ -1,0 +1,28 @@
+bazel_dep(name = "aspect_rules_js", version = "3.4.1")
+single_version_override(
+    module_name = "aspect_rules_js",
+    patch_strip = 1,
+    patches = ["//patches:aspect_rules_js_virtual_store_prefix.patch"],
+)
+
+bazel_dep(name = "aspect_rules_ts", version = "3.10.1")
+bazel_dep(name = "rules_nodejs", version = "6.7.5")
+
+# Hermetic PNPM setup
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
+pnpm.pnpm(pnpm_version = "9.15.0")
+use_repo(pnpm, "pnpm")
+
+# Node.js toolchains
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+use_repo(node, "nodejs_toolchains")
+register_toolchains("@nodejs_toolchains//:all")
+
+# TypeScript toolchain for extensions
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "typescript")
+rules_ts_ext.deps(
+    name = "sdk_npm_typescript",
+    ts_version_from = "@extensions_sdk//wasm-extension-js:package.json",
+)
+use_repo(rules_ts_ext, npm_typescript = "sdk_npm_typescript")
+register_toolchains("@npm_typescript//:all")
