@@ -1,0 +1,23 @@
+[package]
+name = "apple_music"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ramdl = "1.0.3"
+reqwest = { version = "0.12", features = ["json", "cookies"] }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.12"
+url = "2.5"
+hex = "0.4"
+base64 = "0.22"
+
+[patch.crates-io]
+ramdl = { git = "https://github.com/Ovenoboyo/ramdl", rev = "b6ca235beb99ec062acb9590de04bd268c14269f" }
+reqwest = { git = "https://github.com/Ovenoboyo/reqwest_extism", branch = "0.12.x" }
+
+[lib]
+crate-type = ["cdylib"]
+path = "src/main.rs"

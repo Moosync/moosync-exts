@@ -1,0 +1,8 @@
+apple_music_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+apple_music_crate.from_cargo(
+    name = "apple_music_crates",
+    cargo_lockfile = "//apple_music:Cargo.lock",
+    lockfile = "//apple_music:Cargo.Bazel.lock",
+    manifests = ["//apple_music:Cargo.toml"],
+)
+use_repo(apple_music_crate, "apple_music_crates")
