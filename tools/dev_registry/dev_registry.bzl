@@ -9,7 +9,13 @@ def _dev_registry_impl(ctx):
         if ext[DefaultInfo].default_runfiles:
             all_files.extend(ext[DefaultInfo].default_runfiles.files.to_list())
 
-    runfiles = ctx.runfiles(files = all_files + [ctx.file._server_py])
+    proto_files = []
+    for dep in ctx.attr._proto_deps:
+        proto_files.extend(dep[DefaultInfo].files.to_list())
+        if dep[DefaultInfo].default_runfiles:
+            proto_files.extend(dep[DefaultInfo].default_runfiles.files.to_list())
+
+    runfiles = ctx.runfiles(files = all_files + [ctx.file._server_py] + proto_files)
 
     runner_script = ctx.actions.declare_file(ctx.label.name)
     ctx.actions.write(
@@ -40,6 +46,9 @@ if [ ! -f "$SCRIPT_PATH" ]; then
     fi
 fi
 
+RUNFILES_DIR="${{RUNFILES_DIR:-$0.runfiles}}"
+export PYTHONPATH="${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/extensions_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/preferences_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/songs_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/ui_proto:${{RUNFILES_DIR}}/_main:${{PYTHONPATH}}"
+echo "PYTHONPATH=$PYTHONPATH" >&2
 exec "$PYTHON_BIN" "$SCRIPT_PATH" "$@"
 """.format(server_py = ctx.file._server_py.short_path),
         is_executable = True,
@@ -63,6 +72,12 @@ dev_registry = rule(
         "_server_py": attr.label(
             default = "//tools/dev_registry:server.py",
             allow_single_file = True,
+        ),
+        "_proto_deps": attr.label_list(
+            default = [
+                "@extensions_sdk//protos:extensions_py_proto",
+                "@extensions_sdk//protos:moosync_python_root",
+            ],
         ),
     },
     doc = "Runs a local HTTP dev registry serving Protobuf manifests and .msxt packages.",
