@@ -1,6 +1,7 @@
 {
     "name": "youtube_js",
     "version": "0.0.1",
+    "extensionEntry": "youtube_js.wasm",
     "type": "module",
     "dependencies": {
         "@types/node": "^25.0.3",

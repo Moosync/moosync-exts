@@ -80,11 +80,7 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    ret = entry.send_command(
-        ExtensionCommand(get_provider_scopes=GetProviderScopesRequest())
-    )
-
-    scopes = ret.get_provider_scopes.scopes
+    scopes = list(entry.manifest.scopes)
     scopes.sort()
 
     # Check that our active scopes are reported
@@ -95,6 +91,9 @@ def test_get_provider_scopes(entry: Moounit):
     assert ExtensionProviderScope.ARTIST_SONGS in scopes
     assert ExtensionProviderScope.PLAYLIST_SONGS in scopes
     assert ExtensionProviderScope.RECOMMENDATIONS in scopes
+    assert ExtensionProviderScope.ACCOUNTS in scopes
+    assert ExtensionProviderScope.PLAYLIST_FROM_URL in scopes
+    assert len(scopes) == 9
 
 
 def test_search(entry: Moounit):

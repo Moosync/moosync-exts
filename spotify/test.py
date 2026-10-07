@@ -64,12 +64,7 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    ret = entry.send_command(
-        ExtensionCommand(get_provider_scopes=GetProviderScopesRequest())
-    )
-
-    scopes = ret.get_provider_scopes.scopes
-    # Spotify has no scopes if not logged in
+    scopes = list(entry.manifest.scopes)
     assert len(scopes) == 0
 
 

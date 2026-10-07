@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "py_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "py_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 load("@pypi_youtube_dl//:requirements.bzl", "requirement")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
@@ -28,6 +28,13 @@ py_extension(
     allowed_paths = {
         "{CACHE_DIR}/youtube_dl/test": "/downloads",
     },
+    scopes = [
+        PROVIDER_SCOPES.SEARCH,
+        PROVIDER_SCOPES.PLAYLIST_SONGS,
+        PROVIDER_SCOPES.ARTIST_SONGS,
+        PROVIDER_SCOPES.ALBUM_SONGS,
+        PROVIDER_SCOPES.PLAYBACK_DETAILS,
+    ],
     display_name = "Youtube (No API)",
     icon = "assets/icon.svg",
     main = "extension.py",

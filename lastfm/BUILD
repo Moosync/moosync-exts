@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "rust_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -9,6 +9,10 @@ rust_extension(
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "ws.audioscrobbler.com",
+    ],
+    scopes = [
+        PROVIDER_SCOPES.SCROBBLE,
+        PROVIDER_SCOPES.ACCOUNTS,
     ],
     display_name = "LastFM",
     edition = "2021",

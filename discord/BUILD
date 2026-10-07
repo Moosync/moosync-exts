@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "rust_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -19,6 +19,10 @@ rust_extension(
         "\\\\.\\pipe\\": "/",
         "{XDG_RUNTIME_DIR}/.flatpak/dev.vencord.Vesktop/xdg-run": "/",
     },
+    scopes = [
+        PROVIDER_SCOPES.PLAYER_UI_EVENTS,
+        PROVIDER_SCOPES.PLAYER_DATA_EVENTS,
+    ],
     display_name = "Discord RPC",
     edition = "2024",
     icon = "assets/icon.svg",

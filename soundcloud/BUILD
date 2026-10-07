@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "go_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "go_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -12,6 +12,13 @@ go_extension(
     ],
     allowed_hosts = [
         "*",
+    ],
+    scopes = [
+        PROVIDER_SCOPES.SEARCH,
+        PROVIDER_SCOPES.SONG_FROM_URL,
+        PROVIDER_SCOPES.PLAYLIST_FROM_URL,
+        PROVIDER_SCOPES.PLAYBACK_DETAILS,
+        PROVIDER_SCOPES.PLAYLIST_SONGS,
     ],
     display_name = "Soundcloud",
     icon = "assets/icon.svg",

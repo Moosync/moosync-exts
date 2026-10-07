@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "rust_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -9,6 +9,16 @@ rust_extension(
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "*",
+    ],
+    scopes = [
+        PROVIDER_SCOPES.PLAYLISTS,
+        PROVIDER_SCOPES.PLAYLIST_SONGS,
+        PROVIDER_SCOPES.PLAYBACK_DETAILS,
+        PROVIDER_SCOPES.SEARCH,
+        PROVIDER_SCOPES.ACCOUNTS,
+        PROVIDER_SCOPES.SONG_FROM_URL,
+        PROVIDER_SCOPES.ALBUM_SONGS,
+        PROVIDER_SCOPES.ARTIST_SONGS,
     ],
     display_name = "Koel",
     edition = "2024",

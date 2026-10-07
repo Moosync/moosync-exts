@@ -17,11 +17,7 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    ret = entry.send_command(
-        ExtensionCommand(get_provider_scopes=GetProviderScopesRequest())
-    )
-
-    scopes = ret.get_provider_scopes.scopes
+    scopes = list(entry.manifest.scopes)
     scopes.sort()
 
     assert len(scopes) == 1

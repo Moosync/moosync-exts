@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "rust_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -10,6 +10,7 @@ rust_extension(
     allowed_hosts = [
         "*",
     ],
+    scopes = [],
     display_name = "Spotify",
     edition = "2024",
     icon = "assets/icon.png",

@@ -1,68 +1,61 @@
 {
-    // Settings for go/bazel are based on editor setup instructions at
-    // https://github.com/bazelbuild/rules_go/wiki/Editor-setup#visual-studio-code
-    "go.goroot": "${workspaceFolder}/bazel-${workspaceFolderBasename}/external/rules_go++go_sdk+extensions_sdk__download_0/",
-    "go.toolsEnvVars": {
-        "GOPACKAGESDRIVER": "${workspaceFolder}/tools/gopackagesdriver.sh"
-    },
-    "go.enableCodeLens": {
-        "runtest": false
-    },
-    "gopls": {
-        "build.workspaceFiles": [
-            "**/BUILD",
-            "**/WORKSPACE",
-            "**/*.{bzl,bazel}",
-        ],
-        "build.directoryFilters": [
-            "-bazel-bin",
-            "-bazel-out",
-            "-bazel-testlogs",
-            "-bazel-${workspaceFolderBasename}",
-        ],
-        "formatting.gofumpt": true,
-        "formatting.local": "github.com/Moosync/extensions-sdk/wasm-extension-go",
-        "ui.completion.usePlaceholders": true,
-        "ui.semanticTokens": true,
-        "ui.codelenses": {
-            "gc_details": false,
-            "regenerate_cgo": false,
-            "generate": false,
-            "test": false,
-            "tidy": false,
-            "upgrade_dependency": false,
-            "vendor": false
-        },
-    },
-    "go.useLanguageServer": true,
-    "go.buildOnSave": "off",
-    "go.lintOnSave": "off",
-    "go.vetOnSave": "off",
-    "rust-analyzer.linkedProjects": [
-        "discord/Cargo.toml",
-        "koel/Cargo.toml",
-        "lastfm/Cargo.toml",
-        "radio/Cargo.toml",
-        "spotify/Cargo.toml",
-        "youtube/Cargo.toml",
-        "sample_extensions/rs/Cargo.toml"
+  // Settings for go/bazel are based on editor setup instructions at
+  // https://github.com/bazelbuild/rules_go/wiki/Editor-setup#visual-studio-code
+  "go.goroot": "${workspaceFolder}/bazel-${workspaceFolderBasename}/external/rules_go++go_sdk+extensions_sdk__download_0/",
+  "go.toolsEnvVars": {
+    "GOPACKAGESDRIVER": "${workspaceFolder}/tools/gopackagesdriver.sh",
+  },
+  "go.enableCodeLens": {
+    "runtest": false,
+  },
+  "gopls": {
+    "build.workspaceFiles": ["**/BUILD", "**/WORKSPACE", "**/*.{bzl,bazel}"],
+    "build.directoryFilters": [
+      "-bazel-bin",
+      "-bazel-out",
+      "-bazel-testlogs",
+      "-bazel-${workspaceFolderBasename}",
     ],
-    "rust-analyzer.cargo.target": "wasm32-wasip1",
-    "files.exclude": {
-        "bazel-bin": true,
-        "bazel-out": true,
-        "bazel-testlogs": true,
-        "bazel-${workspaceFolderBasename}": true
+    "formatting.gofumpt": true,
+    "formatting.local": "github.com/Moosync/extensions-sdk/wasm-extension-go",
+    "ui.completion.usePlaceholders": true,
+    "ui.semanticTokens": true,
+    "ui.codelenses": {
+      "gc_details": false,
+      "regenerate_cgo": false,
+      "generate": false,
+      "test": false,
+      "tidy": false,
+      "upgrade_dependency": false,
+      "vendor": false,
     },
-    "search.exclude": {
-        "bazel-bin": true,
-        "bazel-out": true,
-        "bazel-testlogs": true,
-        "bazel-${workspaceFolderBasename}": true
-    },
-    "python.defaultInterpreterPath": "${workspaceFolder}/youtube_dl/.venv/bin/python",
-    "python.analysis.extraPaths": [
-        "${workspaceFolder}/youtube_dl/.venv/lib/python3.11/site-packages",
-        "${workspaceFolder}/sample_extensions/py/.venv/lib/python3.11/site-packages"
-    ]
+  },
+  "go.useLanguageServer": true,
+  "go.lintOnSave": "off",
+  "go.vetOnSave": "off",
+  "rust-analyzer.linkedProjects": [
+    "discord/Cargo.toml",
+    "koel/Cargo.toml",
+    "lastfm/Cargo.toml",
+    "radio/Cargo.toml",
+    "spotify/Cargo.toml",
+    "youtube/Cargo.toml",
+    "apple_music/Cargo.toml",
+  ],
+  "rust-analyzer.cargo.target": "wasm32-wasip1",
+  "files.exclude": {
+    // "bazel-bin": true,
+    // "bazel-out": true,
+    // "bazel-testlogs": true,
+    "bazel-${workspaceFolderBasename}": true,
+  },
+  "search.exclude": {
+    "bazel-bin": true,
+    "bazel-out": true,
+    "bazel-testlogs": true,
+    "bazel-${workspaceFolderBasename}": true,
+  },
+  "python.defaultInterpreterPath": "",
+  "python.analysis.languageServerMode": "full",
+  "python.useEnvironmentsExtension": true,
 }

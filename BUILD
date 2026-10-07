@@ -25,7 +25,8 @@ dev_registry(
         "//radio",
         "//soundcloud",
         "//spotify",
-        "//youtube",
-        "//youtube_dl",
+        # "//youtube",
+        # "//youtube_dl",
+        "//youtube_js"
     ],
 )

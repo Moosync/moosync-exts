@@ -1,4 +1,4 @@
-load("@extensions_sdk//:defs.bzl", "rust_extension")
+load("@extensions_sdk//:defs.bzl", "PROVIDER_SCOPES", "rust_extension")
 load("@extensions_sdk//moounit:defs.bzl", "moounit_test")
 
 package(default_visibility = ["//visibility:public"])
@@ -10,6 +10,9 @@ rust_extension(
     allowed_hosts = [
         "*.api.radio-browser.info",
         "api.radio-browser.info",
+    ],
+    scopes = [
+        PROVIDER_SCOPES.SEARCH,
     ],
     display_name = "Radio",
     edition = "2024",
