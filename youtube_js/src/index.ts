@@ -1,9 +1,11 @@
 import {
+  Duration,
   ExtensionAccountDetail,
   ExtensionProviderScope,
   GetProviderScopesResponse,
   OauthCallbackResponse,
   PerformAccountLoginResponse,
+  PlaybackDetailsRequestedResponse,
   PreferenceData,
   RequestedAlbumSongsResponse,
   RequestedArtistSongsResponse,
@@ -27,7 +29,9 @@ import {
 } from "./model";
 
 export { handle_extension_command } from "wasm-extension-js";
-import { Innertube, OAuth2Tokens, Types, YTNodes } from "youtubei.js";
+import { Innertube, OAuth2Tokens, Platform, Types, YTNodes } from "youtubei.js";
+
+type Format = Awaited<ReturnType<Innertube["getStreamingData"]>>;
 
 let extension: YoutubeJsExtension;
 const api = getApi();
@@ -87,6 +91,18 @@ class YoutubeJsExtension {
         }),
       };
     }
+
+    Platform.load({
+      ...Platform.shim,
+      eval: (data, _env) => {
+        const fn = new Function(data.output);
+        const res = fn();
+        if (typeof res === "object" && res !== null) {
+          return res;
+        }
+        return undefined;
+      },
+    });
 
     try {
       this.innertube = await Innertube.create({
@@ -199,6 +215,7 @@ class YoutubeJsExtension {
             ExtensionProviderScope.ALBUM_SONGS,
             ExtensionProviderScope.RECOMMENDATIONS,
             ExtensionProviderScope.ACCOUNTS,
+            ExtensionProviderScope.PLAYBACK_DETAILS
           ],
         }),
     );
@@ -519,6 +536,83 @@ class YoutubeJsExtension {
           .map(parseArtist)
           .filter(Boolean),
         albums: albumSearchRes.albums?.contents.map(parseAlbum).filter(Boolean),
+      });
+    });
+
+    api.on("playbackDetailsRequested", async ({ song }) => {
+      if (!this.innertube || !song) {
+        return new PlaybackDetailsRequestedResponse();
+      }
+
+      const rawId =
+        song.song?.id ?? song.song?.playbackUrl ?? song.song?.url ?? "";
+      const videoId = extractVideoId(rawId);
+      if (!videoId) {
+        return new PlaybackDetailsRequestedResponse();
+      }
+
+      let streamUrl: string | undefined;
+      let durationSeconds = song.song?.duration?.seconds
+        ? Number(song.song.duration.seconds)
+        : 0;
+
+      const clients = ["IOS", "ANDROID", "WEB"] as const;
+      for (const client of clients) {
+        try {
+          const response = await this.innertube.actions.execute("/player", {
+            videoId,
+            client,
+          });
+          const streamingData = response.data?.streamingData;
+          if (streamingData?.hlsManifestUrl) {
+            streamUrl = streamingData.hlsManifestUrl;
+            if (response.data?.videoDetails?.lengthSeconds) {
+              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
+            }
+            break;
+          }
+
+          // Progressive formats with audio (e.g. ANDROID itag 18) have full unthrottled streams
+          const progressiveAudio = streamingData?.formats?.find(
+            (f) => (f.mimeType?.startsWith("audio/") || (f.mimeType?.startsWith("video/") && f.audioQuality)) && f.url,
+          );
+          if (progressiveAudio?.url) {
+            streamUrl = progressiveAudio.url;
+            if (response.data?.videoDetails?.lengthSeconds) {
+              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
+            }
+            break;
+          }
+
+          // Adaptive audio formats
+          const adaptiveAudio = streamingData?.adaptiveFormats?.find(
+            (f) => f.mimeType?.startsWith("audio/") && f.url,
+          );
+          if (adaptiveAudio?.url && client !== "IOS") {
+            streamUrl = adaptiveAudio.url;
+            if (response.data?.videoDetails?.lengthSeconds) {
+              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
+            }
+            break;
+          }
+        } catch (err) {
+          console.error(`Failed to fetch player data with client ${client}`, err);
+        }
+      }
+
+      if (!streamUrl) {
+        console.error(`No playback stream available for video: ${videoId}`);
+        return new PlaybackDetailsRequestedResponse();
+      }
+
+      return new PlaybackDetailsRequestedResponse({
+        url: streamUrl,
+        duration:
+          durationSeconds > 0
+            ? new Duration({
+                seconds: BigInt(Math.floor(durationSeconds)),
+              })
+            : undefined,
       });
     });
   }
