@@ -18,14 +18,11 @@ from core.types.protos.extensions_pb2 import (
     PreferenceData,
     RequestedAlbumSongsRequest,
     RequestedArtistSongsRequest,
-    RequestedPlaylistFromUrlRequest,
     RequestedPlaylistSongsRequest,
     RequestedPlaylistsRequest,
     RequestedRecommendationsRequest,
     RequestedSearchResultRequest,
     RequestedSearchResultResponse,
-    RequestedSongFromUrlRequest,
-    RequestedSongFromUrlResponse,
 )
 from core.types.protos.songs_pb2 import Album, Artist, InnerSong, Playlist, Song
 from moounit import Moounit
@@ -73,11 +70,9 @@ def test_get_provider_scopes(entry: Moounit):
         ExtensionProviderScope.ARTIST_SONGS,
         ExtensionProviderScope.PLAYBACK_DETAILS,
         ExtensionProviderScope.PLAYLISTS,
-        ExtensionProviderScope.PLAYLIST_FROM_URL,
         ExtensionProviderScope.PLAYLIST_SONGS,
         ExtensionProviderScope.RECOMMENDATIONS,
         ExtensionProviderScope.SEARCH,
-        ExtensionProviderScope.SONG_FROM_URL,
     ]
     expected.sort()
     assert scopes == expected
@@ -156,94 +151,6 @@ def test_search(entry: Moounit):
     )
     assert len(cached_ret.requested_search_result.songs) == 1
     assert cached_ret.requested_search_result.songs[0].song.title == "Cached Search Hit"
-
-
-def test_song_from_url(entry: Moounit):
-    entry.replay_ignore(
-        request=BatchHttpRequest(),
-        ignore_field=[
-            "headers.X-Goog-Visitor-Id",
-            "body",
-            "headers.user-agent",
-        ],
-    )
-    ret = entry.send_command(
-        ExtensionCommand(
-            requested_song_from_url=RequestedSongFromUrlRequest(
-                url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-            )
-        )
-    )
-    song_detail = ret.requested_song_from_url.song
-    assert song_detail.song.id == "moosync.youtube.js:youtube:dQw4w9WgXcQ"
-    assert song_detail.song.title == "Never Gonna Give You Up"
-    assert song_detail.song.duration.seconds == 213
-    assert song_detail.song.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    assert song_detail.song.song_cover_path_high.startswith("http")
-    assert song_detail.song.song_cover_path_low.startswith("http")
-    assert len(song_detail.artists) == 1
-    assert (
-        song_detail.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCuAXFkgsw1L7xaCfnd5JJOw"
-    )
-    assert song_detail.artists[0].artist_name == "Rick Astley"
-
-    cached_song_resp = RequestedSongFromUrlResponse(
-        song=Song(
-            artists=[Artist(artist_name="Cached Artist")],
-            song=InnerSong(id="youtube:dQw4w9WgXcQ", title="Cached Song"),
-        )
-    )
-    entry.expect_command(
-        MainCommand(get_cache=GetCacheRequest(key="song_url:dQw4w9WgXcQ")),
-        MainCommandResponse(
-            get_cache=GetCacheResponse(data=cached_song_resp.SerializeToString())
-        ),
-    )
-    ret_cached = entry.send_command(
-        ExtensionCommand(
-            requested_song_from_url=RequestedSongFromUrlRequest(
-                url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-            )
-        )
-    )
-    assert ret_cached.requested_song_from_url.song.song.title == "Cached Song"
-    assert (
-        ret_cached.requested_song_from_url.song.artists[0].artist_name
-        == "Cached Artist"
-    )
-
-
-def test_playlist_from_url(entry: Moounit):
-    entry.replay_ignore(
-        request=BatchHttpRequest(),
-        ignore_field=[
-            "headers.X-Goog-Visitor-Id",
-            "body",
-            "headers.user-agent",
-        ],
-    )
-    ret = entry.send_command(
-        ExtensionCommand(
-            requested_playlist_from_url=RequestedPlaylistFromUrlRequest(
-                url="https://music.youtube.com/playlist?list=PLDIoUOhQQPlU2DoseElwLlKXmV9YSEnKI"
-            )
-        )
-    )
-    songs = ret.requested_playlist_from_url.songs
-    assert len(songs) == 98
-
-    first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:EFqvVSqh6R8"
-    assert first.song.title == "Next Summer (Official Video)"
-    assert first.song.duration.seconds == 313
-    assert first.song.url == "https://www.youtube.com/watch?v=EFqvVSqh6R8"
-
-    second = songs[1]
-    assert second.song.id == "moosync.youtube.js:youtube:ko70cExuzZM"
-    assert second.song.title == "The Fate of Ophelia"
-    assert second.song.duration.seconds == 239
-    assert second.song.url == "https://www.youtube.com/watch?v=ko70cExuzZM"
 
 
 def test_playlist_songs(entry: Moounit):

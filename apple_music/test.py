@@ -16,12 +16,10 @@ from core.types.protos.extensions_pb2 import (
     RegisterUserPreferenceResponse,
     RequestedAlbumSongsRequest,
     RequestedArtistSongsRequest,
-    RequestedPlaylistFromUrlRequest,
     RequestedPlaylistSongsRequest,
     RequestedRecommendationsRequest,
     RequestedSearchResultRequest,
     RequestedSongFromIdRequest,
-    RequestedSongFromUrlRequest,
     SetAccountRequest,
     SetAccountResponse,
 )
@@ -85,15 +83,13 @@ def test_get_provider_scopes(entry: Moounit):
 
     # Check that our active scopes are reported
     assert ExtensionProviderScope.SEARCH in scopes
-    assert ExtensionProviderScope.SONG_FROM_URL in scopes
     assert ExtensionProviderScope.PLAYBACK_DETAILS in scopes
     assert ExtensionProviderScope.ALBUM_SONGS in scopes
     assert ExtensionProviderScope.ARTIST_SONGS in scopes
     assert ExtensionProviderScope.PLAYLIST_SONGS in scopes
     assert ExtensionProviderScope.RECOMMENDATIONS in scopes
     assert ExtensionProviderScope.ACCOUNTS in scopes
-    assert ExtensionProviderScope.PLAYLIST_FROM_URL in scopes
-    assert len(scopes) == 9
+    assert len(scopes) == 7
 
 
 def test_search(entry: Moounit):
@@ -123,26 +119,6 @@ def test_search(entry: Moounit):
     assert second.album.album_name == "Thriller (25th Anniversary) [Deluxe Edition]"
 
 
-def test_song_from_url(entry: Moounit):
-    ret = entry.send_command(
-        ExtensionCommand(
-            requested_song_from_url=RequestedSongFromUrlRequest(
-                url="https://music.apple.com/us/album/billie-jean/269572838?i=269573364"
-            )
-        )
-    )
-
-    assert ret.requested_song_from_url.song is not None
-    song = ret.requested_song_from_url.song
-    assert song.song.id == "applemusic:269573364"
-    assert song.song.title == "Billie Jean"
-    assert song.song.duration.seconds == 293
-    assert song.album.album_name == "Thriller"
-    assert len(song.artists) == 1
-    assert song.artists[0].artist_name == "Michael Jackson"
-    assert song.song.playback_url.startswith("https://audio-ssl.itunes.apple.com/")
-
-
 def test_song_from_id(entry: Moounit):
     ret = entry.send_command(
         ExtensionCommand(
@@ -158,26 +134,6 @@ def test_song_from_id(entry: Moounit):
     assert song.album.album_name == "Thriller"
     assert len(song.artists) == 1
     assert song.artists[0].artist_name == "Michael Jackson"
-
-
-def test_playlist_from_url(entry: Moounit):
-    url = (
-        "https://music.apple.com/us/playlist/todays-hits/"
-        "pl.f4d106fed2bd41149aaacabb233eb5eb"
-    )
-    ret = entry.send_command(
-        ExtensionCommand(
-            requested_playlist_from_url=RequestedPlaylistFromUrlRequest(url=url)
-        )
-    )
-
-    assert ret.requested_playlist_from_url.playlist is not None
-    playlist = ret.requested_playlist_from_url.playlist
-    assert (
-        playlist.playlist_id
-        == "applemusic:playlist:pl.f4d106fed2bd41149aaacabb233eb5eb"
-    )
-    assert playlist.playlist_name == "Today’s Hits"
 
 
 def test_playlist_songs(entry: Moounit):

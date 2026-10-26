@@ -12,7 +12,7 @@ use moosync_edk::{
     error,
     handler::register_extension,
     info, warn, ExtensionAccountDetail, ExtensionProviderScope, MoosyncResult,
-    OauthCallbackRequest, PreferenceData, ScrobbleRequest, Song,
+    OauthCallbackRequest, PreferenceData, ScrobbleRequest,
 };
 
 mod client;
@@ -84,13 +84,6 @@ impl PlayerEvents for LastFMExtension {
     }
 }
 impl Provider for LastFMExtension {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![
-            ExtensionProviderScope::Scrobble,
-            ExtensionProviderScope::Accounts,
-        ])
-    }
-
     fn scrobble(&self, req: ScrobbleRequest) -> MoosyncResult<()> {
         let client = self.client.lock().unwrap();
         if let Some(song) = req.song {

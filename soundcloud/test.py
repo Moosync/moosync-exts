@@ -14,11 +14,9 @@ def test_get_provider_scopes(entry: Moounit):
     scopes = list(entry.manifest.scopes)
     scopes.sort()
 
-    assert len(scopes) == 5
+    assert len(scopes) == 3
     expected = [
         pb.ExtensionProviderScope.SEARCH,
-        pb.ExtensionProviderScope.SONG_FROM_URL,
-        pb.ExtensionProviderScope.PLAYLIST_FROM_URL,
         pb.ExtensionProviderScope.PLAYBACK_DETAILS,
         pb.ExtensionProviderScope.PLAYLIST_SONGS,
     ]

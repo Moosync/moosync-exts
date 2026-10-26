@@ -99,10 +99,6 @@ impl RadioExtension {
 
 impl PlayerEvents for RadioExtension {}
 impl Provider for RadioExtension {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![ExtensionProviderScope::Search])
-    }
-
     fn search(
         &self,
         req: moosync_edk::api::RequestedSearchResultRequest,
@@ -141,14 +137,6 @@ impl Provider for RadioExtension {
             songs: self.stations_to_songs(resp),
             ..Default::default()
         })
-    }
-
-    fn get_song_from_url(
-        &self,
-        req: moosync_edk::api::RequestedSongFromUrlRequest,
-    ) -> MoosyncResult<Option<Song>> {
-        info!("Got URL {}", req.url);
-        Ok(None)
     }
 }
 impl DatabaseEvents for RadioExtension {}

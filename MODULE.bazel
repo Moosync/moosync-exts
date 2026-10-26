@@ -7,13 +7,13 @@ module(
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
 local_path_override(
     module_name = "extensions_sdk",
-    path = "../extensions-sdk-lyrics-cover",
+    path = "../extensions-sdk",
 )
 
 bazel_dep(name = "moosync")
 local_path_override(
     module_name = "moosync",
-    path = "../Moosync-lyrics-cover",
+    path = "../Moosync",
 )
 
 # Shared foundation rules

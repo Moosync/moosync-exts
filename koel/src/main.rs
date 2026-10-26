@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use moosync_edk::{
     ExtensionProviderScope, MoosyncResult, Playlist, PreferenceItem, PreferenceType,
     RequestedAlbumSongsRequest, RequestedArtistSongsRequest, RequestedPlaylistSongsRequest,
-    RequestedPlaylistsRequest, RequestedSearchResultRequest, RequestedSongFromUrlRequest,
+    RequestedPlaylistsRequest, RequestedSearchResultRequest,
     SearchResult, Song,
     api::{
         Accounts, ContextMenu, CustomRequest, CustomRequestReturnType, DatabaseEvents, Extension,
@@ -38,27 +38,9 @@ impl KoelExtension {
 
 impl PlayerEvents for KoelExtension {}
 impl Provider for KoelExtension {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![
-            ExtensionProviderScope::Playlists,
-            ExtensionProviderScope::PlaylistSongs,
-            ExtensionProviderScope::PlaybackDetails,
-            ExtensionProviderScope::Search,
-            ExtensionProviderScope::Accounts,
-            ExtensionProviderScope::SongFromUrl,
-            ExtensionProviderScope::AlbumSongs,
-            ExtensionProviderScope::ArtistSongs,
-        ])
-    }
-
     fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         let mut inner = self.inner.lock().unwrap();
         Ok(inner.search(req.query)?)
-    }
-
-    fn get_song_from_url(&self, req: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
-        let mut inner = self.inner.lock().unwrap();
-        Ok(inner.get_song_from_url(req.url)?)
     }
 
     fn get_playlists(&self, _: RequestedPlaylistsRequest) -> MoosyncResult<Vec<Playlist>> {

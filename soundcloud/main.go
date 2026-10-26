@@ -17,7 +17,7 @@ type SoundcloudExtension struct {
 }
 
 func (*SoundcloudExtension) GetProviderScopes() ([]extensions.ExtensionProviderScope, error) {
-	return []extensions.ExtensionProviderScope{extensions.ExtensionProviderScope_SEARCH, extensions.ExtensionProviderScope_SONG_FROM_URL, extensions.ExtensionProviderScope_PLAYLIST_FROM_URL, extensions.ExtensionProviderScope_PLAYBACK_DETAILS, extensions.ExtensionProviderScope_PLAYLIST_SONGS}, nil
+	return []extensions.ExtensionProviderScope{extensions.ExtensionProviderScope_SEARCH, extensions.ExtensionProviderScope_PLAYBACK_DETAILS, extensions.ExtensionProviderScope_PLAYLIST_SONGS}, nil
 }
 
 func (s *SoundcloudExtension) HandleCustomRequest(req *extensions.CustomRequest) (ret *extensions.CustomRequestResponse, err error) {
@@ -84,41 +84,6 @@ func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultReques
 	}
 
 	return
-}
-
-func (s *SoundcloudExtension) GetSongFromURL(req *extensions.RequestedSongFromUrlRequest) (*extensions.RequestedSongFromUrlResponse, error) {
-	url := req.Url
-	if s.sc.IsURL(url) {
-		tracks, err := s.sc.GetTrackInfo(soundcloudapi.GetTrackInfoOptions{
-			URL: url,
-		})
-
-		if err != nil {
-			return nil, err
-		}
-
-		if len(tracks) == 0 {
-			return nil, fmt.Errorf("Could not fetch details for the URL")
-		}
-
-		return &extensions.RequestedSongFromUrlResponse{Song: scTracksToSong(tracks[0])}, nil
-	}
-
-	return nil, fmt.Errorf("Not a valid soundcloud URL")
-}
-
-func (s *SoundcloudExtension) GetPlaylistFromURL(req *extensions.RequestedPlaylistFromUrlRequest) (*extensions.RequestedPlaylistFromUrlResponse, error) {
-	url := req.Url
-	if s.sc.IsURL(url) {
-		playlist, err := s.sc.GetPlaylistInfo(url)
-		if err != nil {
-			return nil, err
-		}
-
-		return &extensions.RequestedPlaylistFromUrlResponse{Playlist: scPlaylistToPlaylists(playlist)}, nil
-
-	}
-	return nil, fmt.Errorf("Not a valid soundcloud URL")
 }
 
 func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlaylistSongsRequest) (ret *extensions.RequestedPlaylistSongsResponse, err error) {

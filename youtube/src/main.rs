@@ -215,13 +215,6 @@ impl Provider for YoutubeExtension {
         Ok(suggestions)
     }
 
-    fn get_song_from_url(
-        &self,
-        _url: moosync_edk::RequestedSongFromUrlRequest,
-    ) -> Result<Option<moosync_edk::Song>> {
-        Ok(None)
-    }
-
     fn handle_custom_request(
         &self,
         _request: moosync_edk::CustomRequest,

@@ -7,7 +7,7 @@ use moosync_edk::{
         Accounts, ContextMenu, CustomRequest, CustomRequestReturnType, DatabaseEvents, Extension,
         PlayerEvents, PlayerStateChangedRequest, PreferenceEvents, Provider,
         RequestedAlbumSongsRequest, RequestedArtistSongsRequest, RequestedPlaylistSongsRequest,
-        RequestedSongFromUrlRequest, SeekedRequest, SongChangedRequest, SongQueueChangedRequest,
+        SeekedRequest, SongChangedRequest, SongQueueChangedRequest,
         SongsWithPageTokenReturnType, VolumeChangedRequest,
         extension_api::{self, get_system_time, open_sock, read_sock, write_sock},
     },
@@ -437,21 +437,10 @@ impl PlayerEvents for DiscordRPC {
     }
 }
 impl Provider for DiscordRPC {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![
-            ExtensionProviderScope::PlayerUiEvents,
-            ExtensionProviderScope::PlayerDataEvents,
-        ])
-    }
-
     fn get_playlist_content(
         &self,
         _: RequestedPlaylistSongsRequest,
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
-        Err("Not implemented".into())
-    }
-
-    fn get_song_from_url(&self, _: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
         Err("Not implemented".into())
     }
 

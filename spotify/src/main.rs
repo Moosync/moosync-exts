@@ -12,9 +12,9 @@ use moosync_edk::{
         AccountLoginArgs, Accounts, ContextMenu, CustomRequest, CustomRequestReturnType,
         DatabaseEvents, Extension, ExtensionAccountDetail, ExtensionProviderScope,
         OauthCallbackRequest, PlayerEvents, PreferenceEvents, Provider, RequestedAlbumSongsRequest,
-        RequestedArtistSongsRequest, RequestedPlaylistFromUrlRequest,
+        RequestedArtistSongsRequest,
         RequestedPlaylistSongsRequest, RequestedPlaylistsRequest, RequestedRecommendationsRequest,
-        RequestedSearchResultRequest, RequestedSongFromIdRequest, RequestedSongFromUrlRequest,
+        RequestedSearchResultRequest, RequestedSongFromIdRequest,
         SongsWithPageTokenReturnType,
         extension_api::{get_secure, set_account, set_secure},
     },
@@ -129,10 +129,6 @@ impl SpotifyExtension {
 impl PlayerEvents for SpotifyExtension {}
 
 impl Provider for SpotifyExtension {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![])
-    }
-
     fn get_album_songs(
         &self,
         req: RequestedAlbumSongsRequest,
@@ -235,35 +231,12 @@ impl Provider for SpotifyExtension {
         Err("Not logged in".into())
     }
 
-    fn get_song_from_url(&self, req: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
-        let url = req.url;
-        let api_client = self.api_client.lock().unwrap();
-        if let Some(api_client) = api_client.as_ref() {
-            let song = block_on(api_client.song_from_url(url))?;
-            return Ok(Some(song));
-        }
-        Err("Not logged in".into())
-    }
-
     fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         let term = req.query;
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let results = block_on(api_client.search(term))?;
             return Ok(results);
-        }
-        Err("Not logged in".into())
-    }
-
-    fn get_playlist_from_url(
-        &self,
-        req: RequestedPlaylistFromUrlRequest,
-    ) -> MoosyncResult<Option<Playlist>> {
-        let url = req.url;
-        let api_client = self.api_client.lock().unwrap();
-        if let Some(api_client) = api_client.as_ref() {
-            let playlist = block_on(api_client.playlist_from_url(url))?;
-            return Ok(Some(playlist));
         }
         Err("Not logged in".into())
     }

@@ -18,6 +18,14 @@ filegroup(
     ],
 )
 
+genrule(
+    name = "manifest",
+    srcs = [":all"],
+    outs = ["manifest.pb"],
+    cmd = "$(location //tools:gen_manifest) --out $@ $(SRCS)",
+    tools = ["//tools:gen_manifest"],
+)
+
 dev_registry(
     name = "dev_registry",
     extensions = [

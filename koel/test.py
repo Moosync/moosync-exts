@@ -90,7 +90,6 @@ def test_get_provider_scopes(entry: Moounit):
         pb.ExtensionProviderScope.ACCOUNTS,
         pb.ExtensionProviderScope.PLAYLISTS,
         pb.ExtensionProviderScope.PLAYBACK_DETAILS,
-        pb.ExtensionProviderScope.SONG_FROM_URL,
     ]
     expected_scopes.sort()
     assert scopes == expected_scopes

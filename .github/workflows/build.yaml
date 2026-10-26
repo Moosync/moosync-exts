@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - v2
-  pull_request:
-    branches:
+      - main
       - v2
 
 jobs:
@@ -27,7 +25,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: "v2"
 
       - name: install dependencies (ubuntu only)
         uses: awalsh128/cache-apt-pkgs-action@latest
@@ -56,25 +53,12 @@ jobs:
         with:
           node-version: "latest"
 
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-
-      - name: build extensions
+      - name: Build extensions and manifest
         run: |
-          bazel build //:all
+          bazel build //:all //:manifest
           mkdir -p dist
-          cp bazel-bin/*.msxt dist/
-          for dir in discord koel lastfm radio soundcloud spotify youtube youtube_dl; do
-            cp bazel-bin/$dir/package.json $dir/package.json
-          done
-
-      - name: Generate manifest
-        run: |
-          python3 gen-manifest.py
-          for dir in discord koel lastfm radio soundcloud spotify youtube youtube_dl; do
-            rm -f $dir/package.json
-          done
+          find bazel-bin -name "*.msxt" -exec cp -f {} dist/ \;
+          cp -f bazel-bin/manifest.pb dist/
 
       - name: Get release name
         id: date
@@ -103,12 +87,14 @@ jobs:
             console.log('created release', { release });
 
             for (let file of await fs.readdir('./dist')) {
-              console.log('uploading', file);
+              if (file.endsWith('.msxt') || file.endsWith('.pb')) {
+                console.log('uploading', file);
 
-              await github.repos.uploadReleaseAsset({
-                owner, repo,
-                release_id: release.data.id,
-                name: file,
-                data: await fs.readFile(`./dist/${file}`)
-              });
+                await github.repos.uploadReleaseAsset({
+                  owner, repo,
+                  release_id: release.data.id,
+                  name: file,
+                  data: await fs.readFile(`./dist/${file}`)
+                });
+              }
             }

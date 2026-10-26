@@ -4,11 +4,11 @@
 use std::time::Duration;
 
 use moosync_edk::{
-    ExtensionProviderScope, MoosyncResult, PlaybackDetailsRequestedRequest, Playlist,
+    MoosyncResult, PlaybackDetailsRequestedRequest,
     PreferenceData, PreferenceItem, PreferenceType, RequestedAlbumSongsRequest,
-    RequestedArtistSongsRequest, RequestedPlaylistFromUrlRequest,
+    RequestedArtistSongsRequest,
     RequestedPlaylistSongsRequest, RequestedRecommendationsRequest,
-    RequestedSearchResultRequest, RequestedSongFromIdRequest, RequestedSongFromUrlRequest,
+    RequestedSearchResultRequest, RequestedSongFromIdRequest,
     SearchResult, Song,
     api::{
         AccountLoginArgs, Accounts, ContextMenu, CustomRequest, CustomRequestReturnType,
@@ -18,7 +18,7 @@ use moosync_edk::{
         extension_api::{get_secure, register_user_preferences, set_account, set_secure},
     },
     handler::register_extension,
-    info, warn,
+    info,
 };
 
 mod client;
@@ -26,7 +26,7 @@ mod utils;
 
 use client::AppleMusicClient;
 use utils::{
-    cast_prefdata, extract_playlist_id, extract_song_id, serde_to_google_value,
+    cast_prefdata, serde_to_google_value,
 };
 
 struct AppleMusic {
@@ -123,52 +123,15 @@ impl Accounts for AppleMusic {
 }
 
 impl Provider for AppleMusic {
-    fn get_provider_scopes(&self) -> MoosyncResult<Vec<ExtensionProviderScope>> {
-        Ok(vec![
-            ExtensionProviderScope::Search,
-            ExtensionProviderScope::SongFromUrl,
-            ExtensionProviderScope::PlaylistFromUrl,
-            ExtensionProviderScope::PlaylistSongs,
-            ExtensionProviderScope::AlbumSongs,
-            ExtensionProviderScope::ArtistSongs,
-            ExtensionProviderScope::Recommendations,
-            ExtensionProviderScope::PlaybackDetails,
-            ExtensionProviderScope::Accounts,
-        ])
-    }
-
     fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         info!("Search requested for query: {}", req.query);
         self.client.search(req.query)
-    }
-
-    fn get_song_from_url(&self, req: RequestedSongFromUrlRequest) -> MoosyncResult<Option<Song>> {
-        info!("Get song from URL: {}", req.url);
-        if let Some(id) = extract_song_id(&req.url) {
-            self.client.get_song(&id)
-        } else {
-            warn!("Could not extract song ID from URL: {}", req.url);
-            Ok(None)
-        }
     }
 
     fn get_song_from_id(&self, req: RequestedSongFromIdRequest) -> MoosyncResult<Option<Song>> {
         let id = req.id.trim_start_matches("applemusic:");
         info!("Get song from ID: {}", id);
         self.client.get_song(id)
-    }
-
-    fn get_playlist_from_url(
-        &self,
-        req: RequestedPlaylistFromUrlRequest,
-    ) -> MoosyncResult<Option<Playlist>> {
-        info!("Get playlist from URL: {}", req.url);
-        if let Some(id) = extract_playlist_id(&req.url) {
-            self.client.get_playlist(&id)
-        } else {
-            warn!("Could not extract playlist ID from URL: {}", req.url);
-            Ok(None)
-        }
     }
 
     fn get_playlist_content(
