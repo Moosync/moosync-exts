@@ -35,33 +35,34 @@ type Format = Awaited<ReturnType<Innertube["getStreamingData"]>>;
 
 let extension: YoutubeJsExtension;
 const api = getApi();
+const CACHE_TTL_SECONDS = 7200;
 
 class ExtensionCache implements Types.ICache {
-  public cache_dir: string = "";
+  public readonly cache_dir: string = "";
   private mem = new Map<string, ArrayBuffer>();
 
-  async get(key: string): Promise<ArrayBuffer | undefined> {
+  get(key: string): Promise<ArrayBuffer | undefined> {
     const memVal = this.mem.get(key);
-    if (memVal) return memVal;
+    if (memVal) return Promise.resolve(memVal);
 
     const data = api.getSecure(new PreferenceData({ key }));
     const val = data?.value;
     if (val?.kind.case === "stringValue" && val.kind.value) {
       const buf = Uint8Array.from(atob(val.kind.value), (c) =>
-        c.charCodeAt(0),
+        c.codePointAt(0) ?? 0,
       ).buffer;
       this.mem.set(key, buf);
-      return buf;
+      return Promise.resolve(buf);
     }
-    return undefined;
+    return Promise.resolve(undefined);
   }
 
-  async set(key: string, value: ArrayBuffer): Promise<void> {
+  set(key: string, value: ArrayBuffer): Promise<void> {
     this.mem.set(key, value);
     const bytes = new Uint8Array(value);
     let binary = "";
     for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      binary += String.fromCodePoint(bytes[i]);
     }
     const b64 = btoa(binary);
     api.setSecure(
@@ -70,21 +71,109 @@ class ExtensionCache implements Types.ICache {
         value: { kind: { case: "stringValue", value: b64 } },
       }),
     );
+    return Promise.resolve();
   }
 
-  async remove(key: string): Promise<void> {
+  remove(key: string): Promise<void> {
     this.mem.delete(key);
     api.setSecure(new PreferenceData({ key }));
+    return Promise.resolve();
   }
+}
+
+interface PlaybackStreamCandidate {
+  hlsManifestUrl?: string;
+  formats?: Array<{ mimeType?: string; audioQuality?: string; url?: string }>;
+  adaptiveFormats?: Array<{ mimeType?: string; url?: string }>;
+}
+
+function extractMusicPlaylistSongs(items: unknown[]): Song[] {
+  const songs: Song[] = [];
+  for (const item of items) {
+    if (item instanceof YTNodes.MusicResponsiveListItem) {
+      const parsed = parseSong(item);
+      if (parsed) songs.push(parsed);
+    }
+  }
+  return songs;
+}
+
+function extractYtPlaylistSongs(items: unknown[]): Song[] {
+  const songs: Song[] = [];
+  for (const item of items) {
+    if (item instanceof YTNodes.PlaylistVideo) {
+      const parsed = parseSong(item);
+      if (parsed) songs.push(parsed);
+    }
+  }
+  return songs;
+}
+
+function extractShelfSongs(contents: unknown[]): Song[] {
+  const songs: Song[] = [];
+  for (const item of contents) {
+    if (
+      item instanceof YTNodes.MusicResponsiveListItem ||
+      item instanceof YTNodes.MusicTwoRowItem
+    ) {
+      const parsed = parseSong(item);
+      if (parsed) songs.push(parsed);
+    }
+  }
+  return songs;
+}
+
+function extractArtistSectionSongs(sections: unknown[]): Song[] {
+  const songs: Song[] = [];
+  for (const sec of sections) {
+    if (
+      sec instanceof YTNodes.MusicShelf ||
+      sec instanceof YTNodes.MusicCarouselShelf
+    ) {
+      songs.push(...extractShelfSongs(sec.contents));
+    }
+  }
+  return songs;
+}
+
+function extractStreamUrl(
+  streamingData: PlaybackStreamCandidate | undefined,
+  client: "IOS" | "ANDROID" | "WEB",
+): string | undefined {
+  if (streamingData?.hlsManifestUrl) {
+    return streamingData.hlsManifestUrl;
+  }
+
+  const progressiveAudio = streamingData?.formats?.find(
+    (f) =>
+      (f.mimeType?.startsWith("audio/") ||
+        (f.mimeType?.startsWith("video/") && f.audioQuality)) &&
+      f.url,
+  );
+  if (progressiveAudio?.url) {
+    return progressiveAudio.url;
+  }
+
+  if (client !== "IOS") {
+    const adaptiveAudio = streamingData?.adaptiveFormats?.find(
+      (f) => f.mimeType?.startsWith("audio/") && f.url,
+    );
+    if (adaptiveAudio?.url) {
+      return adaptiveAudio.url;
+    }
+  }
+
+  return undefined;
 }
 
 class YoutubeJsExtension {
   private innertube?: Innertube;
-  private cache = new ExtensionCache();
+  private readonly cache = new ExtensionCache();
 
   public async init() {
     this.register_api();
-    if (typeof (globalThis as unknown as { Intl: unknown }).Intl === "undefined") {
+    await this.sync_account();
+    if ((globalThis as unknown as { Intl: unknown }).Intl === undefined) {
       (globalThis as unknown as { Intl: unknown }).Intl = {
         DateTimeFormat: () => ({
           resolvedOptions: () => ({ timeZone: "UTC" }),
@@ -95,6 +184,7 @@ class YoutubeJsExtension {
     Platform.load({
       ...Platform.shim,
       eval: (data, _env) => {
+        // NOSONAR: YouTube.js requires dynamic function evaluation for player deciphering
         const fn = new Function(data.output);
         const res = fn();
         if (typeof res === "object" && res !== null) {
@@ -126,6 +216,15 @@ class YoutubeJsExtension {
         }
       });
 
+      const tokens = await this.load_tokens();
+      if (tokens) {
+        try {
+          await this.innertube.session.signIn(tokens);
+          await this.sync_account();
+        } catch (error_) {
+          console.error("failed to signIn with stored tokens", error_);
+        }
+      }
     } catch (e) {
       console.error("failed to create innertube", e);
     }
@@ -193,6 +292,107 @@ class YoutubeJsExtension {
     );
   }
 
+  private async fetchSongFromUrl(videoId: string): Promise<Song | undefined> {
+    if (!this.innertube) return undefined;
+    try {
+      const trackInfo = await this.innertube.music.getInfo(videoId);
+      return parseSong(trackInfo);
+    } catch (error_) {
+      console.error("music.getInfo failed", error_);
+    }
+
+    try {
+      const videoInfo = await this.innertube.getInfo(videoId);
+      return parseSong(videoInfo);
+    } catch (error_) {
+      console.error("getInfo failed", error_);
+    }
+
+    return undefined;
+  }
+
+  private async fetchPlaylistFromUrl(playlistId: string): Promise<Song[]> {
+    if (!this.innertube) return [];
+    try {
+      const musicPlaylist = await this.innertube.music.getPlaylist(playlistId);
+      return extractMusicPlaylistSongs(musicPlaylist.items);
+    } catch {
+      try {
+        const ytPlaylist = await this.innertube.getPlaylist(playlistId);
+        return extractYtPlaylistSongs(ytPlaylist.items);
+      } catch {
+        return [];
+      }
+    }
+  }
+
+  private async fetchArtistSongs(artistId: string): Promise<Song[]> {
+    if (!this.innertube) return [];
+    const ytArtist = await this.innertube.music.getArtist(artistId);
+    try {
+      const songsShelf = await ytArtist.getAllSongs();
+      if (songsShelf) {
+        return extractShelfSongs(songsShelf.contents);
+      }
+    } catch {
+      // Fall through to sections
+    }
+    return extractArtistSectionSongs(ytArtist.sections);
+  }
+
+  private async getHomeFeedRecommendations(): Promise<Song[]> {
+    if (!this.innertube) return [];
+    const home = await this.innertube.music.getHomeFeed();
+    const songs: Song[] = [];
+    for (const sec of home.sections ?? []) {
+      if (sec instanceof YTNodes.MusicCarouselShelf) {
+        songs.push(...extractShelfSongs(sec.contents));
+      }
+    }
+    return songs;
+  }
+
+  private async getExploreRecommendations(): Promise<Song[]> {
+    if (!this.innertube) return [];
+    const explore = await this.innertube.music.getExplore();
+    const songs: Song[] = [];
+    for (const sec of explore.sections) {
+      songs.push(...extractShelfSongs(sec.contents));
+    }
+    return songs;
+  }
+
+  private async fetchStreamDetails(
+    videoId: string,
+    fallbackDuration: number,
+  ): Promise<{ streamUrl?: string; durationSeconds: number }> {
+    if (!this.innertube) {
+      return { durationSeconds: fallbackDuration };
+    }
+    const clients: Array<"IOS" | "ANDROID" | "WEB"> = ["IOS", "ANDROID", "WEB"];
+    let durationSeconds = fallbackDuration;
+
+    for (const client of clients) {
+      try {
+        const response = await this.innertube.actions.execute("/player", {
+          videoId,
+          client,
+        });
+        const streamingData = response.data?.streamingData;
+        const streamUrl = extractStreamUrl(streamingData, client);
+        if (streamUrl) {
+          if (response.data?.videoDetails?.lengthSeconds) {
+            durationSeconds = Number(response.data.videoDetails.lengthSeconds);
+          }
+          return { streamUrl, durationSeconds };
+        }
+      } catch (err) {
+        console.error(`Failed to fetch player data with client ${client}`, err);
+      }
+    }
+    return { durationSeconds };
+  }
+
   private currentDeviceCode?: {
     device_code: string;
     user_code: string;
@@ -227,10 +427,8 @@ class YoutubeJsExtension {
 
       if (loginStatus) {
         try {
-          if (!this.innertube.session.oauth.client_id) {
-            this.innertube.session.oauth.client_id =
-              await this.innertube.session.oauth.getClientID();
-          }
+          this.innertube.session.oauth.client_id ??=
+            await this.innertube.session.oauth.getClientID();
           const deviceCode =
             await this.innertube.session.oauth.getDeviceAndUserCode();
           this.currentDeviceCode = deviceCode;
@@ -276,7 +474,7 @@ class YoutubeJsExtension {
                 client_id: client.client_id,
                 client_secret: client.client_secret,
                 code: deviceCode,
-                grant_type: "http://oauth.net/grant_type/device/1.0",
+                grant_type: "http://oauth.net/grant_type/device/1.0", // NOSONAR
               }),
             },
           );
@@ -321,21 +519,17 @@ class YoutubeJsExtension {
         return new RequestedSongFromUrlResponse();
       }
       const videoId = extractVideoId(url);
-      try {
-        const trackInfo = await this.innertube.music.getInfo(videoId);
-        const song = parseSong(trackInfo);
-        return new RequestedSongFromUrlResponse({ song });
-      } catch (e1) {
-        console.error("music.getInfo failed", e1);
-        try {
-          const videoInfo = await this.innertube.getInfo(videoId);
-          const song = parseSong(videoInfo);
-          return new RequestedSongFromUrlResponse({ song });
-        } catch (e2) {
-          console.error("getInfo failed", e2);
-          return new RequestedSongFromUrlResponse();
-        }
+      const cacheKey = `song_url:${videoId}`;
+      const cached = api.getCache(cacheKey, RequestedSongFromUrlResponse);
+      if (cached) {
+        return cached;
       }
+      const song = await this.fetchSongFromUrl(videoId);
+      const resp = new RequestedSongFromUrlResponse({ song });
+      if (song) {
+        api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+      }
+      return resp;
     });
 
     api.on("requestedPlaylistFromUrl", async ({ url }) => {
@@ -343,31 +537,17 @@ class YoutubeJsExtension {
         return new RequestedPlaylistFromUrlResponse();
       }
       const playlistId = extractPlaylistId(url);
-      try {
-        const musicPlaylist = await this.innertube.music.getPlaylist(playlistId);
-        const songs: Song[] = [];
-        for (const item of musicPlaylist.items) {
-          if (item instanceof YTNodes.MusicResponsiveListItem) {
-            const parsed = parseSong(item);
-            if (parsed) songs.push(parsed);
-          }
-        }
-        return new RequestedPlaylistFromUrlResponse({ songs });
-      } catch {
-        try {
-          const ytPlaylist = await this.innertube.getPlaylist(playlistId);
-          const songs: Song[] = [];
-          for (const item of ytPlaylist.items) {
-            if (item instanceof YTNodes.PlaylistVideo) {
-              const parsed = parseSong(item);
-              if (parsed) songs.push(parsed);
-            }
-          }
-          return new RequestedPlaylistFromUrlResponse({ songs });
-        } catch {
-          return new RequestedPlaylistFromUrlResponse();
-        }
+      const cacheKey = `playlist_url:${playlistId}`;
+      const cached = api.getCache(cacheKey, RequestedPlaylistFromUrlResponse);
+      if (cached) {
+        return cached;
       }
+      const songs = await this.fetchPlaylistFromUrl(playlistId);
+      const resp = new RequestedPlaylistFromUrlResponse({ songs });
+      if (songs.length > 0) {
+        api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+      }
+      return resp;
     });
 
     api.on("requestedPlaylistSongs", async ({ id }) => {
@@ -375,22 +555,23 @@ class YoutubeJsExtension {
         return new RequestedPlaylistSongsResponse();
       }
       const playlistId = sanitizeId(id);
+      const cacheKey = `playlist_songs:${playlistId}`;
+      const cached = api.getCache(cacheKey, RequestedPlaylistSongsResponse);
+      if (cached) {
+        return cached;
+      }
       try {
         const playlist = await this.innertube.music.getPlaylist(playlistId);
-        const songs: Song[] = [];
-
-        for (const item of playlist.items) {
-          if (item instanceof YTNodes.MusicResponsiveListItem) {
-            const parsed = parseSong(item);
-            if (parsed) songs.push(parsed);
-          }
-        }
-
-        return new RequestedPlaylistSongsResponse({
+        const songs = extractMusicPlaylistSongs(playlist.items);
+        const resp = new RequestedPlaylistSongsResponse({
           songs,
         });
-      } catch (e) {
-        console.error("failed to get playlist songs", e);
+        if (songs.length > 0) {
+          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+        }
+        return resp;
+      } catch (error_) {
+        console.error("failed to get playlist songs", error_);
         return new RequestedPlaylistSongsResponse();
       }
     });
@@ -400,38 +581,22 @@ class YoutubeJsExtension {
         return new RequestedArtistSongsResponse();
       }
       const artistId = sanitizeId(artist.artistId);
+      const cacheKey = `artist_songs:${artistId}`;
+      const cached = api.getCache(cacheKey, RequestedArtistSongsResponse);
+      if (cached) {
+        return cached;
+      }
       try {
-        const ytArtist = await this.innertube.music.getArtist(artistId);
-        const songs: Song[] = [];
-
-        try {
-          const songsShelf = await ytArtist.getAllSongs();
-          if (songsShelf) {
-            for (const item of songsShelf.contents) {
-              if (item instanceof YTNodes.MusicResponsiveListItem) {
-                const parsed = parseSong(item);
-                if (parsed) songs.push(parsed);
-              }
-            }
-          }
-        } catch {
-          for (const sec of ytArtist.sections) {
-            if (sec instanceof YTNodes.MusicShelf || sec instanceof YTNodes.MusicCarouselShelf) {
-              for (const item of sec.contents) {
-                if (item instanceof YTNodes.MusicResponsiveListItem || item instanceof YTNodes.MusicTwoRowItem) {
-                  const parsed = parseSong(item);
-                  if (parsed) songs.push(parsed);
-                }
-              }
-            }
-          }
-        }
-
-        return new RequestedArtistSongsResponse({
+        const songs = await this.fetchArtistSongs(artistId);
+        const resp = new RequestedArtistSongsResponse({
           songs,
         });
-      } catch (e) {
-        console.error("failed to get artist songs", e);
+        if (songs.length > 0) {
+          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+        }
+        return resp;
+      } catch (error_) {
+        console.error("failed to get artist songs", error_);
         return new RequestedArtistSongsResponse();
       }
     });
@@ -441,12 +606,21 @@ class YoutubeJsExtension {
         return new RequestedAlbumSongsResponse();
       }
       const albumId = sanitizeId(album.albumId);
+      const cacheKey = `album_songs:${albumId}`;
+      const cached = api.getCache(cacheKey, RequestedAlbumSongsResponse);
+      if (cached) {
+        return cached;
+      }
       try {
         const ytAlbum = await this.innertube.music.getAlbum(albumId);
         const songs = ytAlbum.contents.map(parseSong).filter(Boolean);
-        return new RequestedAlbumSongsResponse({ songs });
-      } catch (e) {
-        console.error("failed to get album songs", e);
+        const resp = new RequestedAlbumSongsResponse({ songs });
+        if (songs.length > 0) {
+          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+        }
+        return resp;
+      } catch (error_) {
+        console.error("failed to get album songs", error_);
         return new RequestedAlbumSongsResponse();
       }
     });
@@ -455,47 +629,46 @@ class YoutubeJsExtension {
       if (!this.innertube) {
         return new RequestedRecommendationsResponse();
       }
-      const songs: Song[] = [];
-      try {
-        if (this.innertube.session.logged_in) {
-          const home = await this.innertube.music.getHomeFeed();
-          for (const sec of home.sections ?? []) {
-            if (sec instanceof YTNodes.MusicCarouselShelf) {
-              for (const item of sec.contents) {
-                if (item instanceof YTNodes.MusicResponsiveListItem || item instanceof YTNodes.MusicTwoRowItem) {
-                  const parsed = parseSong(item);
-                  if (parsed) songs.push(parsed);
-                }
-              }
-            }
-          }
-        } else {
-          const explore = await this.innertube.music.getExplore();
-          for (const sec of explore.sections) {
-            for (const item of sec.contents) {
-              if (item instanceof YTNodes.MusicResponsiveListItem || item instanceof YTNodes.MusicTwoRowItem) {
-                const parsed = parseSong(item);
-                if (parsed) songs.push(parsed);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.error("failed to get recommendations", e);
+      const loggedIn = this.innertube.session.logged_in;
+      const cacheKey = `recommendations:${loggedIn ? "auth" : "anon"}`;
+      const cached = api.getCache(cacheKey, RequestedRecommendationsResponse);
+      if (cached) {
+        return cached;
       }
-      return new RequestedRecommendationsResponse({ songs });
+      try {
+        const songs = loggedIn
+          ? await this.getHomeFeedRecommendations()
+          : await this.getExploreRecommendations();
+        const resp = new RequestedRecommendationsResponse({ songs });
+        if (songs.length > 0) {
+          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+        }
+        return resp;
+      } catch (error_) {
+        console.error("failed to get recommendations", error_);
+        return new RequestedRecommendationsResponse();
+      }
     });
 
     api.on("requestedPlaylists", async () => {
-      if (!this.innertube || !this.innertube.session.logged_in) {
+      if (!this.innertube?.session.logged_in) {
         return new RequestedPlaylistsResponse();
+      }
+      const cacheKey = "user_playlists";
+      const cached = api.getCache(cacheKey, RequestedPlaylistsResponse);
+      if (cached) {
+        return cached;
       }
       try {
         const feed = await this.innertube.getPlaylists();
         const playlists = feed.playlists.map(parsePlaylist).filter(Boolean);
-        return new RequestedPlaylistsResponse({ playlists });
-      } catch (e) {
-        console.error("failed to get playlists", e);
+        const resp = new RequestedPlaylistsResponse({ playlists });
+        if (playlists.length > 0) {
+          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+        }
+        return resp;
+      } catch (error_) {
+        console.error("failed to get playlists", error_);
         return new RequestedPlaylistsResponse();
       }
     });
@@ -503,6 +676,11 @@ class YoutubeJsExtension {
     api.on("requestedSearchResult", async ({ query }) => {
       if (!this.innertube) {
         return new RequestedSearchResultResponse();
+      }
+      const cacheKey = `search:${query.trim()}`;
+      const cached = api.getCache(cacheKey, RequestedSearchResultResponse);
+      if (cached) {
+        return cached;
       }
       const songSearchRes = await this.innertube.music.search(query, {
         type: "song",
@@ -527,7 +705,7 @@ class YoutubeJsExtension {
         );
       }
 
-      return new RequestedSearchResultResponse({
+      const resp = new RequestedSearchResultResponse({
         songs: songSearchRes.songs?.contents.map(parseSong).filter(Boolean),
         playlists: playlistSearchRes.playlists?.contents
           .map(parsePlaylist)
@@ -537,6 +715,8 @@ class YoutubeJsExtension {
           .filter(Boolean),
         albums: albumSearchRes.albums?.contents.map(parseAlbum).filter(Boolean),
       });
+      api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+      return resp;
     });
 
     api.on("playbackDetailsRequested", async ({ song }) => {
@@ -551,54 +731,14 @@ class YoutubeJsExtension {
         return new PlaybackDetailsRequestedResponse();
       }
 
-      let streamUrl: string | undefined;
-      let durationSeconds = song.song?.duration?.seconds
+      const fallbackDuration = song.song?.duration?.seconds
         ? Number(song.song.duration.seconds)
         : 0;
 
-      const clients = ["IOS", "ANDROID", "WEB"] as const;
-      for (const client of clients) {
-        try {
-          const response = await this.innertube.actions.execute("/player", {
-            videoId,
-            client,
-          });
-          const streamingData = response.data?.streamingData;
-          if (streamingData?.hlsManifestUrl) {
-            streamUrl = streamingData.hlsManifestUrl;
-            if (response.data?.videoDetails?.lengthSeconds) {
-              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
-            }
-            break;
-          }
-
-          // Progressive formats with audio (e.g. ANDROID itag 18) have full unthrottled streams
-          const progressiveAudio = streamingData?.formats?.find(
-            (f) => (f.mimeType?.startsWith("audio/") || (f.mimeType?.startsWith("video/") && f.audioQuality)) && f.url,
-          );
-          if (progressiveAudio?.url) {
-            streamUrl = progressiveAudio.url;
-            if (response.data?.videoDetails?.lengthSeconds) {
-              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
-            }
-            break;
-          }
-
-          // Adaptive audio formats
-          const adaptiveAudio = streamingData?.adaptiveFormats?.find(
-            (f) => f.mimeType?.startsWith("audio/") && f.url,
-          );
-          if (adaptiveAudio?.url && client !== "IOS") {
-            streamUrl = adaptiveAudio.url;
-            if (response.data?.videoDetails?.lengthSeconds) {
-              durationSeconds = Number(response.data.videoDetails.lengthSeconds);
-            }
-            break;
-          }
-        } catch (err) {
-          console.error(`Failed to fetch player data with client ${client}`, err);
-        }
-      }
+      const { streamUrl, durationSeconds } = await this.fetchStreamDetails(
+        videoId,
+        fallbackDuration,
+      );
 
       if (!streamUrl) {
         console.error(`No playback stream available for video: ${videoId}`);
@@ -620,7 +760,7 @@ class YoutubeJsExtension {
 
 export function entry(): number {
   extension = new YoutubeJsExtension();
-  extension.init();
+  void extension.init();
   console.log("started youtubejs extension successfully");
   return 0;
 }

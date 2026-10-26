@@ -5,12 +5,17 @@ from core.types.protos.extensions_pb2 import (
     BatchHttpResponse,
     ExtensionCommand,
     ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
     GetProviderScopesRequest,
+    GetSecureRequest,
+    GetSecureResponse,
     MainCommand,
     MainCommandResponse,
     OauthCallbackRequest,
     PerformAccountLoginRequest,
     PlaybackDetailsRequestedRequest,
+    PreferenceData,
     RequestedAlbumSongsRequest,
     RequestedArtistSongsRequest,
     RequestedPlaylistFromUrlRequest,
@@ -18,7 +23,9 @@ from core.types.protos.extensions_pb2 import (
     RequestedPlaylistsRequest,
     RequestedRecommendationsRequest,
     RequestedSearchResultRequest,
+    RequestedSearchResultResponse,
     RequestedSongFromUrlRequest,
+    RequestedSongFromUrlResponse,
 )
 from core.types.protos.songs_pb2 import Album, Artist, InnerSong, Playlist, Song
 from moounit import Moounit
@@ -39,6 +46,17 @@ def entry(moounit: Moounit):
         request=BatchHttpRequest(),
         ignore_fields=["body"],
         regex=r'"(visitorData|userAgent)":\s*"[^"]*"',
+    )
+    moounit.expect_command(
+        MainCommand(
+            get_secure=GetSecureRequest(data=PreferenceData(key="youtube_oauth_tokens"))
+        ),
+        MainCommandResponse(
+            get_secure=GetSecureResponse(
+                data=PreferenceData(key="youtube_oauth_tokens")
+            )
+        ),
+        times=-1,
     )
     moounit.call_entry()
     return moounit
@@ -118,6 +136,27 @@ def test_search(entry: Moounit):
     )
     assert second.artists[0].artist_name == "Fabrício Cesar"
 
+    cached_search_resp = RequestedSearchResultResponse(
+        songs=[
+            Song(
+                song=InnerSong(id="youtube:cached123", title="Cached Search Hit"),
+            )
+        ]
+    )
+    entry.expect_command(
+        MainCommand(get_cache=GetCacheRequest(key="search:bass test")),
+        MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_search_resp.SerializeToString())
+        ),
+    )
+    cached_ret = entry.send_command(
+        ExtensionCommand(
+            requested_search_result=RequestedSearchResultRequest(query="bass test")
+        )
+    )
+    assert len(cached_ret.requested_search_result.songs) == 1
+    assert cached_ret.requested_search_result.songs[0].song.title == "Cached Search Hit"
+
 
 def test_song_from_url(entry: Moounit):
     entry.replay_ignore(
@@ -148,6 +187,31 @@ def test_song_from_url(entry: Moounit):
         == "moosync.youtube.js:youtube-artist:UCuAXFkgsw1L7xaCfnd5JJOw"
     )
     assert song_detail.artists[0].artist_name == "Rick Astley"
+
+    cached_song_resp = RequestedSongFromUrlResponse(
+        song=Song(
+            artists=[Artist(artist_name="Cached Artist")],
+            song=InnerSong(id="youtube:dQw4w9WgXcQ", title="Cached Song"),
+        )
+    )
+    entry.expect_command(
+        MainCommand(get_cache=GetCacheRequest(key="song_url:dQw4w9WgXcQ")),
+        MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_song_resp.SerializeToString())
+        ),
+    )
+    ret_cached = entry.send_command(
+        ExtensionCommand(
+            requested_song_from_url=RequestedSongFromUrlRequest(
+                url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            )
+        )
+    )
+    assert ret_cached.requested_song_from_url.song.song.title == "Cached Song"
+    assert (
+        ret_cached.requested_song_from_url.song.artists[0].artist_name
+        == "Cached Artist"
+    )
 
 
 def test_playlist_from_url(entry: Moounit):
@@ -326,6 +390,15 @@ def test_oauth_flow(entry: Moounit):
         request=MainCommand(),
         ignore_fields=["set_secure.data.value.string_value"],
     )
+
+    pre_login_account = entry.accounts.get("youtube")
+    assert pre_login_account is not None
+    assert pre_login_account.id == "youtube"
+    assert pre_login_account.name == "YouTube"
+    assert pre_login_account.package_name == "moosync.youtube.js"
+    assert pre_login_account.bg_color == "#FF0000"
+    assert pre_login_account.logged_in is False
+
     ret = entry.send_command(
         ExtensionCommand(
             perform_account_login=PerformAccountLoginRequest(login_status=True)
@@ -374,6 +447,10 @@ def test_requested_playlists(entry: Moounit):
             cmd = ParseDict(call["request"], MainCommand())
             resp = ParseDict(call["response"], MainCommandResponse())
             entry.expect_command(cmd, resp)
+
+    pre_login_account = entry.accounts.get("youtube")
+    assert pre_login_account is not None
+    assert pre_login_account.logged_in is False
 
     ret = entry.send_command(
         ExtensionCommand(
