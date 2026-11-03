@@ -5,9 +5,11 @@ package(default_visibility = ["//visibility:public"])
 filegroup(
     name = "all",
     srcs = [
+        "//cover_art",
         "//discord",
         "//koel",
         "//lastfm",
+        "//lyrics",
         "//radio",
         "//soundcloud",
         "//spotify",
@@ -19,9 +21,11 @@ filegroup(
 dev_registry(
     name = "dev_registry",
     extensions = [
+        "//cover_art",
         "//discord",
         "//koel",
         "//lastfm",
+        "//lyrics",
         "//radio",
         "//soundcloud",
         "//spotify",

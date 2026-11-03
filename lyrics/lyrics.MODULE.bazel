@@ -1,0 +1,8 @@
+lyrics_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+lyrics_crate.from_cargo(
+    name = "lyrics_crates",
+    cargo_lockfile = "//lyrics:Cargo.lock",
+    lockfile = "//lyrics:Cargo.Bazel.lock",
+    manifests = ["//lyrics:Cargo.toml"],
+)
+use_repo(lyrics_crate, "lyrics_crates")

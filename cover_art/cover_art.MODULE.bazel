@@ -1,0 +1,8 @@
+cover_art_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
+cover_art_crate.from_cargo(
+    name = "cover_art_crates",
+    cargo_lockfile = "//cover_art:Cargo.lock",
+    lockfile = "//cover_art:Cargo.Bazel.lock",
+    manifests = ["//cover_art:Cargo.toml"],
+)
+use_repo(cover_art_crate, "cover_art_crates")
