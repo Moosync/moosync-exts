@@ -2,8 +2,7 @@
 import pytest
 import core.types.protos.extensions_pb2 as pb
 import core.types.protos.ui_pb2
-from core.types.protos.songs_pb2 import Album
-from core.types.protos.songs_pb2 import Artist
+from core.types.protos.songs_pb2 import Album, Artist, InnerSong, SearchResult, Song
 from moounit import Moounit
 
 
@@ -121,3 +120,32 @@ def test_get_recommendations(entry: Moounit):
     )
 
     assert len(ret.requested_recommendations.songs) > 0
+
+
+def test_search_cache_hit(entry: Moounit):
+    cached_search = SearchResult(
+        songs=[
+            Song(
+                song=InnerSong(
+                    id="youtube:cached_yt_1",
+                    title="Cached YouTube Video",
+                )
+            )
+        ]
+    )
+    entry.expect_command(
+        command=pb.MainCommand(get_cache=pb.GetCacheRequest(key="search:synthwave")),
+        response=pb.MainCommandResponse(
+            get_cache=pb.GetCacheResponse(data=cached_search.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        pb.ExtensionCommand(
+            requested_search_result=pb.RequestedSearchResultRequest(query="synthwave")
+        )
+    )
+
+    assert ret.HasField("requested_search_result")
+    assert len(ret.requested_search_result.songs) == 1
+    assert ret.requested_search_result.songs[0].song.title == "Cached YouTube Video"

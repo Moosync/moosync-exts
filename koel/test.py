@@ -1,11 +1,17 @@
 # pylint: disable=no-member,unused-import
 import pytest
-from core.types.protos.extensions_pb2 import ExtensionProviderScope
+from core.types.protos.extensions_pb2 import (
+    ExtensionCommand,
+    ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
+    MainCommand,
+    MainCommandResponse,
+    RequestedSearchResultRequest,
+)
 import core.types.protos.extensions_pb2 as pb
+from core.types.protos.songs_pb2 import InnerSong, SearchResult, Song
 import core.types.protos.ui_pb2 as ui_pb
-from core.types.protos.extensions_pb2 import ExtensionCommand
-from core.types.protos.extensions_pb2 import MainCommand
-from core.types.protos.extensions_pb2 import MainCommandResponse
 from moounit import Moounit
 
 
@@ -93,3 +99,32 @@ def test_get_provider_scopes(entry: Moounit):
     ]
     expected_scopes.sort()
     assert scopes == expected_scopes
+
+
+def test_search_cache_hit(entry: Moounit):
+    cached_search = SearchResult(
+        songs=[
+            Song(
+                song=InnerSong(
+                    id="koel:cached_koel_1",
+                    title="Cached Koel Song",
+                )
+            )
+        ]
+    )
+    entry.expect_command(
+        command=MainCommand(get_cache=GetCacheRequest(key="search:ambient")),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_search.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(
+            requested_search_result=RequestedSearchResultRequest(query="ambient")
+        )
+    )
+
+    assert ret.HasField("requested_search_result")
+    assert len(ret.requested_search_result.songs) == 1
+    assert ret.requested_search_result.songs[0].song.title == "Cached Koel Song"

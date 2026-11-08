@@ -1,8 +1,14 @@
 import pytest
-from core.types.protos.extensions_pb2 import ExtensionProviderScope
-from core.types.protos.extensions_pb2 import GetProviderScopesRequest
-from core.types.protos.extensions_pb2 import ExtensionCommand
-from core.types.protos.extensions_pb2 import RequestedSearchResultRequest
+from core.types.protos.extensions_pb2 import (
+    ExtensionCommand,
+    ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
+    MainCommand,
+    MainCommandResponse,
+    RequestedSearchResultRequest,
+)
+from core.types.protos.songs_pb2 import InnerSong, SearchResult, Song
 from moounit import Moounit
 
 
@@ -33,3 +39,32 @@ def test_search(entry: Moounit):
 
     print(ret)
     assert len(ret.requested_search_result.songs) > 0
+
+
+def test_search_cache_hit(entry: Moounit):
+    cached_search = SearchResult(
+        songs=[
+            Song(
+                song=InnerSong(
+                    id="radio:cached_radio_1",
+                    title="Cached Radio Station",
+                )
+            )
+        ]
+    )
+    entry.expect_command(
+        command=MainCommand(get_cache=GetCacheRequest(key="search:chill")),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_search.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(
+            requested_search_result=RequestedSearchResultRequest(query="chill")
+        )
+    )
+
+    assert ret.HasField("requested_search_result")
+    assert len(ret.requested_search_result.songs) == 1
+    assert ret.requested_search_result.songs[0].song.title == "Cached Radio Station"

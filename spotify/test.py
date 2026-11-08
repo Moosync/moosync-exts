@@ -1,16 +1,22 @@
 # pylint: disable=no-member,unused-import
 import pytest
-from core.types.protos.extensions_pb2 import ExtensionProviderScope
-from core.types.protos.extensions_pb2 import GetProviderScopesRequest
-from core.types.protos.extensions_pb2 import ExtensionCommand
-from core.types.protos.extensions_pb2 import GetAccountsRequest
-from core.types.protos.extensions_pb2 import MainCommand
-from core.types.protos.extensions_pb2 import MainCommandResponse
-from core.types.protos.extensions_pb2 import RegisterUserPreferenceResponse
-from core.types.protos.extensions_pb2 import RegisterUserPreferenceRequest
-from core.types.protos.extensions_pb2 import PreferenceData
-from core.types.protos.extensions_pb2 import GetSecureRequest
-from core.types.protos.extensions_pb2 import GetSecureResponse
+from core.types.protos.extensions_pb2 import (
+    ExtensionCommand,
+    ExtensionProviderScope,
+    GetAccountsRequest,
+    GetCacheRequest,
+    GetCacheResponse,
+    GetProviderScopesRequest,
+    GetSecureRequest,
+    GetSecureResponse,
+    MainCommand,
+    MainCommandResponse,
+    PreferenceData,
+    RegisterUserPreferenceRequest,
+    RegisterUserPreferenceResponse,
+    RequestedSearchResultRequest,
+)
+from core.types.protos.songs_pb2 import InnerSong, SearchResult, Song
 import core.types.protos.ui_pb2 as ui_pb
 from moounit import Moounit
 
@@ -76,3 +82,32 @@ def test_get_accounts(entry: Moounit):
     assert ret.get_accounts.accounts[0].id == "spotify"
     assert ret.get_accounts.accounts[0].name == "Spotify"
     assert ret.get_accounts.accounts[0].logged_in is False
+
+
+def test_search_cache_hit(entry: Moounit):
+    cached_search = SearchResult(
+        songs=[
+            Song(
+                song=InnerSong(
+                    id="spotify:cached_spotify_1",
+                    title="Cached Spotify Song",
+                )
+            )
+        ]
+    )
+    entry.expect_command(
+        command=MainCommand(get_cache=GetCacheRequest(key="search:electronic")),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_search.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(
+            requested_search_result=RequestedSearchResultRequest(query="electronic")
+        )
+    )
+
+    assert ret.HasField("requested_search_result")
+    assert len(ret.requested_search_result.songs) == 1
+    assert ret.requested_search_result.songs[0].song.title == "Cached Spotify Song"

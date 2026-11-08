@@ -3,9 +3,13 @@ from core.types.protos.extensions_pb2 import (
     BatchHttpRequest,
     ExtensionCommand,
     ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
+    MainCommand,
+    MainCommandResponse,
     RequestedLyricsRequest,
 )
-from core.types.protos.songs_pb2 import Artist, InnerSong, Song
+from core.types.protos.songs_pb2 import Artist, InnerSong, LyricLine, Lyrics, Song
 from moounit import Moounit
 
 
@@ -107,3 +111,32 @@ def test_get_lyrics_empty_song(entry: Moounit):
 
     assert ret.HasField("requested_lyrics")
     assert not ret.requested_lyrics.HasField("lyrics")
+
+
+def test_get_lyrics_cache_hit(entry: Moounit):
+    cached_lyrics = Lyrics(
+        lines=[LyricLine(text="Cached lyrics line", time_ms=1000)],
+        is_synced=False,
+    )
+    entry.expect_command(
+        command=MainCommand(
+            get_cache=GetCacheRequest(key="lyrics:track:cached song:cached artist")
+        ),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_lyrics.SerializeToString())
+        ),
+    )
+
+    test_song = Song(
+        song=InnerSong(title="Cached Song"),
+        artists=[Artist(artist_name="Cached Artist")],
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(requested_lyrics=RequestedLyricsRequest(song=test_song))
+    )
+
+    assert ret.HasField("requested_lyrics")
+    assert ret.requested_lyrics.HasField("lyrics")
+    assert len(ret.requested_lyrics.lyrics.lines) == 1
+    assert ret.requested_lyrics.lyrics.lines[0].text == "Cached lyrics line"

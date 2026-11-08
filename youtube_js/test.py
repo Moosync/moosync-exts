@@ -1,5 +1,6 @@
 # pylint: disable=unused-import
 import pytest
+from google.protobuf.duration_pb2 import Duration
 from google.protobuf.json_format import ParseDict
 from core.types.protos.extensions_pb2 import (
     BatchHttpResponse,
@@ -15,6 +16,7 @@ from core.types.protos.extensions_pb2 import (
     OauthCallbackRequest,
     PerformAccountLoginRequest,
     PlaybackDetailsRequestedRequest,
+    PlaybackDetailsRequestedResponse,
     PreferenceData,
     RequestedAlbumSongsRequest,
     RequestedArtistSongsRequest,
@@ -424,4 +426,28 @@ def test_playback_details(entry: Moounit):
     assert playback.url.startswith("https://")
     assert "googlevideo.com" in playback.url
     assert playback.url.endswith(".m3u8")
+    assert playback.duration.seconds == 213
+
+
+def test_playback_details_cache_hit(entry: Moounit):
+    cached_playback = PlaybackDetailsRequestedResponse(
+        url="https://cached.googlevideo.com/videoplayback/test.m3u8",
+        duration=Duration(seconds=213),
+    )
+    entry.expect_command(
+        command=MainCommand(get_cache=GetCacheRequest(key="playback:cached_vid1")),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_playback.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(
+            playback_details_requested=PlaybackDetailsRequestedRequest(
+                song=Song(song=InnerSong(id="moosync.youtube_js:cached_vid1"))
+            )
+        )
+    )
+    playback = ret.playback_details_requested
+    assert playback.url == "https://cached.googlevideo.com/videoplayback/test.m3u8"
     assert playback.duration.seconds == 213

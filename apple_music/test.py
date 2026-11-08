@@ -5,6 +5,8 @@ from core.types.protos.extensions_pb2 import (
     ExtensionAccountDetail,
     ExtensionCommand,
     ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
     GetProviderScopesRequest,
     GetSecureRequest,
     GetSecureResponse,
@@ -23,7 +25,14 @@ from core.types.protos.extensions_pb2 import (
     SetAccountRequest,
     SetAccountResponse,
 )
-from core.types.protos.songs_pb2 import Album, Artist, InnerSong, Playlist, Song
+from core.types.protos.songs_pb2 import (
+    Album,
+    Artist,
+    InnerSong,
+    Playlist,
+    SearchResult,
+    Song,
+)
 import core.types.protos.preferences_pb2 as pref_pb
 from moounit import Moounit
 
@@ -222,3 +231,32 @@ def test_playback_details(entry: Moounit):
     assert resp.url.startswith("https://audio-ssl.itunes.apple.com/")
     assert ".m4a" in resp.url
     assert resp.duration.seconds == 293
+
+
+def test_search_cache_hit(entry: Moounit):
+    cached_search = SearchResult(
+        songs=[
+            Song(
+                song=InnerSong(
+                    id="applemusic:cached_apple_1",
+                    title="Cached Apple Song",
+                )
+            )
+        ]
+    )
+    entry.expect_command(
+        command=MainCommand(get_cache=GetCacheRequest(key="search:chill")),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_search.SerializeToString())
+        ),
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(
+            requested_search_result=RequestedSearchResultRequest(query="chill")
+        )
+    )
+
+    assert ret.HasField("requested_search_result")
+    assert len(ret.requested_search_result.songs) == 1
+    assert ret.requested_search_result.songs[0].song.title == "Cached Apple Song"

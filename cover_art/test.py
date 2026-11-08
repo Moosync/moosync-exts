@@ -3,7 +3,12 @@ from core.types.protos.extensions_pb2 import (
     BatchHttpRequest,
     ExtensionCommand,
     ExtensionProviderScope,
+    GetCacheRequest,
+    GetCacheResponse,
+    MainCommand,
+    MainCommandResponse,
     RequestedCoverArtRequest,
+    RequestedCoverArtResponse,
 )
 from core.types.protos.songs_pb2 import Album, Artist, InnerSong, Song
 from moounit import Moounit
@@ -176,3 +181,31 @@ def test_get_cover_art_empty_request(entry: Moounit):
 
     assert ret.HasField("requested_cover_art")
     assert len(ret.requested_cover_art.cover_urls) == 0
+
+
+def test_get_cover_art_cache_hit(entry: Moounit):
+    cached_response = RequestedCoverArtResponse(
+        cover_urls=["https://example.com/cached_cover.jpg"]
+    )
+    entry.expect_command(
+        command=MainCommand(
+            get_cache=GetCacheRequest(key="cover:song:cached track:cached artist")
+        ),
+        response=MainCommandResponse(
+            get_cache=GetCacheResponse(data=cached_response.SerializeToString())
+        ),
+    )
+
+    test_song = Song(
+        song=InnerSong(title="Cached Track"),
+        artists=[Artist(artist_name="Cached Artist")],
+    )
+
+    ret = entry.send_command(
+        ExtensionCommand(requested_cover_art=RequestedCoverArtRequest(song=test_song))
+    )
+
+    assert ret.HasField("requested_cover_art")
+    assert list(ret.requested_cover_art.cover_urls) == [
+        "https://example.com/cached_cover.jpg"
+    ]
