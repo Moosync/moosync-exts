@@ -4,23 +4,26 @@
 use std::time::Duration;
 
 use moosync_edk::{
-    MoosyncResult, PlaybackDetailsRequestedRequest,
-    PreferenceData, PreferenceItem, PreferenceType, RequestedAlbumSongsRequest,
-    RequestedArtistSongsRequest,
-    RequestedPlaylistSongsRequest, RequestedRecommendationsRequest,
-    RequestedSearchResultRequest, RequestedSongFromIdRequest,
-    SearchResult, Song,
+    MoosyncResult, PlaybackDetailsRequestedRequest, PreferenceData, PreferenceItem, PreferenceType,
+    RequestedAlbumSongsRequest, RequestedAlbumSongsResponse, RequestedArtistSongsRequest,
+    RequestedArtistSongsResponse, RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
+    RequestedRecommendationsRequest, RequestedRecommendationsResponse, RequestedSearchResultRequest,
+    RequestedSongFromIdRequest, SearchResult, Song,
     api::{
         AccountLoginArgs, Accounts, ContextMenu, CustomRequest, CustomRequestReturnType,
         DatabaseEvents, Extension, ExtensionAccountDetail, PlaybackDetailsReturnType,
         PlayerEvents, PreferenceChangedRequest, PreferenceEvents, Provider,
         SongsWithPageTokenReturnType,
-        extension_api::{get_secure, register_user_preferences, set_account, set_secure},
+        extension_api::{
+            get_cache, get_secure, register_user_preferences, set_account, set_cache,
+            set_cache_with_ttl, set_secure,
+        },
     },
     handler::register_extension,
     info,
 };
 
+mod cache_keys;
 mod client;
 mod utils;
 
@@ -125,13 +128,29 @@ impl Accounts for AppleMusic {
 impl Provider for AppleMusic {
     fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         info!("Search requested for query: {}", req.query);
-        self.client.search(req.query)
+        let cache_key = cache_keys::search(&req.query);
+        if let Ok(Some(cached)) = get_cache::<SearchResult>(&cache_key) {
+            return Ok(cached);
+        }
+
+        let res = self.client.search(req.query)?;
+        let _ = set_cache_with_ttl(&cache_key, &res, Some(7200));
+        Ok(res)
     }
 
     fn get_song_from_id(&self, req: RequestedSongFromIdRequest) -> MoosyncResult<Option<Song>> {
         let id = req.id.trim_start_matches("applemusic:");
         info!("Get song from ID: {}", id);
-        self.client.get_song(id)
+        let cache_key = cache_keys::song(id);
+        if let Ok(Some(cached)) = get_cache::<Song>(&cache_key) {
+            return Ok(Some(cached));
+        }
+
+        let song = self.client.get_song(id)?;
+        if let Some(ref s) = song {
+            let _ = set_cache(&cache_key, s);
+        }
+        Ok(song)
     }
 
     fn get_playlist_content(
@@ -143,7 +162,24 @@ impl Provider for AppleMusic {
             .trim_start_matches("applemusic:playlist:")
             .trim_start_matches("applemusic:");
         info!("Get playlist songs: {}", id);
+        let cache_key = cache_keys::playlist_songs(id, req.page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedPlaylistSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let songs = self.client.get_playlist_songs(id)?;
+        let _ = set_cache_with_ttl(
+            &cache_key,
+            &RequestedPlaylistSongsResponse {
+                songs: songs.clone(),
+                next_page_token: None,
+            },
+            Some(3600),
+        );
+
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token: None,
@@ -160,7 +196,23 @@ impl Provider for AppleMusic {
             .trim_start_matches("applemusic:album:")
             .trim_start_matches("applemusic:");
         info!("Get album songs: {}", clean_id);
+        let cache_key = cache_keys::album_songs(clean_id, req.page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedAlbumSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let songs = self.client.get_album_songs(clean_id)?;
+        let _ = set_cache(
+            &cache_key,
+            &RequestedAlbumSongsResponse {
+                songs: songs.clone(),
+                next_page_token: None,
+            },
+        );
+
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token: None,
@@ -177,7 +229,24 @@ impl Provider for AppleMusic {
             .trim_start_matches("applemusic:artist:")
             .trim_start_matches("applemusic:");
         info!("Get artist songs: {}", clean_id);
+        let cache_key = cache_keys::artist_songs(clean_id, req.page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedArtistSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let songs = self.client.get_artist_songs(clean_id)?;
+        let _ = set_cache_with_ttl(
+            &cache_key,
+            &RequestedArtistSongsResponse {
+                songs: songs.clone(),
+                next_page_token: None,
+            },
+            Some(86400),
+        );
+
         Ok(SongsWithPageTokenReturnType {
             songs,
             next_page_token: None,
@@ -186,10 +255,26 @@ impl Provider for AppleMusic {
 
     fn get_recommendations(
         &self,
-        _req: RequestedRecommendationsRequest,
+        req: RequestedRecommendationsRequest,
     ) -> MoosyncResult<Vec<Song>> {
         info!("Get recommendations");
-        self.client.get_recommendations()
+        let cache_key = cache_keys::recommendations();
+        if !req.refresh {
+            if let Ok(Some(cached)) = get_cache::<RequestedRecommendationsResponse>(&cache_key) {
+                return Ok(cached.songs);
+            }
+        }
+
+        let songs = self.client.get_recommendations()?;
+        let _ = set_cache_with_ttl(
+            &cache_key,
+            &RequestedRecommendationsResponse {
+                songs: songs.clone(),
+            },
+            Some(3600),
+        );
+
+        Ok(songs)
     }
 
     fn get_playback_details(

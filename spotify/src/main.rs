@@ -7,16 +7,19 @@ use crate::{
 use futures::executor::block_on;
 use moosync_edk::{
     Album, Artist, MoosyncResult, Playlist, PreferenceData, PreferenceItem, PreferenceType,
+    RequestedAlbumSongsRequest, RequestedAlbumSongsResponse, RequestedArtistSongsRequest,
+    RequestedArtistSongsResponse, RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
+    RequestedPlaylistsRequest, RequestedPlaylistsResponse, RequestedRecommendationsRequest,
+    RequestedRecommendationsResponse, RequestedSearchResultRequest, RequestedSongFromIdRequest,
     SearchResult, Song,
     api::{
         AccountLoginArgs, Accounts, ContextMenu, CustomRequest, CustomRequestReturnType,
         DatabaseEvents, Extension, ExtensionAccountDetail, ExtensionProviderScope,
-        OauthCallbackRequest, PlayerEvents, PreferenceEvents, Provider, RequestedAlbumSongsRequest,
-        RequestedArtistSongsRequest,
-        RequestedPlaylistSongsRequest, RequestedPlaylistsRequest, RequestedRecommendationsRequest,
-        RequestedSearchResultRequest, RequestedSongFromIdRequest,
+        OauthCallbackRequest, PlayerEvents, PreferenceEvents, Provider,
         SongsWithPageTokenReturnType,
-        extension_api::{get_secure, set_account, set_secure},
+        extension_api::{
+            get_cache, get_secure, set_account, set_cache, set_cache_with_ttl, set_secure,
+        },
     },
     error,
     handler::register_extension,
@@ -24,6 +27,7 @@ use moosync_edk::{
 };
 
 mod api;
+mod cache_keys;
 mod utils;
 
 struct SpotifyExtension {
@@ -135,15 +139,33 @@ impl Provider for SpotifyExtension {
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let album = req.album.unwrap();
         let next_page_token = req.page_token;
+        let album_id = album.album_id.as_deref().unwrap_or_default();
+        let cache_key = cache_keys::album_songs(album_id, next_page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedAlbumSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let (songs, token) = block_on(
                 api_client.get_album_content(album, parse_next_page_token(next_page_token)),
             )?;
 
+            let token_str: Option<String> = token.try_into().ok();
+            let _ = set_cache(
+                &cache_key,
+                &RequestedAlbumSongsResponse {
+                    songs: songs.clone(),
+                    next_page_token: token_str.clone(),
+                },
+            );
+
             return Ok(SongsWithPageTokenReturnType {
                 songs,
-                next_page_token: Some(token.try_into()?),
+                next_page_token: token_str,
             });
         }
 
@@ -156,6 +178,14 @@ impl Provider for SpotifyExtension {
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let id = req.id;
         let next_page_token = req.page_token;
+        let cache_key = cache_keys::playlist_songs(&id, next_page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedPlaylistSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             // Construct a temporary Playlist object with the ID to pass to the API client
@@ -168,9 +198,19 @@ impl Provider for SpotifyExtension {
                 api_client.get_playlist_content(playlist, parse_next_page_token(next_page_token)),
             )?;
 
+            let token_str: Option<String> = token.try_into().ok();
+            let _ = set_cache_with_ttl(
+                &cache_key,
+                &RequestedPlaylistSongsResponse {
+                    songs: songs.clone(),
+                    next_page_token: token_str.clone(),
+                },
+                Some(3600),
+            );
+
             return Ok(SongsWithPageTokenReturnType {
                 songs,
-                next_page_token: Some(token.try_into()?),
+                next_page_token: token_str,
             });
         }
         Err("Not logged in".into())
@@ -182,21 +222,45 @@ impl Provider for SpotifyExtension {
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let artist = req.artist.unwrap();
         let next_page_token = req.page_token;
+        let artist_id = artist.artist_id.as_deref().unwrap_or_default();
+        let cache_key = cache_keys::artist_songs(artist_id, next_page_token.as_deref());
+        if let Ok(Some(cached)) = get_cache::<RequestedArtistSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let (songs, token) = block_on(
                 api_client.get_artist_content(artist, parse_next_page_token(next_page_token)),
             )?;
 
+            let token_str: Option<String> = token.try_into().ok();
+            let _ = set_cache_with_ttl(
+                &cache_key,
+                &RequestedArtistSongsResponse {
+                    songs: songs.clone(),
+                    next_page_token: token_str.clone(),
+                },
+                Some(86400),
+            );
+
             return Ok(SongsWithPageTokenReturnType {
                 songs,
-                next_page_token: Some(token.try_into()?),
+                next_page_token: token_str,
             });
         }
         Err("Not logged in".into())
     }
 
     fn get_playlists(&self, _: RequestedPlaylistsRequest) -> MoosyncResult<Vec<Playlist>> {
+        let cache_key = cache_keys::user_playlists();
+        if let Ok(Some(cached)) = get_cache::<RequestedPlaylistsResponse>(&cache_key) {
+            return Ok(cached.playlists);
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let mut all_playlists = vec![];
@@ -216,6 +280,14 @@ impl Provider for SpotifyExtension {
                 pagination = next_page;
             }
 
+            let _ = set_cache_with_ttl(
+                &cache_key,
+                &RequestedPlaylistsResponse {
+                    playlists: all_playlists.clone(),
+                },
+                Some(3600),
+            );
+
             return Ok(all_playlists);
         }
         Err("Not logged in".into())
@@ -223,9 +295,15 @@ impl Provider for SpotifyExtension {
 
     fn get_song_from_id(&self, req: RequestedSongFromIdRequest) -> MoosyncResult<Option<Song>> {
         let id = req.id;
+        let cache_key = cache_keys::song(&id);
+        if let Ok(Some(cached)) = get_cache::<Song>(&cache_key) {
+            return Ok(Some(cached));
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let song = block_on(api_client.song_from_id(id))?;
+            let _ = set_cache(&cache_key, &song);
             return Ok(Some(song));
         }
         Err("Not logged in".into())
@@ -233,18 +311,36 @@ impl Provider for SpotifyExtension {
 
     fn search(&self, req: RequestedSearchResultRequest) -> MoosyncResult<SearchResult> {
         let term = req.query;
+        let cache_key = cache_keys::search(&term);
+        if let Ok(Some(cached)) = get_cache::<SearchResult>(&cache_key) {
+            return Ok(cached);
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let results = block_on(api_client.search(term))?;
+            let _ = set_cache_with_ttl(&cache_key, &results, Some(7200));
             return Ok(results);
         }
         Err("Not logged in".into())
     }
 
     fn get_recommendations(&self, _: RequestedRecommendationsRequest) -> MoosyncResult<Vec<Song>> {
+        let cache_key = cache_keys::recommendations();
+        if let Ok(Some(cached)) = get_cache::<RequestedRecommendationsResponse>(&cache_key) {
+            return Ok(cached.songs);
+        }
+
         let api_client = self.api_client.lock().unwrap();
         if let Some(api_client) = api_client.as_ref() {
             let songs = block_on(api_client.get_suggestions())?;
+            let _ = set_cache_with_ttl(
+                &cache_key,
+                &RequestedRecommendationsResponse {
+                    songs: songs.clone(),
+                },
+                Some(3600),
+            );
             return Ok(songs);
         }
         Err("Not logged in".into())

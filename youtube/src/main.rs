@@ -3,11 +3,13 @@ use std::sync::Mutex;
 use futures::executor::block_on;
 use moosync_edk::MoosyncResult as Result;
 use moosync_edk::{
-    Album, Artist, ExtensionProviderScope, MoosyncResult, Playlist, PreferenceData, PreferenceItem,
-    PreferenceType, SearchResult, Song,
+    ExtensionProviderScope, MoosyncResult, Playlist, PreferenceData, PreferenceItem, PreferenceType,
+    RequestedAlbumSongsResponse, RequestedArtistSongsResponse, RequestedPlaylistSongsResponse,
+    RequestedPlaylistsResponse, RequestedRecommendationsResponse, SearchResult, Song,
     api::{
         Accounts, ContextMenu, CustomRequestReturnType, DatabaseEvents, Extension, PlayerEvents,
         PreferenceEvents, Provider, SongsWithPageTokenReturnType,
+        extension_api::{get_cache, set_cache, set_cache_with_ttl},
     },
     handler::register_extension,
     info,
@@ -19,6 +21,7 @@ use crate::{
 };
 
 mod api;
+mod cache_keys;
 mod no_api;
 mod utils;
 
@@ -116,20 +119,23 @@ impl DatabaseEvents for YoutubeExtension {}
 impl PreferenceEvents for YoutubeExtension {}
 impl PlayerEvents for YoutubeExtension {}
 impl Provider for YoutubeExtension {
-    fn get_provider_scopes(&self) -> Result<Vec<ExtensionProviderScope>> {
-        Ok(vec![
-            ExtensionProviderScope::Playlists,
-            ExtensionProviderScope::PlaylistSongs,
-            ExtensionProviderScope::Accounts,
-        ])
-    }
-
     fn get_playlists(&self, _req: moosync_edk::RequestedPlaylistsRequest) -> Result<Vec<Playlist>> {
+        let cache_key = cache_keys::user_playlists();
+        if let Ok(Some(cached)) = get_cache::<RequestedPlaylistsResponse>(&cache_key) {
+            return Ok(cached.playlists);
+        }
+
         if let Some(api_client) = self.api_client.lock().unwrap().as_ref() {
             if api_client.account_details.logged_in {
-                return Ok(
-                    block_on(api_client.get_all_playlists()).map_err(to_moosync_string_error)?
+                let playlists = block_on(api_client.get_all_playlists()).map_err(to_moosync_string_error)?;
+                let _ = set_cache_with_ttl(
+                    &cache_key,
+                    &RequestedPlaylistsResponse {
+                        playlists: playlists.clone(),
+                    },
+                    Some(3600),
                 );
+                return Ok(playlists);
             }
         }
         Err("Not logged in".into())
@@ -141,12 +147,28 @@ impl Provider for YoutubeExtension {
     ) -> Result<SongsWithPageTokenReturnType> {
         let id = req.id;
         let next_page_token = req.page_token;
-        if let Some(id) = self.match_id(id) {
+        if let Some(clean_id) = self.match_id(id.clone()) {
+            let cache_key = cache_keys::playlist_songs(&clean_id, next_page_token.as_deref());
+            if let Ok(Some(cached)) = get_cache::<RequestedPlaylistSongsResponse>(&cache_key) {
+                return Ok(SongsWithPageTokenReturnType {
+                    songs: cached.songs,
+                    next_page_token: cached.next_page_token,
+                });
+            }
+
             if let Some(api_client) = self.api_client.lock().unwrap().as_ref() {
                 if api_client.account_details.logged_in {
                     let (songs, next_page) =
-                        block_on(api_client.get_playlist_content(&id, next_page_token))
+                        block_on(api_client.get_playlist_content(&clean_id, next_page_token))
                             .map_err(to_moosync_string_error)?;
+                    let _ = set_cache_with_ttl(
+                        &cache_key,
+                        &RequestedPlaylistSongsResponse {
+                            songs: songs.clone(),
+                            next_page_token: next_page.clone(),
+                        },
+                        Some(3600),
+                    );
                     return Ok(SongsWithPageTokenReturnType {
                         songs,
                         next_page_token: next_page,
@@ -162,9 +184,15 @@ impl Provider for YoutubeExtension {
         &self,
         req: moosync_edk::RequestedSearchResultRequest,
     ) -> MoosyncResult<SearchResult> {
+        let cache_key = cache_keys::search(&req.query);
+        if let Ok(Some(cached)) = get_cache::<SearchResult>(&cache_key) {
+            return Ok(cached);
+        }
+
         let scraper = no_api::YoutubeScraper::default();
         // Use the generic search type to return videos, playlists and channels
         let res = block_on(scraper.search_yt(req.query, rusty_ytdl::search::SearchType::All))?;
+        let _ = set_cache_with_ttl(&cache_key, &res, Some(7200));
         Ok(res)
     }
 
@@ -173,10 +201,25 @@ impl Provider for YoutubeExtension {
         req: moosync_edk::RequestedAlbumSongsRequest,
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let album = req.album.ok_or("No album provided")?;
+        let query = album.album_name.unwrap_or_default();
+        let cache_key = cache_keys::album_songs(&query);
+        if let Ok(Some(cached)) = get_cache::<RequestedAlbumSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
         let scraper = no_api::YoutubeScraper::default();
         // Fallback: search by album name and return matching videos as songs
-        let query = album.album_name.unwrap_or_default();
         let search_res = block_on(scraper.search_yt(query, rusty_ytdl::search::SearchType::Video))?;
+        let _ = set_cache(
+            &cache_key,
+            &RequestedAlbumSongsResponse {
+                songs: search_res.songs.clone(),
+                next_page_token: None,
+            },
+        );
         Ok(SongsWithPageTokenReturnType {
             songs: search_res.songs,
             next_page_token: None,
@@ -188,7 +231,6 @@ impl Provider for YoutubeExtension {
         req: moosync_edk::RequestedArtistSongsRequest,
     ) -> MoosyncResult<SongsWithPageTokenReturnType> {
         let artist = req.artist.ok_or("No artist provided")?;
-        let scraper = no_api::YoutubeScraper::default();
         // Prefer artist name; if absent, try to extract id from artist_id
         let query = if let Some(name) = artist.artist_name.clone() {
             name
@@ -199,7 +241,24 @@ impl Provider for YoutubeExtension {
             String::new()
         };
 
+        let cache_key = cache_keys::artist_songs(&query);
+        if let Ok(Some(cached)) = get_cache::<RequestedArtistSongsResponse>(&cache_key) {
+            return Ok(SongsWithPageTokenReturnType {
+                songs: cached.songs,
+                next_page_token: cached.next_page_token,
+            });
+        }
+
+        let scraper = no_api::YoutubeScraper::default();
         let search_res = block_on(scraper.search_yt(query, rusty_ytdl::search::SearchType::Video))?;
+        let _ = set_cache_with_ttl(
+            &cache_key,
+            &RequestedArtistSongsResponse {
+                songs: search_res.songs.clone(),
+                next_page_token: None,
+            },
+            Some(86400),
+        );
         Ok(SongsWithPageTokenReturnType {
             songs: search_res.songs,
             next_page_token: None,
@@ -210,8 +269,20 @@ impl Provider for YoutubeExtension {
         &self,
         _req: moosync_edk::RequestedRecommendationsRequest,
     ) -> MoosyncResult<Vec<Song>> {
+        let cache_key = cache_keys::recommendations();
+        if let Ok(Some(cached)) = get_cache::<RequestedRecommendationsResponse>(&cache_key) {
+            return Ok(cached.songs);
+        }
+
         let scraper = no_api::YoutubeScraper::default();
         let suggestions = block_on(scraper.get_suggestions())?;
+        let _ = set_cache_with_ttl(
+            &cache_key,
+            &RequestedRecommendationsResponse {
+                songs: suggestions.clone(),
+            },
+            Some(3600),
+        );
         Ok(suggestions)
     }
 

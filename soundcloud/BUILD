@@ -7,6 +7,7 @@ go_extension(
     name = "soundcloud",
     package_name = "moosync.soundcloud",
     srcs = [
+        "cache_keys.go",
         "main.go",
         "utils.go",
     ],
@@ -25,6 +26,7 @@ go_extension(
         "@com_github_antchfx_htmlquery//:htmlquery",
         "@com_github_ovenoboyo_scdl_v2//pkg/soundcloud",
         "@com_github_zackradisic_soundcloud_api//:soundcloud-api",
+        "@org_golang_google_protobuf//proto",
         "@org_golang_google_protobuf//types/known/durationpb",
     ],
 )

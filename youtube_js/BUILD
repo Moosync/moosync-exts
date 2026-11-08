@@ -10,6 +10,7 @@ js_extension(
     name = "youtube_js",
     package_name = "moosync.youtube.js",
     srcs = [
+        "src/cache_keys.ts",
         "src/index.ts",
         "src/model.ts",
     ],

@@ -25,6 +25,15 @@ import {
   parseSong,
   sanitizeId,
 } from "./model";
+import {
+  albumSongsCacheKey,
+  artistSongsCacheKey,
+  playbackCacheKey,
+  playlistSongsCacheKey,
+  recommendationsCacheKey,
+  searchCacheKey,
+  userPlaylistsCacheKey,
+} from "./cache_keys";
 
 export { handle_extension_command } from "wasm-extension-js";
 import { Innertube, OAuth2Tokens, Platform, YTNodes } from "youtubei.js";
@@ -33,7 +42,7 @@ type Format = Awaited<ReturnType<Innertube["getStreamingData"]>>;
 
 let extension: YoutubeJsExtension;
 const api = getApi();
-const CACHE_TTL_SECONDS = 7200;
+const CACHE_TTL_SECONDS = 3600;
 
 interface PlaybackStreamCandidate {
   hlsManifestUrl?: string;
@@ -320,7 +329,11 @@ class YoutubeJsExtension {
   private async fetchStreamDetails(
     videoId: string,
     fallbackDuration: number,
-  ): Promise<{ streamUrl?: string; durationSeconds: number }> {
+  ): Promise<{
+    streamUrl?: string;
+    durationSeconds: number;
+    expiresInSeconds?: number;
+  }> {
     if (!this.innertube) {
       return { durationSeconds: fallbackDuration };
     }
@@ -339,7 +352,11 @@ class YoutubeJsExtension {
           if (response.data?.videoDetails?.lengthSeconds) {
             durationSeconds = Number(response.data.videoDetails.lengthSeconds);
           }
-          return { streamUrl, durationSeconds };
+          const rawExpires = streamingData?.expiresInSeconds;
+          const expiresInSeconds = rawExpires
+            ? parseInt(rawExpires, 10)
+            : undefined;
+          return { streamUrl, durationSeconds, expiresInSeconds };
         }
       } catch (err) {
         console.error(`Failed to fetch player data with client ${client}`, err);
@@ -472,7 +489,7 @@ class YoutubeJsExtension {
         return new RequestedPlaylistSongsResponse();
       }
       const playlistId = sanitizeId(id);
-      const cacheKey = `playlist_songs:${playlistId}`;
+      const cacheKey = playlistSongsCacheKey(playlistId);
       const cached = api.getCache(cacheKey, RequestedPlaylistSongsResponse);
       if (cached) {
         return cached;
@@ -498,7 +515,7 @@ class YoutubeJsExtension {
         return new RequestedArtistSongsResponse();
       }
       const artistId = sanitizeId(artist.artistId);
-      const cacheKey = `artist_songs:${artistId}`;
+      const cacheKey = artistSongsCacheKey(artistId);
       const cached = api.getCache(cacheKey, RequestedArtistSongsResponse);
       if (cached) {
         return cached;
@@ -523,7 +540,7 @@ class YoutubeJsExtension {
         return new RequestedAlbumSongsResponse();
       }
       const albumId = sanitizeId(album.albumId);
-      const cacheKey = `album_songs:${albumId}`;
+      const cacheKey = albumSongsCacheKey(albumId);
       const cached = api.getCache(cacheKey, RequestedAlbumSongsResponse);
       if (cached) {
         return cached;
@@ -547,7 +564,7 @@ class YoutubeJsExtension {
         return new RequestedRecommendationsResponse();
       }
       const loggedIn = this.innertube.session.logged_in;
-      const cacheKey = `recommendations:${loggedIn ? "auth" : "anon"}`;
+      const cacheKey = recommendationsCacheKey(loggedIn ? "auth" : "anon");
       const cached = api.getCache(cacheKey, RequestedRecommendationsResponse);
       if (cached) {
         return cached;
@@ -571,7 +588,7 @@ class YoutubeJsExtension {
       if (!this.innertube?.session.logged_in) {
         return new RequestedPlaylistsResponse();
       }
-      const cacheKey = "user_playlists";
+      const cacheKey = userPlaylistsCacheKey();
       const cached = api.getCache(cacheKey, RequestedPlaylistsResponse);
       if (cached) {
         return cached;
@@ -594,7 +611,7 @@ class YoutubeJsExtension {
       if (!this.innertube) {
         return new RequestedSearchResultResponse();
       }
-      const cacheKey = `search:${query.trim()}`;
+      const cacheKey = searchCacheKey(query);
       const cached = api.getCache(cacheKey, RequestedSearchResultResponse);
       if (cached) {
         return cached;
@@ -648,21 +665,25 @@ class YoutubeJsExtension {
         return new PlaybackDetailsRequestedResponse();
       }
 
+      const cacheKey = playbackCacheKey(videoId);
+      const cached = api.getCache(cacheKey, PlaybackDetailsRequestedResponse);
+      if (cached) {
+        return cached;
+      }
+
       const fallbackDuration = song.song?.duration?.seconds
         ? Number(song.song.duration.seconds)
         : 0;
 
-      const { streamUrl, durationSeconds } = await this.fetchStreamDetails(
-        videoId,
-        fallbackDuration,
-      );
+      const { streamUrl, durationSeconds, expiresInSeconds } =
+        await this.fetchStreamDetails(videoId, fallbackDuration);
 
       if (!streamUrl) {
         console.error(`No playback stream available for video: ${videoId}`);
         return new PlaybackDetailsRequestedResponse();
       }
 
-      return new PlaybackDetailsRequestedResponse({
+      const resp = new PlaybackDetailsRequestedResponse({
         url: streamUrl,
         duration:
           durationSeconds > 0
@@ -671,6 +692,12 @@ class YoutubeJsExtension {
               })
             : undefined,
       });
+
+      if (expiresInSeconds && expiresInSeconds > 60) {
+        api.setCache(cacheKey, resp, expiresInSeconds - 60);
+      }
+
+      return resp;
     });
   }
 }

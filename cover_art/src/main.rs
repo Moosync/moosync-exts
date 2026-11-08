@@ -16,9 +16,10 @@
 
 use futures::executor::block_on;
 use moosync_edk::{
-    Album, Artist, MoosyncResult, RequestedCoverArtRequest, Song,
+    Album, Artist, MoosyncResult, RequestedCoverArtRequest, RequestedCoverArtResponse, Song,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        extension_api::{get_cache, set_cache},
     },
     handler::register_extension,
     info,
@@ -28,6 +29,8 @@ use reqwest::Client;
 use serde::Deserialize;
 use tracing;
 use url::Url;
+
+mod cache_keys;
 
 struct CoverArtExtension {
     client: Client,
@@ -292,6 +295,38 @@ impl CoverArtExtension {
 impl Provider for CoverArtExtension {
     #[tracing::instrument(level = "debug", skip_all)]
     fn get_cover_art(&self, req: RequestedCoverArtRequest) -> MoosyncResult<Vec<String>> {
+        let cache_key = match &req.item {
+            Some(Item::Song(song)) => {
+                let title = song
+                    .song
+                    .as_ref()
+                    .and_then(|s| s.title.as_deref())
+                    .unwrap_or_default();
+                let artist = song
+                    .artists
+                    .first()
+                    .and_then(|a| a.artist_name.as_deref())
+                    .unwrap_or_default();
+                Some(cache_keys::song(title, artist))
+            }
+            Some(Item::Album(album)) => {
+                let name = album.album_name.as_deref().unwrap_or_default();
+                let artist = album.album_artist.as_deref().unwrap_or_default();
+                Some(cache_keys::album(name, artist))
+            }
+            Some(Item::Artist(artist)) => {
+                let name = artist.artist_name.as_deref().unwrap_or_default();
+                Some(cache_keys::artist(name))
+            }
+            None => None,
+        };
+
+        if let Some(ref key) = cache_key {
+            if let Ok(Some(cached)) = get_cache::<RequestedCoverArtResponse>(key) {
+                return Ok(cached.cover_urls);
+            }
+        }
+
         let mut urls = Vec::new();
         match req.item {
             Some(Item::Song(song)) => {
@@ -307,6 +342,17 @@ impl Provider for CoverArtExtension {
                 self.fetch_artist_deezer(&artist, &mut urls);
             }
             None => {}
+        }
+
+        if let Some(ref key) = cache_key {
+            if !urls.is_empty() {
+                let _ = set_cache(
+                    key,
+                    &RequestedCoverArtResponse {
+                        cover_urls: urls.clone(),
+                    },
+                );
+            }
         }
 
         Ok(urls)

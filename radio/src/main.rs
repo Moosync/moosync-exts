@@ -3,6 +3,7 @@ use moosync_edk::{
     ExtensionProviderScope, InnerSong, MoosyncError, MoosyncResult, SearchResult, Song, SongType,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        extension_api::{get_cache, set_cache_with_ttl},
     },
     error,
     handler::register_extension,
@@ -10,6 +11,8 @@ use moosync_edk::{
 };
 use radiobrowser::{ApiStation, RadioBrowserAPI};
 use regex::Regex;
+
+mod cache_keys;
 
 #[derive(Debug)]
 struct ParsedSearchTokens {
@@ -103,6 +106,11 @@ impl Provider for RadioExtension {
         &self,
         req: moosync_edk::api::RequestedSearchResultRequest,
     ) -> MoosyncResult<SearchResult> {
+        let cache_key = cache_keys::search(&req.query);
+        if let Ok(Some(cached)) = get_cache::<SearchResult>(&cache_key) {
+            return Ok(cached);
+        }
+
         let rb = self
             .rb
             .as_ref()
@@ -133,10 +141,13 @@ impl Provider for RadioExtension {
         builder = builder.limit("50");
 
         let resp = block_on(builder.send()).map_err(|e| MoosyncError::String(e.to_string()))?;
-        Ok(SearchResult {
+        let res = SearchResult {
             songs: self.stations_to_songs(resp),
             ..Default::default()
-        })
+        };
+
+        let _ = set_cache_with_ttl(&cache_key, &res, Some(86400));
+        Ok(res)
     }
 }
 impl DatabaseEvents for RadioExtension {}

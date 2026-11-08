@@ -9,6 +9,7 @@ import (
 	extensions "github.com/moosync/moosync/types/extensions"
 	songs "github.com/moosync/moosync/types/songs"
 	soundcloudapi "github.com/zackradisic/soundcloud-api"
+	"google.golang.org/protobuf/proto"
 )
 
 type SoundcloudExtension struct {
@@ -52,6 +53,14 @@ func (s *SoundcloudExtension) HandleCustomRequest(req *extensions.CustomRequest)
 }
 
 func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultRequest) (res *songs.SearchResult, err error) {
+	cacheKey := SearchCacheKey(req.Query)
+	if cached, err := api.GetCache(&extensions.GetCacheRequest{Key: cacheKey}); err == nil && cached != nil && len(cached.Data) > 0 {
+		var cachedRes songs.SearchResult
+		if err := proto.Unmarshal(cached.Data, &cachedRes); err == nil {
+			return &cachedRes, nil
+		}
+	}
+
 	api.LogInfo("Got here")
 	term := req.Query
 	res = &songs.SearchResult{}
@@ -83,12 +92,29 @@ func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultReques
 		res.Playlists = append(res.Playlists, scPlaylistToPlaylists(t))
 	}
 
+	if data, err := proto.Marshal(res); err == nil {
+		ttl := uint64(7200)
+		_, _ = api.SetCache(&extensions.SetCacheRequest{
+			Key:        cacheKey,
+			Data:       data,
+			TtlSeconds: &ttl,
+		})
+	}
+
 	return
 }
 
 func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlaylistSongsRequest) (ret *extensions.RequestedPlaylistSongsResponse, err error) {
 	id := req.Id
 	if strings.HasPrefix(id, "moosync.soundcloud:") {
+		cacheKey := PlaylistSongsCacheKey(id)
+		if cached, err := api.GetCache(&extensions.GetCacheRequest{Key: cacheKey}); err == nil && cached != nil && len(cached.Data) > 0 {
+			var cachedRet extensions.RequestedPlaylistSongsResponse
+			if err := proto.Unmarshal(cached.Data, &cachedRet); err == nil {
+				return &cachedRet, nil
+			}
+		}
+
 		playlistId, err := strconv.ParseInt(strings.TrimPrefix(id, "moosync.soundcloud:"), 10, 64)
 		if err != nil {
 			return ret, err
@@ -102,6 +128,15 @@ func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlayli
 		ret = &extensions.RequestedPlaylistSongsResponse{}
 		for _, t := range playlist.Tracks {
 			ret.Songs = append(ret.Songs, scTracksToSong(t))
+		}
+
+		if data, err := proto.Marshal(ret); err == nil {
+			ttl := uint64(3600)
+			_, _ = api.SetCache(&extensions.SetCacheRequest{
+				Key:        cacheKey,
+				Data:       data,
+				TtlSeconds: &ttl,
+			})
 		}
 
 		return ret, nil

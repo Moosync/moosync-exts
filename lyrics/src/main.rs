@@ -19,6 +19,7 @@ use moosync_edk::{
     Lyrics, MoosyncResult, RequestedLyricsRequest, Song,
     api::{
         Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
+        extension_api::{get_cache, set_cache},
     },
     handler::register_extension,
     info, parse_lrc,
@@ -28,6 +29,8 @@ use scraper::{Html, Selector};
 use serde::Deserialize;
 use tracing;
 use url::Url;
+
+mod cache_keys;
 
 struct LyricsExtension {
     client: Client,
@@ -243,15 +246,44 @@ impl Provider for LyricsExtension {
             return Ok(None);
         };
 
-        if let Ok(Some(lyrics)) = self.fetch_lrclib(&song) {
-            return Ok(Some(lyrics));
+        let cache_key = if let Some(id) = song
+            .song
+            .as_ref()
+            .and_then(|s| s.id.as_deref())
+            .filter(|id| !id.is_empty())
+        {
+            cache_keys::by_id(id)
+        } else {
+            let title = song
+                .song
+                .as_ref()
+                .and_then(|s| s.title.as_deref())
+                .unwrap_or_default();
+            let artist = song
+                .artists
+                .first()
+                .and_then(|a| a.artist_name.as_deref())
+                .unwrap_or_default();
+            cache_keys::by_track(title, artist)
+        };
+
+        if let Ok(Some(cached)) = get_cache::<Lyrics>(&cache_key) {
+            return Ok(Some(cached));
         }
 
-        if let Ok(Some(lyrics)) = self.fetch_genius(&song) {
-            return Ok(Some(lyrics));
+        let lyrics = if let Ok(Some(lyrics)) = self.fetch_lrclib(&song) {
+            Some(lyrics)
+        } else if let Ok(Some(lyrics)) = self.fetch_genius(&song) {
+            Some(lyrics)
+        } else {
+            None
+        };
+
+        if let Some(ref l) = lyrics {
+            let _ = set_cache(&cache_key, l);
         }
 
-        Ok(None)
+        Ok(lyrics)
     }
 }
 
