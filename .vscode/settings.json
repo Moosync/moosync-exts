@@ -33,15 +33,15 @@
   "go.useLanguageServer": true,
   "go.lintOnSave": "off",
   "go.vetOnSave": "off",
-  "rust-analyzer.linkedProjects": [
-    "discord/Cargo.toml",
-    "koel/Cargo.toml",
-    "lastfm/Cargo.toml",
-    "radio/Cargo.toml",
-    "spotify/Cargo.toml",
-    "youtube/Cargo.toml",
-    "apple_music/Cargo.toml",
-  ],
+  // "rust-analyzer.linkedProjects": [
+  //   "discord/Cargo.toml",
+  //   "koel/Cargo.toml",
+  //   "lastfm/Cargo.toml",
+  //   "radio/Cargo.toml",
+  //   "spotify/Cargo.toml",
+  //   "youtube/Cargo.toml",
+  //   "apple_music/Cargo.toml",
+  // ],
   "rust-analyzer.cargo.target": "wasm32-wasip1",
   "files.exclude": {
     // "bazel-bin": true,
@@ -54,8 +54,31 @@
     "bazel-out": true,
     "bazel-testlogs": true,
     "bazel-${workspaceFolderBasename}": true,
+    "**/bazel-*/**": true,
   },
   "python.defaultInterpreterPath": "",
   "python.analysis.languageServerMode": "full",
   "python.useEnvironmentsExtension": true,
+  "rust-analyzer.server.path": "${workspaceFolder}/.vscode/.rules_rust_analyzer/rust_analyzer.exe",
+  "rust-analyzer.procMacro.server": "${workspaceFolder}/.vscode/.rules_rust_analyzer/rust_analyzer_proc_macro_srv.exe",
+  "rust-analyzer.rustfmt.overrideCommand": ["${workspaceFolder}/.vscode/.rules_rust_analyzer/rustfmt.exe"],
+  "rust-analyzer.check.overrideCommand": ["${workspaceFolder}/.vscode/.rules_rust_analyzer/flycheck.exe", "--saved-file", "$saved_file"],
+  "rust-analyzer.workspace.discoverConfig": {
+    "command": [
+      "${workspaceFolder}/.vscode/.rules_rust_analyzer/discover_bazel_rust_project.exe",
+      "{arg}"
+    ],
+    "filesToWatch": [
+      "BUILD",
+      "BUILD.bazel",
+      "MODULE.bazel",
+      "WORKSPACE",
+      "WORKSPACE.bazel"
+    ],
+    "progressLabel": "rules_rust"
+  },
+  "files.watcherExclude": {
+    "**/bazel-*/**": true
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
 }
