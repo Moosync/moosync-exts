@@ -11,3 +11,4 @@ go.work.sum
 .bazelrc.local
 .aspect
 .bazelbsp
+.rules_rust_analyzer
