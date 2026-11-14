@@ -3,18 +3,22 @@ use std::sync::Mutex;
 use futures::executor::block_on;
 use moosync_edk::{
     api::{
-        host_api, Accounts, ContextMenu, CustomRequest, CustomRequestResponse,
-        DatabaseEvents, Extension, GetPreferenceRequest,
-        PlayerEvents, PlayerProvider, PreferenceEvents, Provider, RegisterUserPreferenceRequest,
+        get_preference, register_user_preference, Accounts, ContextMenu, DatabaseEvents, Extension,
+        PlayerEvents, PlayerProvider, PreferenceEvents, Provider,
     },
     cache::{get_cache, set_cache, set_cache_with_ttl},
     handler::register_extension,
-    info, MoosyncResult, Playlist, PreferenceData, PreferenceItem, PreferenceType,
-    RequestedAlbumSongsRequest, RequestedAlbumSongsResponse, RequestedArtistSongsRequest,
-    RequestedArtistSongsResponse, RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
-    RequestedPlaylistsRequest, RequestedPlaylistsResponse, RequestedRecommendationsRequest,
-    RequestedRecommendationsResponse, RequestedSearchResultRequest, RequestedSearchResultResponse,
-    SearchResult, Song,
+    info,
+    types::{
+        CustomRequest, CustomRequestResponse, GetPreferenceRequest, Playlist, PreferenceData,
+        PreferenceItem, PreferenceType, RegisterUserPreferenceRequest, RequestedAlbumSongsRequest,
+        RequestedAlbumSongsResponse, RequestedArtistSongsRequest, RequestedArtistSongsResponse,
+        RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse, RequestedPlaylistsRequest,
+        RequestedPlaylistsResponse, RequestedRecommendationsRequest,
+        RequestedRecommendationsResponse, RequestedSearchResultRequest,
+        RequestedSearchResultResponse, SearchResult, Song,
+    },
+    MoosyncResult,
 };
 
 use crate::{
@@ -32,7 +36,7 @@ struct YoutubeExtension {
 }
 
 fn register_prefs() -> MoosyncResult<()> {
-    host_api::register_user_preference(RegisterUserPreferenceRequest {
+    register_user_preference(RegisterUserPreferenceRequest {
         prefs: vec![
             PreferenceItem {
                 pref_type: PreferenceType::TextInputGroup as i32,
@@ -65,13 +69,13 @@ impl YoutubeExtension {
     }
 
     fn create_api_instance(&self) {
-        if let Ok(resp_id) = host_api::get_preference(GetPreferenceRequest {
+        if let Ok(resp_id) = get_preference(GetPreferenceRequest {
             data: Some(PreferenceData {
                 key: "client_id".into(),
                 ..Default::default()
             }),
         }) {
-            if let Ok(resp_secret) = host_api::get_preference(GetPreferenceRequest {
+            if let Ok(resp_secret) = get_preference(GetPreferenceRequest {
                 data: Some(PreferenceData {
                     key: "client_secret".into(),
                     ..Default::default()

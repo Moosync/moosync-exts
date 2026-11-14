@@ -1,11 +1,11 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    Album, Artist, Genre, InnerSong, Playlist, RequestedPlaylistSongsResponse, SearchResult, Song,
-    api::{
-        host_api, GetPreferenceRequest, GetSecureRequest, PreferenceData,
-        SetAccountRequest, SetPreferenceRequest, SetSecureRequest,
+    api, info,
+    types::{
+        Album, Artist, ExtensionAccountDetail, Genre, InnerSong, Playlist, PreferenceData,
+        RequestedPlaylistSongsResponse, SearchResult, SetAccountRequest, SetPreferenceRequest,
+        SetSecureRequest, Song, GetPreferenceRequest, GetSecureRequest,
     },
-    info, ExtensionAccountDetail,
 };
 use serde_json::{Value, json};
 use std::default::Default;
@@ -116,7 +116,7 @@ impl KoelClient {
         }
     }
     pub fn new() -> Self {
-        let koel_url = host_api::get_preference(GetPreferenceRequest {
+        let koel_url = api::get_preference(GetPreferenceRequest {
             data: Some(PreferenceData {
                 key: "koel_instance_url".to_string(),
                 value: None,
@@ -142,7 +142,7 @@ impl KoelClient {
             info!("Token already exists. Skipping...");
             return Ok(());
         }
-        let email = host_api::get_preference(GetPreferenceRequest {
+        let email = api::get_preference(GetPreferenceRequest {
             data: Some(PreferenceData {
                 key: "koel_username".to_string(),
                 value: None,
@@ -150,7 +150,7 @@ impl KoelClient {
         })
         .ok()
         .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)));
-        let password = host_api::get_secure(GetSecureRequest {
+        let password = api::get_secure(GetSecureRequest {
             data: Some(PreferenceData {
                 key: "koel_password".to_string(),
                 value: None,
@@ -249,7 +249,7 @@ impl KoelClient {
     }
 
     pub fn sync_account(&self) -> Result<(), KoelError> {
-        let _ = host_api::set_account(SetAccountRequest {
+        let _ = api::set_account(SetAccountRequest {
             account: Some(ExtensionAccountDetail {
                 id: "koel".into(),
                 package_name: "koel".into(),
@@ -265,13 +265,13 @@ impl KoelClient {
 
     pub fn perform_account_login(&mut self, login_status: bool) -> Result<String, KoelError> {
         if !login_status {
-            let _ = host_api::set_preference(SetPreferenceRequest {
+            let _ = api::set_preference(SetPreferenceRequest {
                 data: Some(PreferenceData {
                     key: "koel_username".to_string(),
                     value: None,
                 }),
             });
-            let _ = host_api::set_secure(SetSecureRequest {
+            let _ = api::set_secure(SetSecureRequest {
                 data: Some(PreferenceData {
                     key: "koel_password".to_string(),
                     value: None,

@@ -1,5 +1,9 @@
 use moosync_edk::{
-    Album, Artist, ExtensionAccountDetail, InnerSong, Playlist, PreferenceData, info,
+    info,
+    types::{
+        Album, Artist, ExtensionAccountDetail, GetSecureRequest, InnerSong, Playlist,
+        PreferenceData, SetSecureRequest, Song, SongType,
+    },
 };
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -250,7 +254,7 @@ pub struct PlaylistVideoContentDetails {
     pub video_id: Option<String>,
 }
 
-impl From<PlaylistVideoItem> for moosync_edk::Song {
+impl From<PlaylistVideoItem> for Song {
     fn from(item: PlaylistVideoItem) -> Self {
         let (video_id, title, thumbnails, channel_title) = if let Some(snippet) = &item.snippet {
             (
@@ -281,12 +285,12 @@ impl From<PlaylistVideoItem> for moosync_edk::Song {
             )
         };
 
-        moosync_edk::Song {
+        Song {
             song: Some(InnerSong {
                 id: video_id.as_ref().map(|id| format!("youtube:{}", id)),
                 title,
                 duration: None, // Not available from playlistItems API
-                r#type: moosync_edk::SongType::Url.into(),
+                r#type: SongType::Url.into(),
                 url: video_id.clone(),
                 song_cover_path_high: thumbnails
                     .and_then(|thumbs| thumbs.high.as_ref().map(|t| t.url.clone()))
@@ -380,7 +384,7 @@ impl YoutubeAuth {
         self.access_token = Some(token_response.access_token.clone());
         self.refresh_token = token_response.refresh_token.clone();
 
-        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+        moosync_edk::api::set_secure(SetSecureRequest {
             data: Some(PreferenceData {
                 key: "tokens".to_string(),
                 value: Some(token_response.into()),
@@ -424,7 +428,7 @@ impl YoutubeAuth {
 
     /// Loads tokens from disk if available and updates user info.
     pub async fn load_tokens(&mut self) -> Result<(), Box<dyn Error>> {
-        match moosync_edk::api::host_api::get_secure(moosync_edk::api::GetSecureRequest {
+        match moosync_edk::api::get_secure(GetSecureRequest {
             data: Some(PreferenceData {
                 key: "tokens".into(),
                 ..Default::default()
@@ -461,7 +465,7 @@ impl YoutubeAuth {
         self.refresh_token = None;
         self.account_details.logged_in = false;
         self.account_details.username = None;
-        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+        moosync_edk::api::set_secure(SetSecureRequest {
             data: Some(PreferenceData {
                 key: "tokens".to_string(),
                 value: None,
@@ -500,7 +504,7 @@ impl YoutubeAuth {
         let token_response: OAuthTokenResponse = resp.json().await?;
         self.access_token = Some(token_response.access_token.clone());
 
-        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+        moosync_edk::api::set_secure(SetSecureRequest {
             data: Some(PreferenceData {
                 key: "tokens".to_string(),
                 value: Some(token_response.into()),
@@ -565,7 +569,7 @@ impl YoutubeAuth {
         &self,
         playlist_id: &str,
         next_page_token: Option<String>,
-    ) -> Result<(Vec<moosync_edk::Song>, Option<String>), Box<dyn Error>> {
+    ) -> Result<(Vec<Song>, Option<String>), Box<dyn Error>> {
         if self.access_token.is_none() {
             return Err("Not authenticated".into());
         }
@@ -600,7 +604,7 @@ impl YoutubeAuth {
             .items
             .unwrap_or_default()
             .into_iter()
-            .map(moosync_edk::Song::from)
+            .map(Song::from)
             .collect();
 
         Ok((songs, playlist_items.next_page_token))

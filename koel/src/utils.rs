@@ -1,5 +1,4 @@
-use moosync_edk::extensions_proto::struct_proto::google::protobuf::Value as ProtoValue;
-use moosync_edk::{Album, Artist, InnerSong, LyricLine, Lyrics, Playlist};
+use moosync_edk::types::{Album, Artist, InnerSong, LyricLine, Lyrics, Playlist, Value as ProtoValue};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -148,9 +147,9 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
         .collect()
 }
 
-pub fn f64_to_duration(secs: Option<f64>) -> Option<moosync_edk::duration_proto::google::protobuf::Duration> {
+pub fn f64_to_duration(secs: Option<f64>) -> Option<moosync_edk::types::Duration> {
     secs.map(|s| {
-        moosync_edk::duration_to_proto(std::time::Duration::from_secs_f64(s))
+        moosync_edk::api::duration_to_proto(std::time::Duration::from_secs_f64(s))
     })
 }
 

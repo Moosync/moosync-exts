@@ -3,15 +3,19 @@ use std::sync::Mutex;
 use client::{Builder, Client};
 use moosync_edk::{
     api::{
-        host_api, Accounts, ContextMenu, DatabaseEvents, Extension, GetCurrentSongRequest,
-        GetSecureRequest, OauthCallbackRequest, OauthCallbackResponse,
-        OpenExternalUrlRequest, PerformAccountLoginRequest, PerformAccountLoginResponse,
-        PlayerEvents, PlayerProvider, PreferenceEvents, Provider, RegisterOauthRequest,
-        ScrobbleRequest, SetAccountRequest, SetSecureRequest, SongChangedRequest,
+        self, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider,
     },
     error,
     handler::register_extension,
-    info, warn, ExtensionAccountDetail, MoosyncResult, PreferenceData,
+    info,
+    types::{
+        ExtensionAccountDetail, GetCurrentSongRequest, GetSecureRequest, OauthCallbackRequest,
+        OauthCallbackResponse, OpenExternalUrlRequest, PerformAccountLoginRequest,
+        PerformAccountLoginResponse, PreferenceData, RegisterOauthRequest, ScrobbleRequest,
+        SetAccountRequest, SetSecureRequest, SongChangedRequest,
+    },
+    warn, MoosyncResult,
 };
 
 mod client;
@@ -24,7 +28,7 @@ impl LastFMExtension {
     fn sync_account(&self) {
         let client = self.client.lock().unwrap();
         let username = client.get_username();
-        let _ = host_api::set_account(SetAccountRequest {
+        let _ = api::set_account(SetAccountRequest {
             account: Some(ExtensionAccountDetail {
                 id: "lastfm".into(),
                 package_name: "lastfm".into(),
@@ -38,7 +42,7 @@ impl LastFMExtension {
     }
 
     fn fetch_session(&self) -> MoosyncResult<()> {
-        if let Ok(resp) = host_api::get_secure(GetSecureRequest {
+        if let Ok(resp) = api::get_secure(GetSecureRequest {
             data: Some(PreferenceData {
                 key: "session".to_string(),
                 value: None,
@@ -79,7 +83,7 @@ impl LastFMExtension {
 impl PlayerEvents for LastFMExtension {
     fn song_changed(&self, _: SongChangedRequest) -> MoosyncResult<()> {
         let client = self.client.lock().unwrap();
-        if let Ok(resp) = host_api::get_current_song(GetCurrentSongRequest {}) {
+        if let Ok(resp) = api::get_current_song(GetCurrentSongRequest {}) {
             if let Some(current_song) = resp.song {
                 client.set_now_playing(current_song);
             }
@@ -112,11 +116,11 @@ impl Accounts for LastFMExtension {
         if args.login_status {
             let res = client.login();
             info!("opening url {}", res);
-            host_api::open_external_url(OpenExternalUrlRequest { url: res.clone() })?;
+            api::open_external_url(OpenExternalUrlRequest { url: res.clone() })?;
             Ok(PerformAccountLoginResponse { status: res })
         } else {
             client.logout();
-            host_api::set_secure(SetSecureRequest {
+            api::set_secure(SetSecureRequest {
                 data: Some(PreferenceData {
                     key: "session".to_string(),
                     value: None,
@@ -134,7 +138,7 @@ impl Accounts for LastFMExtension {
         let mut client = self.client.lock().unwrap();
         match client.authorize(req.callback_uri) {
             Ok(s) => {
-                if let Err(e) = host_api::set_secure(SetSecureRequest {
+                if let Err(e) = api::set_secure(SetSecureRequest {
                     data: Some(PreferenceData {
                         key: "session".to_string(),
                         value: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
@@ -166,13 +170,13 @@ pub extern "C" fn init() {
 
     register_extension(Box::new(extension)).unwrap();
 
-    if let Err(e) = host_api::register_oauth(RegisterOauthRequest {
+    if let Err(e) = api::register_oauth(RegisterOauthRequest {
         url: "lastfmcallback".to_string(),
     }) {
         error!("Failed to register oauth callback {:?}", e);
     }
 
-    if let Err(e) = host_api::register_oauth(RegisterOauthRequest {
+    if let Err(e) = api::register_oauth(RegisterOauthRequest {
         url: "lastfm".to_string(),
     }) {
         error!("Failed to register oauth callback {:?}", e);

@@ -1,13 +1,17 @@
 use futures::executor::block_on;
 use moosync_edk::{
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
-        PreferenceEvents, Provider, RequestedSearchResultRequest, RequestedSearchResultResponse,
+        duration_to_proto, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents,
+        PlayerProvider, PreferenceEvents, Provider,
     },
     cache::{get_cache, set_cache_with_ttl},
     error,
     handler::register_extension,
-    info, InnerSong, MoosyncError, MoosyncResult, Song, SongType,
+    info,
+    types::{
+        InnerSong, RequestedSearchResultRequest, RequestedSearchResultResponse, Song, SongType,
+    },
+    MoosyncError, MoosyncResult,
 };
 use radiobrowser::{ApiStation, RadioBrowserAPI};
 use regex::Regex;
@@ -87,7 +91,7 @@ impl RadioExtension {
                     title: Some(s.name),
                     bitrate: Some(s.bitrate as f64),
                     codec: Some(s.codec),
-                    duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_secs(0))),
+                    duration: Some(duration_to_proto(std::time::Duration::from_secs(0))),
                     r#type: SongType::Url.into(),
                     url: Some(s.url),
                     playback_url: Some(s.url_resolved),

@@ -1,8 +1,9 @@
 #![allow(dead_code)]
 
 use moosync_edk::{
-    Album, Artist, InnerSong, MoosyncError, MoosyncResult, Playlist, PreferenceData, Song,
-    SongType, duration_to_proto,
+    api::duration_to_proto,
+    types::{Album, Artist, InnerSong, Playlist, PreferenceData, Song, SongType},
+    MoosyncError, MoosyncResult,
 };
 use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
 use moosync_edk::extensions_proto::struct_proto::google::protobuf::{
