@@ -1,5 +1,4 @@
-use std::collections::{HashMap, HashSet};
-use std::time::Instant;
+use std::collections::HashSet;
 
 use chrono::{DateTime, TimeDelta, Utc};
 use futures::StreamExt;
@@ -16,18 +15,16 @@ use rspotify::{
     clients::OAuthClient,
     model::SubscriptionLevel,
     model::{
-        AlbumId, ArtistId, PlaylistId, PlaylistTracksRef, SearchType, SimplifiedArtist,
-        SimplifiedPlaylist, TrackId,
+        AlbumId, ArtistId, PlaylistId, SearchType, SimplifiedArtist, TrackId,
     },
     prelude::BaseClient,
 };
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use serde::{Deserialize, Serialize};
 use url::Url;
 
-use moosync_edk::{
-    Album, Artist, InnerSong, Playlist, PreferenceData, SearchResult, Song, SongType,
+use moosync_edk::types::{
+    Album, Artist, Playlist, SearchResult, Song,
 };
-use regex::Regex;
 
 use crate::utils::{self, Pagination};
 
@@ -143,11 +140,20 @@ impl ApiClient {
     }
 
     pub async fn authorize(&mut self, code: String) -> MoosyncResult<()> {
-        let (client, verifier, _) = self.verifier.take().ok_or("OAuth flow not initiated")?;
+        let (client, verifier) = match self.verifier.take() {
+            Some((c, v, _)) => (c, Some(v)),
+            None => (self.get_oauth_client(), None),
+        };
 
-        let code_val = if code.contains("?") || code.contains("code=") || code.starts_with("http") {
+        let code_val = if code.contains("?") || code.contains("code=") || code.contains("&") || code.starts_with("http") {
             let url_str = if !code.starts_with("http") {
-                format!("https://moosync.app/{}", code.trim_start_matches('/'))
+                if code.starts_with("?") {
+                    format!("https://moosync.app/{}", code)
+                } else if code.contains("code=") {
+                    format!("https://moosync.app/?{}", code)
+                } else {
+                    format!("https://moosync.app/?code={}", code)
+                }
             } else {
                 code
             };
@@ -166,9 +172,12 @@ impl ApiClient {
             .build()
             .map_err(|e| e.to_string())?;
 
-        let res = client
-            .exchange_code(AuthorizationCode::new(code_val))
-            .set_pkce_verifier(verifier)
+        let mut req_builder = client.exchange_code(AuthorizationCode::new(code_val));
+        if let Some(verifier) = verifier {
+            req_builder = req_builder.set_pkce_verifier(verifier);
+        }
+
+        let res = req_builder
             .request_async(&http_client)
             .await
             .map_err(|e| format!("Token exchange failed: {}", e))?;
@@ -180,7 +189,7 @@ impl ApiClient {
 
         let expires_in_sec = res.expires_in().map(|d| d.as_secs()).unwrap_or(3600);
 
-        let now_sec = moosync_edk::api::extension_api::get_system_time();
+        let now_sec = moosync_edk::api::system_time().unwrap_or(0);
 
         let expires_at_ms = (now_sec + expires_in_sec) * 1000;
 
@@ -212,11 +221,13 @@ impl ApiClient {
 
     pub async fn get_username(&mut self) -> MoosyncResult<Option<String>> {
         info!("Fetching user details for spotify");
-        let user = self
-            .api_client
-            .current_user()
-            .await
-            .map_err(|e| MoosyncError::String(e.to_string()))?;
+        let user = match self.api_client.current_user().await {
+            Ok(u) => u,
+            Err(e) => {
+                moosync_edk::error!("Failed to fetch current_user: {:?}", e);
+                return Err(MoosyncError::String(e.to_string()));
+            }
+        };
         info!("Got user {:?}", user);
         if let Some(subscription) = user.product {
             if subscription == SubscriptionLevel::Premium {
@@ -227,31 +238,12 @@ impl ApiClient {
         Ok(user.display_name)
     }
 
-    pub fn key(&self) -> String {
-        "spotify".into()
+    pub fn is_premium(&self) -> bool {
+        self.is_premium
     }
 
     pub fn match_id(&self, id: String) -> bool {
         id.starts_with("moosync.spotify:")
-    }
-
-    pub async fn match_url(&self, url: String) -> MoosyncResult<bool> {
-        let re = Regex::new(
-            r"^(https:\/\/open\.spotify\.com\/(track|embed)\/|spotify:track:)([a-zA-Z0-9]+)(.*)$",
-        )
-        .unwrap();
-        if re.is_match(url.as_str()) {
-            return Ok(true);
-        }
-
-        let re = Regex::new(
-            r"^(https:\/\/open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]+)(.*)$",
-        )
-        .unwrap();
-        if re.is_match(url.as_str()) {
-            return Ok(true);
-        }
-        Ok(false)
     }
 
     pub async fn fetch_user_playlists(
@@ -375,34 +367,6 @@ impl ApiClient {
 
         Ok(ret)
     }
-    pub async fn playlist_from_url(&self, url: String) -> MoosyncResult<Playlist> {
-        let playlist_id_str = Url::parse(&url)
-            .map(|u| u.path().to_string())
-            .unwrap_or_else(|_| url.clone());
-
-        let playlist = self
-            .api_client
-            .playlist(
-                PlaylistId::from_id_or_uri(&playlist_id_str).map_err(|e| e.to_string())?,
-                None,
-                None,
-            )
-            .await
-            .map_err(|e| format!("Failed to fetch playlist from URL: {}", e))?;
-
-        Ok(utils::parse_playlist(SimplifiedPlaylist {
-            collaborative: playlist.collaborative,
-            external_urls: playlist.external_urls,
-            href: playlist.href,
-            id: playlist.id,
-            images: playlist.images,
-            name: playlist.name,
-            owner: playlist.owner,
-            public: playlist.public,
-            snapshot_id: playlist.snapshot_id,
-            tracks: PlaylistTracksRef::default(),
-        }))
-    }
 
     pub async fn song_from_url(&self, url: String) -> MoosyncResult<Song> {
         let track_id_str = Url::parse(&url)
@@ -429,67 +393,27 @@ impl ApiClient {
     }
 
     pub async fn song_from_id(&self, id: String) -> MoosyncResult<Song> {
-        let stripped_id = id.replacen("spotify:", "", 1);
+        let stripped_id = id
+            .strip_prefix("moosync.spotify:")
+            .or_else(|| id.strip_prefix("spotify:track:"))
+            .or_else(|| id.strip_prefix("spotify:"))
+            .unwrap_or(&id);
         self.song_from_url(stripped_id.trim().to_string()).await
     }
 
     pub async fn get_suggestions(&self) -> MoosyncResult<Vec<Song>> {
-        let mut seed_tracks = vec![];
-        let mut i = 0;
-
+        let mut songs = Vec::new();
         let mut top_tracks = self.api_client.current_user_top_tracks(None);
 
-        while i < 5 {
+        while songs.len() < 20 {
             if let Some(Ok(track)) = top_tracks.next().await {
-                if let Some(track_id) = track.id {
-                    seed_tracks.push(track_id);
-                    i += 1;
-                }
+                songs.push(utils::parse_track(track));
             } else {
                 break;
             }
         }
 
-        let recom = self
-            .api_client
-            .recommendations(
-                vec![],
-                Some(vec![]),
-                Some(vec![]),
-                Some(seed_tracks),
-                None,
-                Some(100),
-            )
-            .await
-            .map_err(|e| format!("Failed to fetch recommendations: {}", e))?;
-
-        Ok(recom
-            .tracks
-            .into_iter()
-            .map(|t| {
-                utils::parse_track(rspotify::model::FullTrack {
-                    album: t.album.unwrap_or_default(),
-                    artists: t.artists,
-                    disc_number: t.disc_number,
-                    duration: t.duration,
-                    id: t.id,
-                    name: t.name,
-                    track_number: t.track_number,
-                    available_markets: vec![],
-                    explicit: t.explicit,
-                    external_urls: t.external_urls,
-                    external_ids: HashMap::new(),
-                    href: None,
-                    is_local: false,
-                    is_playable: None,
-                    linked_from: None,
-                    restrictions: None,
-                    popularity: 0,
-                    preview_url: t.preview_url,
-                    r#type: rspotify::model::Type::Track,
-                })
-            })
-            .collect())
+        Ok(songs)
     }
 
     pub async fn get_album_content(

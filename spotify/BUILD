@@ -10,13 +10,29 @@ rust_extension(
     allowed_hosts = [
         "*",
     ],
-    scopes = [],
+    allowed_paths = {
+        "{CACHE_DIR}/bin": "/cache/bin",
+        "{CACHE_DIR}/soloist_data": "/cache/soloist_data",
+    },
+    scopes = [
+        PROVIDER_SCOPES.ACCOUNTS,
+        PROVIDER_SCOPES.SEARCH,
+        PROVIDER_SCOPES.PLAYLIST_SONGS,
+        PROVIDER_SCOPES.PLAYLISTS,
+        PROVIDER_SCOPES.ARTIST_SONGS,
+        PROVIDER_SCOPES.ALBUM_SONGS,
+        PROVIDER_SCOPES.RECOMMENDATIONS,
+        PROVIDER_SCOPES.PLAYER_PROVIDER,
+        PROVIDER_SCOPES.PLAYER_DATA_EVENTS,
+        PROVIDER_SCOPES.PLAYER_UI_EVENTS,
+    ],
     display_name = "Spotify",
     edition = "2024",
     icon = "assets/icon.png",
     version = "0.0.1",
     deps = [
         "@spotify_crates//:chrono",
+        "@spotify_crates//:flate2",
         "@spotify_crates//:futures",
         "@spotify_crates//:oauth2",
         "@spotify_crates//:regex",
@@ -24,13 +40,16 @@ rust_extension(
         "@spotify_crates//:rspotify",
         "@spotify_crates//:serde",
         "@spotify_crates//:serde_json",
+        "@spotify_crates//:tar",
         "@spotify_crates//:url",
+        "@spotify_crates//:zip",
     ],
 )
 
 moounit_test(
     name = "test",
     srcs = ["test.py"],
+    data = glob([".env"], allow_empty = True),
     debug = True,
     extension = ":spotify",
 )

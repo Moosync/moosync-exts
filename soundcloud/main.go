@@ -7,21 +7,15 @@ import (
 
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 	extensions "github.com/moosync/moosync/types/extensions"
-	songs "github.com/moosync/moosync/types/songs"
 	soundcloudapi "github.com/zackradisic/soundcloud-api"
 	"google.golang.org/protobuf/proto"
 )
 
 type SoundcloudExtension struct {
-	api.DefaultExtension
 	sc *soundcloudapi.API
 }
 
-func (*SoundcloudExtension) GetProviderScopes() ([]extensions.ExtensionProviderScope, error) {
-	return []extensions.ExtensionProviderScope{extensions.ExtensionProviderScope_SEARCH, extensions.ExtensionProviderScope_PLAYBACK_DETAILS, extensions.ExtensionProviderScope_PLAYLIST_SONGS}, nil
-}
-
-func (s *SoundcloudExtension) HandleCustomRequest(req *extensions.CustomRequest) (ret *extensions.CustomRequestResponse, err error) {
+func (s *SoundcloudExtension) CustomRequest(req *extensions.CustomRequest) (ret *extensions.CustomRequestResponse, err error) {
 	id, err := strconv.ParseInt(strings.Replace(req.RequestId, "extension://moosync.soundcloud/", "", 1), 10, 64)
 	if err != nil {
 		return
@@ -52,10 +46,10 @@ func (s *SoundcloudExtension) HandleCustomRequest(req *extensions.CustomRequest)
 	}, nil
 }
 
-func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultRequest) (res *songs.SearchResult, err error) {
+func (s *SoundcloudExtension) RequestedSearchResult(req *extensions.RequestedSearchResultRequest) (res *extensions.RequestedSearchResultResponse, err error) {
 	cacheKey := SearchCacheKey(req.Query)
 	if cached, err := api.GetCache(&extensions.GetCacheRequest{Key: cacheKey}); err == nil && cached != nil && len(cached.Data) > 0 {
-		var cachedRes songs.SearchResult
+		var cachedRes extensions.RequestedSearchResultResponse
 		if err := proto.Unmarshal(cached.Data, &cachedRes); err == nil {
 			return &cachedRes, nil
 		}
@@ -63,8 +57,12 @@ func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultReques
 
 	api.LogInfo("Got here")
 	term := req.Query
-	res = &songs.SearchResult{}
-	resp, err := s.sc.Search(soundcloudapi.SearchOptions{
+	res = &extensions.RequestedSearchResultResponse{}
+	sc, err := s.getSc()
+	if err != nil {
+		return nil, err
+	}
+	resp, err := sc.Search(soundcloudapi.SearchOptions{
 		Query:  term,
 		Limit:  50,
 		Offset: 0,
@@ -104,7 +102,7 @@ func (s *SoundcloudExtension) Search(req *extensions.RequestedSearchResultReques
 	return
 }
 
-func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlaylistSongsRequest) (ret *extensions.RequestedPlaylistSongsResponse, err error) {
+func (s *SoundcloudExtension) RequestedPlaylistSongs(req *extensions.RequestedPlaylistSongsRequest) (ret *extensions.RequestedPlaylistSongsResponse, err error) {
 	id := req.Id
 	if strings.HasPrefix(id, "moosync.soundcloud:") {
 		cacheKey := PlaylistSongsCacheKey(id)
@@ -120,7 +118,12 @@ func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlayli
 			return ret, err
 		}
 
-		playlist, err := s.sc.GetPlaylistInfo(fmt.Sprintf("https://api.soundcloud.com/playlists/%d", playlistId))
+		sc, err := s.getSc()
+		if err != nil {
+			return nil, err
+		}
+
+		playlist, err := sc.GetPlaylistInfo(fmt.Sprintf("https://api.soundcloud.com/playlists/%d", playlistId))
 		if err != nil {
 			return nil, err
 		}
@@ -145,15 +148,19 @@ func (s *SoundcloudExtension) GetPlaylistContent(req *extensions.RequestedPlayli
 	return nil, fmt.Errorf("Not a playlist reported by this extension")
 }
 
-func NewSoundcloudExtension() (SoundcloudExtension, error) {
-	sc, err := soundcloudapi.New(soundcloudapi.APIOptions{})
-	if err != nil {
-		return SoundcloudExtension{}, err
+func (s *SoundcloudExtension) getSc() (*soundcloudapi.API, error) {
+	if s.sc == nil {
+		sc, err := soundcloudapi.New(soundcloudapi.APIOptions{})
+		if err != nil {
+			return nil, err
+		}
+		s.sc = sc
 	}
+	return s.sc, nil
+}
 
-	return SoundcloudExtension{
-		sc: sc,
-	}, nil
+func NewSoundcloudExtension() (SoundcloudExtension, error) {
+	return SoundcloudExtension{}, nil
 }
 
 func main() {}

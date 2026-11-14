@@ -1,11 +1,11 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    Album, Artist, Genre, InnerSong, Playlist, SearchResult, Song,
+    Album, Artist, Genre, InnerSong, Playlist, RequestedPlaylistSongsResponse, SearchResult, Song,
     api::{
-        AccountLoginArgs, ExtensionAccountDetail, PreferenceData, SongsWithPageTokenReturnType,
-        extension_api::{get_preference, get_secure, set_account, set_preference, set_secure},
+        host_api, GetPreferenceRequest, GetSecureRequest, PreferenceData,
+        SetAccountRequest, SetPreferenceRequest, SetSecureRequest,
     },
-    info,
+    info, ExtensionAccountDetail,
 };
 use serde_json::{Value, json};
 use std::default::Default;
@@ -116,12 +116,14 @@ impl KoelClient {
         }
     }
     pub fn new() -> Self {
-        let koel_url = get_preference(PreferenceData {
-            key: "koel_instance_url".to_string(),
-            value: None,
+        let koel_url = host_api::get_preference(GetPreferenceRequest {
+            data: Some(PreferenceData {
+                key: "koel_instance_url".to_string(),
+                value: None,
+            }),
         })
         .ok()
-        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string))
+        .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)))
         .unwrap_or("http://localhost:8000".into());
         let mut s = Self {
             token: None,
@@ -140,18 +142,22 @@ impl KoelClient {
             info!("Token already exists. Skipping...");
             return Ok(());
         }
-        let email = get_preference(PreferenceData {
-            key: "koel_username".to_string(),
-            value: None,
+        let email = host_api::get_preference(GetPreferenceRequest {
+            data: Some(PreferenceData {
+                key: "koel_username".to_string(),
+                value: None,
+            }),
         })
         .ok()
-        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string));
-        let password = get_secure(PreferenceData {
-            key: "koel_password".to_string(),
-            value: None,
+        .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)));
+        let password = host_api::get_secure(GetSecureRequest {
+            data: Some(PreferenceData {
+                key: "koel_password".to_string(),
+                value: None,
+            }),
         })
         .ok()
-        .and_then(|v| v.value.and_then(crate::utils::google_value_to_string));
+        .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)));
 
         info!("Loggnig in {:?}, {:?}", email, password);
         if email.is_none() || password.is_none() {
@@ -243,28 +249,34 @@ impl KoelClient {
     }
 
     pub fn sync_account(&self) -> Result<(), KoelError> {
-        let _ = set_account(ExtensionAccountDetail {
-            id: "koel".into(),
-            package_name: "koel".into(),
-            name: "Koel".into(),
-            bg_color: "#2196f3".into(),
-            icon: "".into(),
-            logged_in: self.token.is_some(),
-            username: self.username.clone(),
+        let _ = host_api::set_account(SetAccountRequest {
+            account: Some(ExtensionAccountDetail {
+                id: "koel".into(),
+                package_name: "koel".into(),
+                name: "Koel".into(),
+                bg_color: "#2196f3".into(),
+                icon: "".into(),
+                logged_in: self.token.is_some(),
+                username: self.username.clone(),
+            }),
         });
         Ok(())
     }
 
-    pub fn perform_account_login(&mut self, args: AccountLoginArgs) -> Result<String, KoelError> {
-        if !args.login_status {
-            set_preference(PreferenceData {
-                key: "koel_username".to_string(),
-                value: None,
-            })?;
-            set_secure(PreferenceData {
-                key: "koel_password".to_string(),
-                value: None,
-            })?;
+    pub fn perform_account_login(&mut self, login_status: bool) -> Result<String, KoelError> {
+        if !login_status {
+            let _ = host_api::set_preference(SetPreferenceRequest {
+                data: Some(PreferenceData {
+                    key: "koel_username".to_string(),
+                    value: None,
+                }),
+            });
+            let _ = host_api::set_secure(SetSecureRequest {
+                data: Some(PreferenceData {
+                    key: "koel_password".to_string(),
+                    value: None,
+                }),
+            });
             self.token = None;
             self.sync_account()?;
             return Ok("".into());
@@ -305,7 +317,7 @@ impl KoelClient {
         &mut self,
         playlist_id: &str,
         next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType, KoelError> {
+    ) -> Result<RequestedPlaylistSongsResponse, KoelError> {
         if playlist_id == "all_songs" {
             return self.get_all_songs(next_page_token);
         }
@@ -320,7 +332,7 @@ impl KoelClient {
         )?;
         let songs = koel_songs.iter().map(|ks| self.map_koel_song(ks)).collect();
 
-        Ok(SongsWithPageTokenReturnType {
+        Ok(RequestedPlaylistSongsResponse {
             songs,
             next_page_token: None,
         })
@@ -329,7 +341,7 @@ impl KoelClient {
     pub fn get_all_songs(
         &mut self,
         next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType, KoelError> {
+    ) -> Result<RequestedPlaylistSongsResponse, KoelError> {
         // Extract current page from next_page_token, default to 1
         let page = parse_next_page_token(&next_page_token, 1);
 
@@ -349,7 +361,7 @@ impl KoelClient {
             .map(|ks| self.map_koel_song(ks))
             .collect();
         let next_page_token = make_next_page_token(page, !songs.is_empty());
-        Ok(SongsWithPageTokenReturnType {
+        Ok(RequestedPlaylistSongsResponse {
             songs,
             next_page_token,
         })
@@ -370,7 +382,7 @@ impl KoelClient {
         &mut self,
         album_name: &str,
         next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType, KoelError> {
+    ) -> Result<RequestedPlaylistSongsResponse, KoelError> {
         // 1. Search for the album
         let search_result = self.search(album_name.to_string())?;
         let album = search_result
@@ -381,7 +393,7 @@ impl KoelClient {
             Some(id) => id,
             None => {
                 // No exact match found
-                return Ok(SongsWithPageTokenReturnType {
+                return Ok(RequestedPlaylistSongsResponse {
                     songs: vec![],
                     next_page_token: None,
                 });
@@ -401,7 +413,7 @@ impl KoelClient {
         )?;
         let songs: Vec<Song> = koel_songs.iter().map(|ks| self.map_koel_song(ks)).collect();
         let next_page_token = make_next_page_token(page, !songs.is_empty());
-        Ok(SongsWithPageTokenReturnType {
+        Ok(RequestedPlaylistSongsResponse {
             songs,
             next_page_token,
         })
@@ -413,7 +425,7 @@ impl KoelClient {
         &mut self,
         artist_name: &str,
         next_page_token: Option<String>,
-    ) -> Result<SongsWithPageTokenReturnType, KoelError> {
+    ) -> Result<RequestedPlaylistSongsResponse, KoelError> {
         // 1. Search for the artist
         let search_result = self.search(artist_name.to_string())?;
         let artist = search_result
@@ -424,7 +436,7 @@ impl KoelClient {
             Some(id) => id,
             None => {
                 // No exact match found
-                return Ok(SongsWithPageTokenReturnType {
+                return Ok(RequestedPlaylistSongsResponse {
                     songs: vec![],
                     next_page_token: None,
                 });
@@ -447,7 +459,7 @@ impl KoelClient {
             .map(|ks| self.map_koel_song(ks))
             .collect();
         let next_page_token = make_next_page_token(page, !songs.is_empty());
-        Ok(SongsWithPageTokenReturnType {
+        Ok(RequestedPlaylistSongsResponse {
             songs,
             next_page_token,
         })

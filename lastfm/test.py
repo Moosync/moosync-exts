@@ -1,9 +1,7 @@
 # pylint: disable=no-member,unused-import
 import pytest
 from core.types.protos.extensions_pb2 import ExtensionProviderScope
-from core.types.protos.extensions_pb2 import GetProviderScopesRequest
 from core.types.protos.extensions_pb2 import ExtensionCommand
-from core.types.protos.extensions_pb2 import GetAccountsRequest
 from core.types.protos.extensions_pb2 import MainCommand
 from core.types.protos.extensions_pb2 import MainCommandResponse
 import core.types.protos.extensions_pb2 as pb
@@ -18,6 +16,23 @@ def entry(moounit: Moounit):
             get_secure=pb.GetSecureRequest(data=pb.PreferenceData(key="session"))
         ),
         MainCommandResponse(get_secure=pb.GetSecureResponse(data=pb.PreferenceData())),
+    )
+
+    # Expect sync_account
+    moounit.expect_command(
+        MainCommand(
+            set_account=pb.SetAccountRequest(
+                account=pb.ExtensionAccountDetail(
+                    id="lastfm",
+                    package_name="lastfm",
+                    name="Last.fm",
+                    bg_color="red",
+                    icon="",
+                    logged_in=False,
+                )
+            )
+        ),
+        MainCommandResponse(set_account=pb.SetAccountResponse(success=True)),
     )
 
     # Expect register_oauth calls
@@ -46,10 +61,21 @@ def test_get_provider_scopes(entry: Moounit):
     ]
 
 
-def test_get_accounts(entry: Moounit):
-    ret = entry.send_command(ExtensionCommand(get_accounts=GetAccountsRequest()))
-
-    assert len(ret.get_accounts.accounts) == 1
-    assert ret.get_accounts.accounts[0].id == "lastfm"
-    assert ret.get_accounts.accounts[0].name == "Last.fm"
-    assert ret.get_accounts.accounts[0].logged_in is False
+def test_login(entry: Moounit):
+    url = (
+        "http://www.last.fm/api/auth/?"
+        "api_key=85ac9a982f718673f1cdbb9d8d6fba19&cb=https://moosync.app/lastfm"
+    )
+    entry.expect_command(
+        MainCommand(open_external_url=pb.OpenExternalUrlRequest(url=url)),
+        MainCommandResponse(open_external_url=pb.OpenExternalUrlResponse(success=True)),
+    )
+    ret = entry.send_command(
+        ExtensionCommand(
+            perform_account_login=pb.PerformAccountLoginRequest(
+                account_id="lastfm",
+                login_status=True,
+            )
+        )
+    )
+    assert ret.perform_account_login.status != ""

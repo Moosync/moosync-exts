@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use moosync_edk::{
-    Album, Artist, InnerSong, MoosyncError, MoosyncResult, Playlist, PreferenceData, Song, SongType,
+    types::{Album, Artist, InnerSong, Playlist, PreferenceData, Song, SongType},
+    MoosyncError, MoosyncResult,
 };
 use serde::de::DeserializeOwned;
 
@@ -104,16 +105,6 @@ impl TryFrom<Pagination> for String {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct ArtistExtraInfo {
-    pub artist_id: String,
-}
-
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct SpotifyExtraInfo {
-    pub spotify: ArtistExtraInfo,
-}
-
 pub fn parse_playlist(playlist: SimplifiedPlaylist) -> Playlist {
     Playlist {
         playlist_id: Some(playlist.id.to_string()),
@@ -163,7 +154,7 @@ pub fn parse_track(item: FullTrack) -> Song {
         song: Some(InnerSong {
             id: Some(id.clone()),
             title: Some(item.name),
-            duration: Some(moosync_edk::duration_to_proto(
+            duration: Some(moosync_edk::api::duration_to_proto(
                 item.duration.to_std().unwrap_or(std::time::Duration::from_secs(0))
             )),
             r#type: SongType::Spotify as i32,
@@ -241,12 +232,31 @@ pub fn google_value_to_serde(
     use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
     match v.kind {
         Some(Kind::NullValue(_)) => serde_json::Value::Null,
-        Some(Kind::NumberValue(n)) => serde_json::Value::Number(
-            serde_json::Number::from_f64(n).unwrap_or(serde_json::Number::from(0)),
-        ),
+        Some(Kind::NumberValue(n)) => {
+            if n.fract() == 0.0 && n >= (i64::MIN as f64) && n <= (i64::MAX as f64) {
+                serde_json::Value::Number(serde_json::Number::from(n as i64))
+            } else {
+                serde_json::Value::Number(
+                    serde_json::Number::from_f64(n).unwrap_or(serde_json::Number::from(0)),
+                )
+            }
+        }
         Some(Kind::StringValue(s)) => serde_json::Value::String(s),
         Some(Kind::BoolValue(b)) => serde_json::Value::Bool(b),
-        Some(Kind::StructValue(s)) => google_struct_to_serde(s),
+        Some(Kind::StructValue(s)) => {
+            if s.fields.len() == 1 {
+                if let Some(v) = s.fields.get("stringValue") {
+                    return google_value_to_serde(v.clone());
+                }
+                if let Some(v) = s.fields.get("numberValue") {
+                    return google_value_to_serde(v.clone());
+                }
+                if let Some(v) = s.fields.get("boolValue") {
+                    return google_value_to_serde(v.clone());
+                }
+            }
+            google_struct_to_serde(s)
+        }
         Some(Kind::ListValue(l)) => {
             serde_json::Value::Array(l.values.into_iter().map(google_value_to_serde).collect())
         }

@@ -1,13 +1,13 @@
 use futures::executor::block_on;
 use moosync_edk::{
-    ExtensionProviderScope, InnerSong, MoosyncError, MoosyncResult, SearchResult, Song, SongType,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
-        extension_api::{get_cache, set_cache_with_ttl},
+        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider, RequestedSearchResultRequest, RequestedSearchResultResponse,
     },
+    cache::{get_cache, set_cache_with_ttl},
     error,
     handler::register_extension,
-    info,
+    info, InnerSong, MoosyncError, MoosyncResult, Song, SongType,
 };
 use radiobrowser::{ApiStation, RadioBrowserAPI};
 use regex::Regex;
@@ -101,13 +101,14 @@ impl RadioExtension {
 }
 
 impl PlayerEvents for RadioExtension {}
+impl PlayerProvider for RadioExtension {}
 impl Provider for RadioExtension {
-    fn search(
+    fn requested_search_result(
         &self,
-        req: moosync_edk::api::RequestedSearchResultRequest,
-    ) -> MoosyncResult<SearchResult> {
+        req: RequestedSearchResultRequest,
+    ) -> MoosyncResult<RequestedSearchResultResponse> {
         let cache_key = cache_keys::search(&req.query);
-        if let Ok(Some(cached)) = get_cache::<SearchResult>(&cache_key) {
+        if let Ok(Some(cached)) = get_cache::<RequestedSearchResultResponse>(&cache_key) {
             return Ok(cached);
         }
 
@@ -141,7 +142,7 @@ impl Provider for RadioExtension {
         builder = builder.limit("50");
 
         let resp = block_on(builder.send()).map_err(|e| MoosyncError::String(e.to_string()))?;
-        let res = SearchResult {
+        let res = RequestedSearchResultResponse {
             songs: self.stations_to_songs(resp),
             ..Default::default()
         };

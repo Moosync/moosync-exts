@@ -51,7 +51,12 @@ func scPlaylistToPlaylists(playlist soundcloudapi.Playlist) *songs.Playlist {
 }
 
 func (s *SoundcloudExtension) getTrackFromId(id int64) (*soundcloudapi.Track, error) {
-	info, err := s.sc.GetTrackInfo(soundcloudapi.GetTrackInfoOptions{
+	sc, err := s.getSc()
+	if err != nil {
+		return nil, err
+	}
+
+	info, err := sc.GetTrackInfo(soundcloudapi.GetTrackInfoOptions{
 		ID: []int64{id},
 	})
 

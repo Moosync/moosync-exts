@@ -1,7 +1,7 @@
 # pylint: disable=no-member,unused-import
 import pytest
 import core.types.protos.extensions_pb2 as pb
-import core.types.protos.ui_pb2
+from core.types.protos.preferences_pb2 import PreferenceItem, PreferenceType
 from core.types.protos.songs_pb2 import Album, Artist, InnerSong, SearchResult, Song
 from moounit import Moounit
 
@@ -12,19 +12,17 @@ def entry(moounit: Moounit):
         pb.MainCommand(
             register_user_preference=pb.RegisterUserPreferenceRequest(
                 prefs=[
-                    core.types.protos.ui_pb2.PreferenceUiData(
-                        type=core.types.protos.ui_pb2.PreferenceTypes.EDIT_TEXT,
+                    PreferenceItem(
+                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
                         title="Client ID",
-                        key="client_id",
-                        description="Client ID for Youtube",
-                        mobile=True,
+                        id="client_id",
+                        subtitle="Client ID for Youtube",
                     ),
-                    core.types.protos.ui_pb2.PreferenceUiData(
-                        type=core.types.protos.ui_pb2.PreferenceTypes.EDIT_TEXT,
+                    PreferenceItem(
+                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
                         title="Client Secret",
-                        key="client_secret",
-                        description="Client Secret for Youtube",
-                        mobile=True,
+                        id="client_secret",
+                        subtitle="Client Secret for Youtube",
                     ),
                 ]
             )
@@ -68,11 +66,15 @@ def test_get_provider_scopes(entry: Moounit):
     scopes = list(entry.manifest.scopes)
     scopes.sort()
 
-    assert len(scopes) == 3
+    assert len(scopes) == 7
     expected = [
         pb.ExtensionProviderScope.PLAYLISTS,
         pb.ExtensionProviderScope.PLAYLIST_SONGS,
         pb.ExtensionProviderScope.ACCOUNTS,
+        pb.ExtensionProviderScope.SEARCH,
+        pb.ExtensionProviderScope.ALBUM_SONGS,
+        pb.ExtensionProviderScope.ARTIST_SONGS,
+        pb.ExtensionProviderScope.RECOMMENDATIONS,
     ]
     expected.sort()
     assert scopes == expected

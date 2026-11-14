@@ -1,6 +1,4 @@
 from core.types.protos.extensions_pb2 import ExtensionProviderScope
-from core.types.protos.extensions_pb2 import GetProviderScopesRequest
-from core.types.protos.extensions_pb2 import ExtensionCommand
 from moounit import Moounit
 import pytest
 

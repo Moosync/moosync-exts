@@ -32,6 +32,9 @@ Each extension contains:
 
 ## Record vs Replay Modes
 
+> [!IMPORTANT]
+> **Never manually craft or hand-edit `expectations.json`**. Always generate expectations through record mode (`bazel run //extension_name:test_record`). Hand-written or synthetic expectations hide real runtime bugs, mask protocol mismatches, and violate test authenticity.
+
 1. **Replay Mode (Default)**:
    - Run via `bazel test //extension_name:test`.
    - Runs hermetically offline. All external HTTP requests and host commands match against entries in `expectations.json`.
@@ -68,7 +71,18 @@ assert account.username == "Sahil Gupte"
 assert account.logged_in is True
 ```
 
-### 3. Volatility Filtering
+### 3. Testing for Success & End-to-End Functionality
+Across all kinds of extensions (not just player providers), every feature implemented by the extension should be tested for success:
+- Never settle for only asserting unauthorized or error paths — tests must assert that operations actually **succeed** and produce correct outcomes.
+- Rely on Moounit's **record mode** (`bazel run //extension:test_record`) to automatically record external HTTP calls, WebSockets, processes, and host interactions into `expectations.json` rather than manually crafting verbose mock expectations.
+- Once recorded, tests run hermetically in replay mode (`bazel test //extension:test`) asserting success responses, valid state, and specific values.
+- For player providers:
+  - Verify account authorization & tier validation (e.g., premium check).
+  - Assert that `can_play` returns `True`.
+  - Assert that `player_load_track`, `player_play`, `player_pause`, `player_seek`, `player_set_volume`, and `player_stop` succeed without error.
+  - Assert that player event notifications (`Loading`, `Play`, `Pause`, `Ended`, `TimeUpdate`) are emitted.
+
+### 4. Volatility Filtering
 Ignore fields that change between runs using `entry.replay_ignore(...)`:
 ```python
 entry.replay_ignore(
