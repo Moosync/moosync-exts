@@ -1,0 +1,207 @@
+{
+  "tests": {
+    "test_get_provider_scopes": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3"
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      }
+    ],
+    "test_search_cache_hit": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3"
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.search:ambient"
+          }
+        },
+        "response": {
+          "get_cache": {
+            "data": "CigKJgoSa29lbDpjYWNoZWRfa29lbF8xMhBDYWNoZWQgS29lbCBTb25n"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,17 +1,21 @@
 use std::sync::Mutex;
 
 use moosync_edk::{
-    get_cache, set_cache, set_cache_with_ttl,
     api::{
-        host_api, Accounts, ContextMenu, CustomRequest, CustomRequestResponse,
-        DatabaseEvents, Extension, PerformAccountLoginRequest, PerformAccountLoginResponse,
-        PlayerEvents, PlayerProvider, PreferenceEvents, Provider, RegisterUserPreferenceRequest,
+        self, get_cache, set_cache, set_cache_with_ttl, Accounts, ContextMenu, DatabaseEvents,
+        Extension, PlayerEvents, PlayerProvider, PreferenceEvents, Provider,
     },
     handler::register_extension,
-    info, MoosyncResult, PreferenceItem, PreferenceType, RequestedAlbumSongsRequest,
-    RequestedAlbumSongsResponse, RequestedArtistSongsRequest, RequestedArtistSongsResponse,
-    RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse, RequestedPlaylistsRequest,
-    RequestedPlaylistsResponse, RequestedSearchResultRequest, RequestedSearchResultResponse,
+    info,
+    types::{
+        CustomRequest, CustomRequestResponse, PerformAccountLoginRequest,
+        PerformAccountLoginResponse, PreferenceItem, PreferenceType,
+        RegisterUserPreferenceRequest, RequestedAlbumSongsRequest, RequestedAlbumSongsResponse,
+        RequestedArtistSongsRequest, RequestedArtistSongsResponse, RequestedPlaylistSongsRequest,
+        RequestedPlaylistSongsResponse, RequestedPlaylistsRequest, RequestedPlaylistsResponse,
+        RequestedSearchResultRequest, RequestedSearchResultResponse,
+    },
+    MoosyncResult,
 };
 
 mod cache_keys;
@@ -178,7 +182,7 @@ pub extern "C" fn init() {
     let _ = extension.inner.lock().unwrap().sync_account();
     register_extension(Box::new(extension)).unwrap();
 
-    let _ = host_api::register_user_preference(RegisterUserPreferenceRequest {
+    let _ = api::register_user_preference(RegisterUserPreferenceRequest {
         prefs: vec![
             PreferenceItem {
                 pref_type: PreferenceType::TextInputGroup as i32,

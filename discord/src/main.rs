@@ -2,16 +2,19 @@ use std::sync::Mutex;
 
 use bytes::BytesMut;
 use moosync_edk::{
-    config, MoosyncError, MoosyncResult, PlayerState, Song, SongType,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, GetCurrentSongRequest,
-        GetPlayerStateRequest, GetTimeRequest, PlayerEvents, PlayerProvider,
-        PlayerStateChangedRequest, PreferenceEvents, Provider, SeekedRequest,
-        SongChangedRequest,
-        host_api,
+        self, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider,
     },
+    config,
     handler::register_extension,
     info,
+    socket::SocketClient,
+    types::{
+        GetCurrentSongRequest, GetPlayerStateRequest, GetTimeRequest, PlayerState,
+        PlayerStateChangedRequest, SeekedRequest, Song, SongChangedRequest, SongType,
+    },
+    MoosyncError, MoosyncResult,
 };
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use serde_json::Value;
@@ -48,12 +51,12 @@ struct DecodedData<T> {
 }
 
 struct Sock {
-    id: i64,
+    client: SocketClient,
 }
 
 impl Sock {
-    pub fn new(id: i64) -> Self {
-        Self { id }
+    pub fn new(client: SocketClient) -> Self {
+        Self { client }
     }
 }
 
@@ -80,8 +83,8 @@ impl Sock {
     where
         T: DeserializeOwned,
     {
-        info!("Reading from sock {}", self.id);
-        let data = host_api::read_sock(self.id, 8)?;
+        info!("Reading from sock {}", self.client.sock_id);
+        let data = self.client.read(8)?;
         if data.len() < 8 {
             return Err("Packet not big enough to be decoded".into());
         }
@@ -91,7 +94,7 @@ impl Sock {
 
         let len = u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize;
 
-        let buf = host_api::read_sock(self.id, len as u64)?;
+        let buf = self.client.read(len as u64)?;
         info!("Read buf {:?}", str::from_utf8(&buf));
         let data: T =
             serde_json::from_slice(&buf).map_err(|e| MoosyncError::String(e.to_string()))?;
@@ -104,11 +107,8 @@ impl Sock {
     {
         let encoded = Self::encode(op, data)?;
         info!("Encoded");
-        let _res = host_api::write_sock(self.id, encoded.to_vec())?;
+        let _res = self.client.write(&encoded)?;
         info!("Wrote to sock");
-        // if res == -1 {
-        // return Err("Failed to write to sock".into());
-        // }
         Ok(())
     }
 
@@ -242,13 +242,10 @@ impl DiscordRPC {
     fn open_sock(&self) -> MoosyncResult<()> {
         let mut sock = self.sock.lock().unwrap();
 
-        let id = host_api::open_clientfd("/discord-ipc-0".to_string())?;
-        if id == -1 {
-            return Err("Failed to connect to sock".into());
-        }
+        let client = SocketClient::connect("/discord-ipc-0")?;
 
-        info!("Connected to sock {}", id);
-        *sock = Some(Sock::new(id));
+        info!("Connected to sock {}", client.sock_id);
+        *sock = Some(Sock::new(client));
 
         Ok(())
     }
@@ -309,7 +306,7 @@ impl DiscordRPC {
             }
         );
 
-        let start_time = host_api::system_time().unwrap_or(0) - start_time;
+        let start_time = api::system_time().unwrap_or(0) - start_time;
 
         let mut buttons = vec![];
         if song_inner.playback_url.is_some() {
@@ -398,12 +395,12 @@ impl DiscordRPC {
     }
 
     fn update_presence(&self) -> MoosyncResult<()> {
-        let current_song = host_api::get_current_song(GetCurrentSongRequest {})?.song;
+        let current_song = api::get_current_song(GetCurrentSongRequest {})?.song;
         let player_state = PlayerState::try_from(
-            host_api::get_player_state(GetPlayerStateRequest {})?.state,
+            api::get_player_state(GetPlayerStateRequest {})?.state,
         )
         .unwrap_or(PlayerState::Stopped);
-        let time = host_api::get_time(GetTimeRequest {})?.time as u64;
+        let time = api::get_time(GetTimeRequest {})?.time as u64;
         self.set_activity(current_song, player_state, time)?;
         Ok(())
     }

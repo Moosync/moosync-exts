@@ -12,3 +12,8 @@ go.work.sum
 .aspect
 .bazelbsp
 .rules_rust_analyzer
+.env
+*.env
+.env.*
+.auth_code
+*.auth_code

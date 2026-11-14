@@ -1,9 +1,9 @@
 import {
   Duration,
   ExtensionAccountDetail,
-  ExtensionProviderScope,
-  GetProviderScopesResponse,
+  GetSecureRequest,
   OauthCallbackResponse,
+  OpenExternalUrlRequest,
   PerformAccountLoginResponse,
   PlaybackDetailsRequestedResponse,
   PreferenceData,
@@ -13,6 +13,8 @@ import {
   RequestedPlaylistsResponse,
   RequestedRecommendationsResponse,
   RequestedSearchResultResponse,
+  SetAccountRequest,
+  SetSecureRequest,
   Song,
   getApi,
 } from "wasm-extension-js";
@@ -162,9 +164,11 @@ class YoutubeJsExtension {
         generate_session_locally: true,
       });
 
-      this.innertube.session.on("auth-pending", (data) => {
+      this.innertube.session.on("auth-pending", async (data) => {
         if (data.verification_url) {
-          api.openExternalUrl(data.verification_url);
+          await api.openExternalUrl(
+            new OpenExternalUrlRequest({ url: data.verification_url }),
+          );
         }
       });
 
@@ -172,13 +176,13 @@ class YoutubeJsExtension {
         await this.sync_account();
       });
 
-      this.innertube.session.on("update-credentials", ({ credentials }) => {
+      this.innertube.session.on("update-credentials", async ({ credentials }) => {
         if (credentials) {
-          this.save_tokens(credentials);
+          await this.save_tokens(credentials);
         }
       });
 
-      const tokens = this.load_tokens();
+      const tokens = await this.load_tokens();
       if (tokens) {
         try {
           await this.innertube.session.signIn(tokens);
@@ -193,22 +197,28 @@ class YoutubeJsExtension {
   }
   
 
-  private save_tokens(tokens: OAuth2Tokens): void {
+  private async save_tokens(tokens: OAuth2Tokens): Promise<void> {
     const json = JSON.stringify(tokens);
-    api.setSecure(
-      new PreferenceData({
-        key: "youtube_oauth_tokens",
-        value: { kind: { case: "stringValue", value: json } },
+    await api.setSecure(
+      new SetSecureRequest({
+        data: new PreferenceData({
+          key: "youtube_oauth_tokens",
+          value: { kind: { case: "stringValue", value: json } },
+        }),
       }),
     );
   }
 
-  private load_tokens(): OAuth2Tokens | undefined {
-    const data = api.getSecure(
-      new PreferenceData({ key: "youtube_oauth_tokens" }),
+  private async load_tokens(): Promise<OAuth2Tokens | undefined> {
+    const res = await api.getSecure(
+      new GetSecureRequest({
+        data: new PreferenceData({ key: "youtube_oauth_tokens" }),
+      }),
     );
     const text =
-      data?.value?.kind.case === "stringValue" ? data.value.kind.value : undefined;
+      res?.data?.value?.kind.case === "stringValue"
+        ? res.data.value.kind.value
+        : undefined;
     if (text) {
       try {
         return JSON.parse(text);
@@ -243,15 +253,17 @@ class YoutubeJsExtension {
       }
     }
 
-    api.setAccount(
-      new ExtensionAccountDetail({
-        id: "youtube",
-        name: "YouTube",
-        packageName: "moosync.youtube_js",
-        bgColor: "#FF0000",
-        icon: "",
-        loggedIn,
-        username,
+    await api.setAccount(
+      new SetAccountRequest({
+        account: new ExtensionAccountDetail({
+          id: "youtube",
+          name: "YouTube",
+          packageName: "moosync.youtube_js",
+          bgColor: "#FF0000",
+          icon: "",
+          loggedIn,
+          username,
+        }),
       }),
     );
   }
@@ -373,23 +385,6 @@ class YoutubeJsExtension {
   };
 
   private register_api() {
-    api.on(
-      "getProviderScopes",
-      (_req) =>
-        new GetProviderScopesResponse({
-          scopes: [
-            ExtensionProviderScope.SEARCH,
-            ExtensionProviderScope.PLAYLISTS,
-            ExtensionProviderScope.PLAYLIST_SONGS,
-            ExtensionProviderScope.ARTIST_SONGS,
-            ExtensionProviderScope.ALBUM_SONGS,
-            ExtensionProviderScope.RECOMMENDATIONS,
-            ExtensionProviderScope.ACCOUNTS,
-            ExtensionProviderScope.PLAYBACK_DETAILS
-          ],
-        }),
-    );
-
     api.on("performAccountLogin", async ({ loginStatus }) => {
       if (!this.innertube) {
         return new PerformAccountLoginResponse();
@@ -403,7 +398,9 @@ class YoutubeJsExtension {
             await this.innertube.session.oauth.getDeviceAndUserCode();
           this.currentDeviceCode = deviceCode;
           if (deviceCode.verification_url) {
-            api.openExternalUrl(deviceCode.verification_url);
+            await api.openExternalUrl(
+              new OpenExternalUrlRequest({ url: deviceCode.verification_url }),
+            );
           }
           return new PerformAccountLoginResponse({
             status: deviceCode.user_code,
@@ -417,7 +414,11 @@ class YoutubeJsExtension {
       this.currentDeviceCode = undefined;
       try {
         await this.innertube.session.signOut();
-        api.setSecure(new PreferenceData({ key: "youtube_oauth_tokens" }));
+        await api.setSecure(
+          new SetSecureRequest({
+            data: new PreferenceData({ key: "youtube_oauth_tokens" }),
+          }),
+        );
       } catch (e) {
         console.error("failed to signOut", e);
       }
@@ -473,7 +474,7 @@ class YoutubeJsExtension {
               client,
             };
             await this.innertube.session.signIn(tokens);
-            this.save_tokens(tokens);
+            await this.save_tokens(tokens);
           }
         } catch (e) {
           console.error("failed to exchange token in oauthCallback", e);
@@ -490,7 +491,7 @@ class YoutubeJsExtension {
       }
       const playlistId = sanitizeId(id);
       const cacheKey = playlistSongsCacheKey(playlistId);
-      const cached = api.getCache(cacheKey, RequestedPlaylistSongsResponse);
+      const cached = await api.getCache(cacheKey, RequestedPlaylistSongsResponse);
       if (cached) {
         return cached;
       }
@@ -501,7 +502,7 @@ class YoutubeJsExtension {
           songs,
         });
         if (songs.length > 0) {
-          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+          await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
         }
         return resp;
       } catch (error_) {
@@ -516,7 +517,7 @@ class YoutubeJsExtension {
       }
       const artistId = sanitizeId(artist.artistId);
       const cacheKey = artistSongsCacheKey(artistId);
-      const cached = api.getCache(cacheKey, RequestedArtistSongsResponse);
+      const cached = await api.getCache(cacheKey, RequestedArtistSongsResponse);
       if (cached) {
         return cached;
       }
@@ -526,7 +527,7 @@ class YoutubeJsExtension {
           songs,
         });
         if (songs.length > 0) {
-          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+          await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
         }
         return resp;
       } catch (error_) {
@@ -541,7 +542,7 @@ class YoutubeJsExtension {
       }
       const albumId = sanitizeId(album.albumId);
       const cacheKey = albumSongsCacheKey(albumId);
-      const cached = api.getCache(cacheKey, RequestedAlbumSongsResponse);
+      const cached = await api.getCache(cacheKey, RequestedAlbumSongsResponse);
       if (cached) {
         return cached;
       }
@@ -550,7 +551,7 @@ class YoutubeJsExtension {
         const songs = ytAlbum.contents.map(parseSong).filter(Boolean);
         const resp = new RequestedAlbumSongsResponse({ songs });
         if (songs.length > 0) {
-          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+          await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
         }
         return resp;
       } catch (error_) {
@@ -565,7 +566,7 @@ class YoutubeJsExtension {
       }
       const loggedIn = this.innertube.session.logged_in;
       const cacheKey = recommendationsCacheKey(loggedIn ? "auth" : "anon");
-      const cached = api.getCache(cacheKey, RequestedRecommendationsResponse);
+      const cached = await api.getCache(cacheKey, RequestedRecommendationsResponse);
       if (cached) {
         return cached;
       }
@@ -575,7 +576,7 @@ class YoutubeJsExtension {
           : await this.getExploreRecommendations();
         const resp = new RequestedRecommendationsResponse({ songs });
         if (songs.length > 0) {
-          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+          await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
         }
         return resp;
       } catch (error_) {
@@ -589,7 +590,7 @@ class YoutubeJsExtension {
         return new RequestedPlaylistsResponse();
       }
       const cacheKey = userPlaylistsCacheKey();
-      const cached = api.getCache(cacheKey, RequestedPlaylistsResponse);
+      const cached = await api.getCache(cacheKey, RequestedPlaylistsResponse);
       if (cached) {
         return cached;
       }
@@ -598,7 +599,7 @@ class YoutubeJsExtension {
         const playlists = feed.playlists.map(parsePlaylist).filter(Boolean);
         const resp = new RequestedPlaylistsResponse({ playlists });
         if (playlists.length > 0) {
-          api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+          await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
         }
         return resp;
       } catch (error_) {
@@ -612,7 +613,7 @@ class YoutubeJsExtension {
         return new RequestedSearchResultResponse();
       }
       const cacheKey = searchCacheKey(query);
-      const cached = api.getCache(cacheKey, RequestedSearchResultResponse);
+      const cached = await api.getCache(cacheKey, RequestedSearchResultResponse);
       if (cached) {
         return cached;
       }
@@ -649,7 +650,7 @@ class YoutubeJsExtension {
           .filter(Boolean),
         albums: albumSearchRes.albums?.contents.map(parseAlbum).filter(Boolean),
       });
-      api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
+      await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
       return resp;
     });
 
@@ -666,7 +667,7 @@ class YoutubeJsExtension {
       }
 
       const cacheKey = playbackCacheKey(videoId);
-      const cached = api.getCache(cacheKey, PlaybackDetailsRequestedResponse);
+      const cached = await api.getCache(cacheKey, PlaybackDetailsRequestedResponse);
       if (cached) {
         return cached;
       }
@@ -694,7 +695,7 @@ class YoutubeJsExtension {
       });
 
       if (expiresInSeconds && expiresInSeconds > 60) {
-        api.setCache(cacheKey, resp, expiresInSeconds - 60);
+        await api.setCache(cacheKey, resp, expiresInSeconds - 60);
       }
 
       return resp;
@@ -704,7 +705,7 @@ class YoutubeJsExtension {
 
 export function entry(): number {
   extension = new YoutubeJsExtension();
-  void extension.init();
+  extension.init();
   console.log("started youtubejs extension successfully");
   return 0;
 }

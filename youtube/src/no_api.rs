@@ -6,7 +6,9 @@ use rusty_ytdl::{
 };
 
 use moosync_edk::{
-    Album, Artist, InnerSong, MoosyncError, MoosyncResult, Playlist, SearchResult, Song, SongType,
+    api::duration_to_proto,
+    types::{Album, Artist, InnerSong, Playlist, SearchResult, Song, SongType},
+    MoosyncError, MoosyncResult,
 };
 
 pub type Result<T> = MoosyncResult<T>;
@@ -31,7 +33,7 @@ impl YoutubeScraper {
             song: Some(InnerSong {
                 id: Some(format!("youtube:{}", v.id.clone())),
                 title: Some(v.title.clone()),
-                duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_millis(v.duration))),
+                duration: Some(duration_to_proto(std::time::Duration::from_millis(v.duration))),
                 r#type: SongType::Url.into(),
                 url: Some(v.id.clone()),
                 song_cover_path_high: v.thumbnails.first().map(|d| d.url.clone()),
@@ -58,7 +60,7 @@ impl YoutubeScraper {
             song: Some(InnerSong {
                 id: Some(format!("youtube:{}", details.video_id.clone())),
                 title: Some(details.title.clone()),
-                duration: Some(moosync_edk::duration_to_proto(std::time::Duration::from_secs(
+                duration: Some(duration_to_proto(std::time::Duration::from_secs(
                     details.length_seconds.parse().unwrap_or_default()
                 ))),
                 r#type: SongType::Url.into(),

@@ -2,7 +2,11 @@ use std::sync::Mutex;
 use std::time::Duration;
 
 use futures::executor::block_on;
-use moosync_edk::{Album, Artist, MoosyncResult, Playlist, SearchResult, Song, error, info, warn};
+use moosync_edk::{
+    error, info,
+    types::{Album, Artist, Playlist, SearchResult, Song},
+    warn, MoosyncResult,
+};
 use ramdl::stream_info::StreamInfo;
 use ramdl::AppleMusicDownloader;
 

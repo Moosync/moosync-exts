@@ -16,14 +16,14 @@
 
 use futures::executor::block_on;
 use moosync_edk::{
-    get_cache, set_cache, Lyrics, MoosyncResult, RequestedLyricsRequest,
-    RequestedLyricsResponse, Song,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
-        PreferenceEvents, Provider,
+        get_cache, parse_lrc, set_cache, Accounts, ContextMenu, DatabaseEvents, Extension,
+        PlayerEvents, PlayerProvider, PreferenceEvents, Provider,
     },
     handler::register_extension,
-    info, parse_lrc,
+    info,
+    types::{Lyrics, RequestedLyricsRequest, RequestedLyricsResponse, Song},
+    MoosyncResult,
 };
 use reqwest::Client;
 use scraper::{Html, Selector};

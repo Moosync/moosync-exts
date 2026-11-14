@@ -1,27 +1,26 @@
 #![no_main]
 #![allow(dead_code)]
 
-use std::time::Duration;
-
 use moosync_edk::{
-    MoosyncResult, PreferenceData, PreferenceItem, PreferenceType,
-    RequestedAlbumSongsRequest, RequestedAlbumSongsResponse, RequestedArtistSongsRequest,
-    RequestedArtistSongsResponse, RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
-    RequestedRecommendationsRequest, RequestedRecommendationsResponse, RequestedSearchResultRequest,
-    RequestedSearchResultResponse, RequestedSongFromIdRequest, RequestedSongFromIdResponse,
-    PlaybackDetailsRequestedRequest, PlaybackDetailsRequestedResponse,
-    SearchResult, Song,
     api::{
-        Accounts, ContextMenu, CustomRequest, CustomRequestResponse,
-        DatabaseEvents, Extension, ExtensionAccountDetail,
-        GetSecureRequest, SetSecureRequest, SetAccountRequest, RegisterUserPreferenceRequest,
-        PerformAccountLoginRequest, PerformAccountLoginResponse,
-        PlayerEvents, PlayerProvider, PreferenceChangedRequest, PreferenceEvents, Provider,
-        host_api,
+        self, duration_to_proto, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents,
+        PlayerProvider, PreferenceEvents, Provider,
     },
     cache::{get_cache, set_cache, set_cache_with_ttl},
     handler::register_extension,
     info,
+    types::{
+        CustomRequest, CustomRequestResponse, ExtensionAccountDetail, GetSecureRequest,
+        PerformAccountLoginRequest, PerformAccountLoginResponse, PlaybackDetailsRequestedRequest,
+        PlaybackDetailsRequestedResponse, PreferenceChangedRequest, PreferenceData, PreferenceItem,
+        PreferenceType, RegisterUserPreferenceRequest, RequestedAlbumSongsRequest,
+        RequestedAlbumSongsResponse, RequestedArtistSongsRequest, RequestedArtistSongsResponse,
+        RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
+        RequestedRecommendationsRequest, RequestedRecommendationsResponse,
+        RequestedSearchResultRequest, RequestedSearchResultResponse, RequestedSongFromIdRequest,
+        RequestedSongFromIdResponse, SearchResult, SetAccountRequest, SetSecureRequest, Song,
+    },
+    MoosyncResult,
 };
 
 mod cache_keys;
@@ -49,7 +48,7 @@ impl AppleMusic {
     }
 
     fn get_stored_token() -> Option<String> {
-        let resp = host_api::get_secure(GetSecureRequest {
+        let resp = api::get_secure(GetSecureRequest {
             data: Some(PreferenceData {
                 key: "media_user_token".into(),
                 ..Default::default()
@@ -67,7 +66,7 @@ impl AppleMusic {
         } else {
             None
         };
-        let _ = host_api::set_account(SetAccountRequest {
+        let _ = api::set_account(SetAccountRequest {
             account: Some(ExtensionAccountDetail {
                 id: "apple_music".into(),
                 package_name: "moosync.apple.music".into(),
@@ -100,7 +99,7 @@ impl PreferenceEvents for AppleMusic {
                         .or_else(|| val.as_str());
 
                     if let Some(token) = token {
-                        let _ = host_api::set_secure(SetSecureRequest {
+                        let _ = api::set_secure(SetSecureRequest {
                             data: Some(PreferenceData {
                                 key: "media_user_token".into(),
                                 value: Some(serde_to_google_value(serde_json::Value::String(token.to_string()))),
@@ -122,7 +121,7 @@ impl Accounts for AppleMusic {
         let status = if args.login_status {
             "Please set your Apple Music media-user-token in extension preferences.".into()
         } else {
-            let _ = host_api::set_secure(SetSecureRequest {
+            let _ = api::set_secure(SetSecureRequest {
                 data: Some(PreferenceData {
                     key: "media_user_token".into(),
                     value: None,
@@ -303,7 +302,7 @@ impl Provider for AppleMusic {
 
         Ok(PlaybackDetailsRequestedResponse {
             url,
-            duration: Some(moosync_edk::duration_to_proto(duration.unwrap_or_default())),
+            duration: Some(duration_to_proto(duration.unwrap_or_default())),
             decryption_key: drm_key,
         })
     }
@@ -335,7 +334,7 @@ pub extern "C" fn init() {
     ext.sync_account(token.as_deref());
     register_extension(Box::new(ext)).unwrap();
 
-    let _ = host_api::register_user_preference(RegisterUserPreferenceRequest {
+    let _ = api::register_user_preference(RegisterUserPreferenceRequest {
         prefs: vec![PreferenceItem {
             pref_type: PreferenceType::TextInputGroup as i32,
             title: "Media User Token".into(),

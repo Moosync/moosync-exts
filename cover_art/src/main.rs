@@ -16,15 +16,17 @@
 
 use futures::executor::block_on;
 use moosync_edk::{
-    get_cache, set_cache, Album, Artist, MoosyncResult, RequestedCoverArtRequest,
-    RequestedCoverArtResponse, Song,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
-        PreferenceEvents, Provider,
+        get_cache, set_cache, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents,
+        PlayerProvider, PreferenceEvents, Provider,
     },
     handler::register_extension,
     info,
-    requested_cover_art_request::Item,
+    types::{
+        requested_cover_art_request::Item, Album, Artist, RequestedCoverArtRequest,
+        RequestedCoverArtResponse, Song,
+    },
+    MoosyncResult,
 };
 use reqwest::Client;
 use serde::Deserialize;

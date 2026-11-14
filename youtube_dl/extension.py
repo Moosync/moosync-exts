@@ -117,7 +117,7 @@ def to_artist(ytdl_artist: YtdlEntry) -> Artist:
     )
         
 class YoutubeDlExtension(Extension):
-    def get_album_songs(self, req: RequestedAlbumSongsRequest) -> RequestedAlbumSongsResponse:
+    def requested_album_songs(self, req: RequestedAlbumSongsRequest) -> RequestedAlbumSongsResponse:
         album = req.album
         if not album.album_id:
             return RequestedAlbumSongsResponse(songs=[])
@@ -138,10 +138,10 @@ class YoutubeDlExtension(Extension):
             
             return RequestedAlbumSongsResponse(songs=songs)
         except Exception as e:
-            print("Exception in get_album_songs:", e)
+            print("Exception in requested_album_songs:", e)
             return RequestedAlbumSongsResponse(songs=[])
     
-    def get_artist_songs(self, req: RequestedArtistSongsRequest) -> RequestedArtistSongsResponse:
+    def requested_artist_songs(self, req: RequestedArtistSongsRequest) -> RequestedArtistSongsResponse:
         artist = req.artist
         print("Got artist", artist)
         if not artist or not artist.artist_id:
@@ -164,10 +164,10 @@ class YoutubeDlExtension(Extension):
             
             return RequestedArtistSongsResponse(songs=songs)
         except Exception as e:
-            print("Exception in get_artist_songs:", e)
+            print("Exception in requested_artist_songs:", e)
             return RequestedArtistSongsResponse(songs=[])
     
-    def get_playlist_content(self, req: RequestedPlaylistSongsRequest) -> RequestedPlaylistSongsResponse:
+    def requested_playlist_songs(self, req: RequestedPlaylistSongsRequest) -> RequestedPlaylistSongsResponse:
         id = req.id
         try:
             search_query = f"https://www.youtube.com/playlist?list={id}"
@@ -185,10 +185,10 @@ class YoutubeDlExtension(Extension):
             
             return RequestedPlaylistSongsResponse(songs=songs)
         except Exception as e:
-            print("Exception in get_playlist_content:", e)
+            print("Exception in requested_playlist_songs:", e)
             return RequestedPlaylistSongsResponse(songs=[])
     
-    def get_search(self, req: RequestedSearchResultRequest) -> RequestedSearchResultResponse:
+    def requested_search_result(self, req: RequestedSearchResultRequest) -> RequestedSearchResultResponse:
         term = req.query
         songs: List[Song] = []
         artists: List[Artist] = []
@@ -229,7 +229,7 @@ class YoutubeDlExtension(Extension):
                     if i >= 10:
                         break
             except Exception as e:
-                print(f"Exception in get_search for query '{query}':", e)
+                print(f"Exception in requested_search_result for query '{query}':", e)
             
         return RequestedSearchResultResponse(
             songs=songs,
@@ -238,7 +238,7 @@ class YoutubeDlExtension(Extension):
             albums=albums
         )
     
-    def handle_custom_request(self, req: CustomRequest) -> CustomRequestResponse:
+    def custom_request(self, req: CustomRequest) -> CustomRequestResponse:
         url = req.request_id # Assuming RequestId carries the URL or ID as seen in Soundcloud refactor
         print("Handling custom request for URL:", url)
         if url.startswith("extension://moosync.youtubedl/"):
