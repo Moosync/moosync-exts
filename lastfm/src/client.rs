@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use md5::{Digest, Md5};
 use moosync_edk::{
-    api::extension_api::get_system_time, error, http, info, MoosyncResult, Song,
+    api::host_api, error, http, info, MoosyncResult, Song,
 };
 use regex::Regex;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -222,7 +222,7 @@ impl Client {
                 .clone()
                 .and_then(|s| s.title)
                 .unwrap_or("unknown".to_string());
-            let timestamp = get_system_time() - 20;
+            let timestamp = host_api::system_time().unwrap_or(0) - 20;
             let sk = session.key.clone();
             let album = song.album.clone().and_then(|a| a.album_name);
             let duration = song.song.clone().and_then(|s| s.duration).map(|d| {

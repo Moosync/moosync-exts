@@ -10,8 +10,8 @@ from core.types.protos.extensions_pb2 import (
     RequestedSearchResultRequest,
 )
 import core.types.protos.extensions_pb2 as pb
+from core.types.protos.preferences_pb2 import PreferenceItem, PreferenceType
 from core.types.protos.songs_pb2 import InnerSong, SearchResult, Song
-import core.types.protos.ui_pb2 as ui_pb
 from moounit import Moounit
 
 
@@ -47,26 +47,23 @@ def entry(moounit: Moounit):
         MainCommand(
             register_user_preference=pb.RegisterUserPreferenceRequest(
                 prefs=[
-                    ui_pb.PreferenceUiData(
-                        type=ui_pb.PreferenceTypes.EDIT_TEXT,
+                    PreferenceItem(
+                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
                         title="Instance URL",
-                        key="koel_instance_url",
-                        description="Full URL to your koel instance",
-                        input_type=ui_pb.InputType.TEXT,
+                        id="koel_instance_url",
+                        subtitle="Full URL to your koel instance",
                     ),
-                    ui_pb.PreferenceUiData(
-                        type=ui_pb.PreferenceTypes.EDIT_TEXT,
+                    PreferenceItem(
+                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
                         title="Email",
-                        key="koel_username",
-                        description="Email for your koel account",
-                        input_type=ui_pb.InputType.TEXT,
+                        id="koel_username",
+                        subtitle="Email for your koel account",
                     ),
-                    ui_pb.PreferenceUiData(
-                        type=ui_pb.PreferenceTypes.EDIT_TEXT,
+                    PreferenceItem(
+                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
                         title="Password",
-                        key="koel_password",
-                        description="Password for your koel account",
-                        input_type=ui_pb.InputType.TEXT,
+                        id="koel_password",
+                        subtitle="Password for your koel account",
                     ),
                 ]
             )
@@ -87,7 +84,7 @@ def test_get_provider_scopes(entry: Moounit):
     scopes = list(entry.manifest.scopes)
     scopes.sort()
 
-    assert len(scopes) == 8
+    assert len(scopes) == 7
     expected_scopes = [
         pb.ExtensionProviderScope.SEARCH,
         pb.ExtensionProviderScope.PLAYLIST_SONGS,

@@ -16,10 +16,11 @@
 
 use futures::executor::block_on;
 use moosync_edk::{
-    Album, Artist, MoosyncResult, RequestedCoverArtRequest, RequestedCoverArtResponse, Song,
+    get_cache, set_cache, Album, Artist, MoosyncResult, RequestedCoverArtRequest,
+    RequestedCoverArtResponse, Song,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
-        extension_api::{get_cache, set_cache},
+        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider,
     },
     handler::register_extension,
     info,
@@ -37,6 +38,7 @@ struct CoverArtExtension {
 }
 
 impl Extension for CoverArtExtension {}
+impl PlayerProvider for CoverArtExtension {}
 impl PlayerEvents for CoverArtExtension {}
 impl PreferenceEvents for CoverArtExtension {}
 impl DatabaseEvents for CoverArtExtension {}
@@ -294,7 +296,10 @@ impl CoverArtExtension {
 
 impl Provider for CoverArtExtension {
     #[tracing::instrument(level = "debug", skip_all)]
-    fn get_cover_art(&self, req: RequestedCoverArtRequest) -> MoosyncResult<Vec<String>> {
+    fn requested_cover_art(
+        &self,
+        req: RequestedCoverArtRequest,
+    ) -> MoosyncResult<RequestedCoverArtResponse> {
         let cache_key = match &req.item {
             Some(Item::Song(song)) => {
                 let title = song
@@ -323,7 +328,7 @@ impl Provider for CoverArtExtension {
 
         if let Some(ref key) = cache_key {
             if let Ok(Some(cached)) = get_cache::<RequestedCoverArtResponse>(key) {
-                return Ok(cached.cover_urls);
+                return Ok(cached);
             }
         }
 
@@ -355,7 +360,7 @@ impl Provider for CoverArtExtension {
             }
         }
 
-        Ok(urls)
+        Ok(RequestedCoverArtResponse { cover_urls: urls })
     }
 }
 

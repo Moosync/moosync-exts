@@ -380,10 +380,12 @@ impl YoutubeAuth {
         self.access_token = Some(token_response.access_token.clone());
         self.refresh_token = token_response.refresh_token.clone();
 
-        moosync_edk::api::extension_api::set_secure(PreferenceData {
-            key: "tokens".to_string(),
-            value: Some(token_response.into()),
-            ..Default::default()
+        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+            data: Some(PreferenceData {
+                key: "tokens".to_string(),
+                value: Some(token_response.into()),
+                ..Default::default()
+            }),
         })
         .unwrap();
 
@@ -422,12 +424,14 @@ impl YoutubeAuth {
 
     /// Loads tokens from disk if available and updates user info.
     pub async fn load_tokens(&mut self) -> Result<(), Box<dyn Error>> {
-        match moosync_edk::api::extension_api::get_secure(PreferenceData {
-            key: "tokens".into(),
-            ..Default::default()
+        match moosync_edk::api::host_api::get_secure(moosync_edk::api::GetSecureRequest {
+            data: Some(PreferenceData {
+                key: "tokens".into(),
+                ..Default::default()
+            }),
         }) {
-            Ok(data) => {
-                if let Some(data_val) = data.value {
+            Ok(resp) => {
+                if let Some(data_val) = resp.data.and_then(|d| d.value) {
                     match OAuthTokenResponse::try_from(data_val) {
                         Ok(token_response) => {
                             self.access_token = Some(token_response.access_token);
@@ -457,10 +461,12 @@ impl YoutubeAuth {
         self.refresh_token = None;
         self.account_details.logged_in = false;
         self.account_details.username = None;
-        moosync_edk::api::extension_api::set_secure(PreferenceData {
-            key: "tokens".to_string(),
-            value: None,
-            ..Default::default()
+        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+            data: Some(PreferenceData {
+                key: "tokens".to_string(),
+                value: None,
+                ..Default::default()
+            }),
         })
         .unwrap();
         Ok(())
@@ -494,10 +500,12 @@ impl YoutubeAuth {
         let token_response: OAuthTokenResponse = resp.json().await?;
         self.access_token = Some(token_response.access_token.clone());
 
-        moosync_edk::api::extension_api::set_secure(PreferenceData {
-            key: "tokens".to_string(),
-            value: Some(token_response.into()),
-            ..Default::default()
+        moosync_edk::api::host_api::set_secure(moosync_edk::api::SetSecureRequest {
+            data: Some(PreferenceData {
+                key: "tokens".to_string(),
+                value: Some(token_response.into()),
+                ..Default::default()
+            }),
         })
         .unwrap();
 

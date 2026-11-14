@@ -16,10 +16,11 @@
 
 use futures::executor::block_on;
 use moosync_edk::{
-    Lyrics, MoosyncResult, RequestedLyricsRequest, Song,
+    get_cache, set_cache, Lyrics, MoosyncResult, RequestedLyricsRequest,
+    RequestedLyricsResponse, Song,
     api::{
-        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PreferenceEvents, Provider,
-        extension_api::{get_cache, set_cache},
+        Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider,
     },
     handler::register_extension,
     info, parse_lrc,
@@ -37,6 +38,7 @@ struct LyricsExtension {
 }
 
 impl Extension for LyricsExtension {}
+impl PlayerProvider for LyricsExtension {}
 impl PlayerEvents for LyricsExtension {}
 impl PreferenceEvents for LyricsExtension {}
 impl DatabaseEvents for LyricsExtension {}
@@ -241,9 +243,12 @@ impl LyricsExtension {
 
 impl Provider for LyricsExtension {
     #[tracing::instrument(level = "debug", skip_all)]
-    fn get_lyrics(&self, req: RequestedLyricsRequest) -> MoosyncResult<Option<Lyrics>> {
+    fn requested_lyrics(
+        &self,
+        req: RequestedLyricsRequest,
+    ) -> MoosyncResult<RequestedLyricsResponse> {
         let Some(song) = req.song else {
-            return Ok(None);
+            return Ok(RequestedLyricsResponse { lyrics: None });
         };
 
         let cache_key = if let Some(id) = song
@@ -268,7 +273,7 @@ impl Provider for LyricsExtension {
         };
 
         if let Ok(Some(cached)) = get_cache::<Lyrics>(&cache_key) {
-            return Ok(Some(cached));
+            return Ok(RequestedLyricsResponse { lyrics: Some(cached) });
         }
 
         let lyrics = if let Ok(Some(lyrics)) = self.fetch_lrclib(&song) {
@@ -283,7 +288,7 @@ impl Provider for LyricsExtension {
             let _ = set_cache(&cache_key, l);
         }
 
-        Ok(lyrics)
+        Ok(RequestedLyricsResponse { lyrics })
     }
 }
 

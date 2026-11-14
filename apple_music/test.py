@@ -7,7 +7,6 @@ from core.types.protos.extensions_pb2 import (
     ExtensionProviderScope,
     GetCacheRequest,
     GetCacheResponse,
-    GetProviderScopesRequest,
     GetSecureRequest,
     GetSecureResponse,
     MainCommand,
@@ -114,7 +113,7 @@ def test_search(entry: Moounit):
     assert len(songs) == 25
 
     first = songs[0]
-    assert first.song.id == "applemusic:269573364"
+    assert first.song.id == "moosync.apple.music:applemusic:269573364"
     assert first.song.title == "Billie Jean"
     assert first.song.duration.seconds == 293
     assert first.album.album_name == "Thriller"
@@ -122,7 +121,7 @@ def test_search(entry: Moounit):
     assert first.artists[0].artist_name == "Michael Jackson"
 
     second = songs[1]
-    assert second.song.id == "applemusic:273048805"
+    assert second.song.id == "moosync.apple.music:applemusic:273048805"
     assert second.song.title == "Billie Jean (1981 Home Demo)"
     assert second.song.duration.seconds == 140
     assert second.album.album_name == "Thriller (25th Anniversary) [Deluxe Edition]"
@@ -137,7 +136,7 @@ def test_song_from_id(entry: Moounit):
 
     assert ret.requested_song_from_id.song is not None
     song = ret.requested_song_from_id.song
-    assert song.song.id == "applemusic:269573364"
+    assert song.song.id == "moosync.apple.music:applemusic:269573364"
     assert song.song.title == "Billie Jean"
     assert song.song.duration.seconds == 293
     assert song.album.album_name == "Thriller"
@@ -157,7 +156,7 @@ def test_playlist_songs(entry: Moounit):
     songs = ret.requested_playlist_songs.songs
     assert len(songs) == 50
     first = songs[0]
-    assert first.song.id == "applemusic:6818209989"
+    assert first.song.id == "moosync.apple.music:applemusic:6818209989"
     assert first.song.title == "Solar Eclipse"
     assert first.song.duration.seconds == 218
     assert len(first.artists) >= 1
@@ -176,12 +175,14 @@ def test_album_songs(entry: Moounit):
     songs = ret.requested_album_songs.songs
     assert len(songs) == 9
     first = songs[0]
-    assert first.song.id == "applemusic:269572927"
+    assert first.song.id == "moosync.apple.music:applemusic:269572927"
     assert first.song.title == "Wanna Be Startin' Somethin'"
     assert first.song.duration.seconds == 363
     assert first.song.track_no == 1.0
 
-    billie_jean = next(s for s in songs if s.song.id == "applemusic:269573364")
+    billie_jean = next(
+        s for s in songs if s.song.id == "moosync.apple.music:applemusic:269573364"
+    )
     assert billie_jean.song.title == "Billie Jean"
     assert billie_jean.song.duration.seconds == 293
     assert billie_jean.song.track_no == 6.0
@@ -199,7 +200,7 @@ def test_artist_songs(entry: Moounit):
     songs = ret.requested_artist_songs.songs
     assert len(songs) == 50
     first = songs[0]
-    assert first.song.id == "applemusic:269573303"
+    assert first.song.id == "moosync.apple.music:applemusic:269573303"
     assert first.song.title == "Thriller"
     assert first.song.duration.seconds == 358
     assert len(first.artists) == 1
@@ -214,7 +215,7 @@ def test_recommendations(entry: Moounit):
     songs = ret.requested_recommendations.songs
     assert len(songs) == 25
     first = songs[0]
-    assert first.song.id == "applemusic:6818209989"
+    assert first.song.id == "moosync.apple.music:applemusic:6818209989"
     assert first.song.title == "Solar Eclipse"
 
 

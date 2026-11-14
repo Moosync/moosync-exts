@@ -1,7 +1,6 @@
 from moosync_edk import (
     register_extension, Extension, ExtensionProviderScope,
     CustomRequest, CustomRequestResponse,
-    GetProviderScopesRequest, GetProviderScopesResponse,
     RequestedAlbumSongsRequest, RequestedAlbumSongsResponse,
     RequestedArtistSongsRequest, RequestedArtistSongsResponse,
     RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse,
@@ -118,15 +117,6 @@ def to_artist(ytdl_artist: YtdlEntry) -> Artist:
     )
         
 class YoutubeDlExtension(Extension):
-    def get_provider_scopes(self, _: GetProviderScopesRequest) -> GetProviderScopesResponse:
-        return GetProviderScopesResponse(scopes=[
-            ExtensionProviderScope.SEARCH,
-            ExtensionProviderScope.PLAYBACK_DETAILS,
-            ExtensionProviderScope.PLAYLIST_SONGS,
-            ExtensionProviderScope.ARTIST_SONGS,
-            ExtensionProviderScope.ALBUM_SONGS
-        ])
-    
     def get_album_songs(self, req: RequestedAlbumSongsRequest) -> RequestedAlbumSongsResponse:
         album = req.album
         if not album.album_id:
