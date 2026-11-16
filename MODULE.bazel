@@ -5,9 +5,10 @@ module(
 
 # Core Moosync dependencies
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
-local_path_override(
+git_override(
     module_name = "extensions_sdk",
-    path = "../extensions-sdk",
+    branch = "main",
+    remote = "https://github.com/Moosync/extensions-sdk",
 )
 
 bazel_dep(name = "moosync")

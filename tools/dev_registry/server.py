@@ -14,8 +14,11 @@ from core.types.protos import extensions_pb2
 
 def build_extension_manifest(ext_info: dict) -> extensions_pb2.ExtensionManifest:
     m = extensions_pb2.ExtensionManifest()
+    if ext_info.get("pb_manifest") is not None:
+        m.CopyFrom(ext_info["pb_manifest"])
     m.display_name = ext_info.get("display_name", "")
-    m.extension_entry = ext_info.get("extension_entry", "")
+    if ext_info.get("extension_entry"):
+        m.extension_entry = ext_info["extension_entry"]
     if ext_info.get("author"):
         m.author = ext_info["author"]
     m.name = ext_info.get("name", "")
@@ -66,6 +69,7 @@ class ExtensionRegistry:
                     msxt_bytes = f.read()
 
                 with zipfile.ZipFile(io.BytesIO(msxt_bytes)) as zf:
+                    pb_manifest = None
                     pkg_name = None
                     disp_name = None
                     version = "0.0.1"
@@ -106,8 +110,9 @@ class ExtensionRegistry:
                         icon_url = icon_serve_path
 
                     ext_info = {
+                        "pb_manifest": pb_manifest,
                         "display_name": disp_name,
-                        "extension_entry": "",
+                        "extension_entry": pb_manifest.extension_entry if pb_manifest else "",
                         "author": author,
                         "name": pkg_name,
                         "version": version,

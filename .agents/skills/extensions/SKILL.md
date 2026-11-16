@@ -202,6 +202,53 @@ Moosync extensions use **Moounit** for hermetic integration testing via Bazel.
 
 ---
 
+## Permissions & Binary Security
+
+All extensions declare their required permissions in their `BUILD` rule (`scopes`, `allowed_hosts`, `allowed_paths`, `binaries`).
+
+### Mandatory Rules
+1. **Mandatory Justifications**: Every scope, network host, filesystem path, and binary execution strictly requires an explicit justification string.
+2. **Justification is Always the Value**: The permission target is always the key, and the justification string is always the value.
+3. **Binary Location in `allowed_paths`**: Any native binary specified in `binaries` must specify its exact execution path (e.g. `path = "{CACHE_DIR}/bin/yt-dlp"`), and the directory containing that binary **must also be explicitly declared in `allowed_paths`**.
+4. **Binary Hashes**: Each binary requires at least one cryptographic hash (`sha256`, `sha512`, or `md5`).
+
+### Generating Binary Hashes CLI Tool
+Use the `hash_binary` CLI tool provided by `extensions-sdk` to automatically compute hashes and print a ready-to-copy Bazel snippet:
+
+```bash
+bazel run @extensions_sdk//tools:hash_binary -- /path/to/binary \
+    --name yt-dlp \
+    --path "{CACHE_DIR}/bin/yt-dlp" \
+    --justification "Extract audio streams from media URLs"
+```
+
+Example Bazel rule configuration:
+```python
+rust_extension(
+    name = "my_extension",
+    # ...
+    allowed_paths = [
+        {
+            "paths": [
+                {"source": "{CACHE_DIR}/bin", "target": "/cache/bin"},
+            ],
+            "justification": "Store extracted helper binaries",
+        },
+    ],
+    binaries = {
+        "yt-dlp": {
+            "path": "{CACHE_DIR}/bin/yt-dlp",
+            "sha256": "7b819280e5...",
+            "sha512": "d80214a9b2...",
+            "md5": "9e107d9d37...",
+            "justification": "Extract audio streams from media URLs",
+        },
+    },
+)
+```
+
+---
+
 ## Language-Specific Implementation Skills
 
 For concrete language runtimes, SDK APIs, and packaging details, consult the language skill:

@@ -10,10 +10,16 @@ def _dev_registry_impl(ctx):
             all_files.extend(ext[DefaultInfo].default_runfiles.files.to_list())
 
     proto_files = []
+    python_paths = ["${RUNFILES_DIR}/_main"]
     for dep in ctx.attr._proto_deps:
         proto_files.extend(dep[DefaultInfo].files.to_list())
         if dep[DefaultInfo].default_runfiles:
             proto_files.extend(dep[DefaultInfo].default_runfiles.files.to_list())
+        if PyInfo in dep:
+            for imp in dep[PyInfo].imports.to_list():
+                path = "${{RUNFILES_DIR}}/{imp}".format(imp = imp)
+                if path not in python_paths:
+                    python_paths.append(path)
 
     runfiles = ctx.runfiles(files = all_files + [ctx.file._server_py] + proto_files)
 
@@ -47,10 +53,13 @@ if [ ! -f "$SCRIPT_PATH" ]; then
 fi
 
 RUNFILES_DIR="${{RUNFILES_DIR:-$0.runfiles}}"
-export PYTHONPATH="${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/extensions_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/preferences_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/songs_proto:${{RUNFILES_DIR}}/extensions_sdk+/protos/_virtual_imports/ui_proto:${{RUNFILES_DIR}}/_main:${{PYTHONPATH}}"
+export PYTHONPATH="{python_paths}:${{PYTHONPATH}}"
 echo "PYTHONPATH=$PYTHONPATH" >&2
 exec "$PYTHON_BIN" "$SCRIPT_PATH" "$@"
-""".format(server_py = ctx.file._server_py.short_path),
+""".format(
+            server_py = ctx.file._server_py.short_path,
+            python_paths = ":".join(python_paths),
+        ),
         is_executable = True,
     )
 
