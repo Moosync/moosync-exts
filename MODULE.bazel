@@ -11,9 +11,10 @@ local_path_override(
 )
 
 bazel_dep(name = "moosync")
-local_path_override(
+git_override(
     module_name = "moosync",
-    path = "../Moosync",
+    branch = "main",
+    remote = "https://github.com/Moosync/Moosync",
 )
 
 # Shared foundation rules
