@@ -9,6 +9,7 @@ import (
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 	"github.com/Ovenoboyo/scdl/v2/pkg/soundcloud"
 	"github.com/antchfx/htmlquery"
+	extensions "github.com/moosync/moosync/types/extensions"
 	songs "github.com/moosync/moosync/types/songs"
 	soundcloudapi "github.com/zackradisic/soundcloud-api"
 )
@@ -19,7 +20,10 @@ func ptr[T any](v T) *T {
 
 func scTracksToSong(track soundcloudapi.Track) *songs.Song {
 	duration := api.DurationToProto(time.Duration(track.DurationMS) * time.Millisecond)
-	dateAdded := int64(api.SystemTime())
+	var dateAdded int64
+	if timeResp, err := api.SystemTime(&extensions.SystemTimeRequest{}); err == nil && timeResp != nil {
+		dateAdded = int64(timeResp.GetTimestamp())
+	}
 	return &songs.Song{
 		Song: &songs.InnerSong{
 			Id:                ptr(strconv.Itoa(int(track.ID))),

@@ -189,7 +189,9 @@ impl ApiClient {
 
         let expires_in_sec = res.expires_in().map(|d| d.as_secs()).unwrap_or(3600);
 
-        let now_sec = moosync_edk::api::system_time().unwrap_or(0);
+        let now_sec = moosync_edk::api::system_time(moosync_edk::types::SystemTimeRequest {})
+            .map(|r| r.timestamp)
+            .unwrap_or(0);
 
         let expires_at_ms = (now_sec + expires_in_sec) * 1000;
 

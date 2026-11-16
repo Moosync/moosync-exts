@@ -222,7 +222,10 @@ impl Client {
                 .clone()
                 .and_then(|s| s.title)
                 .unwrap_or("unknown".to_string());
-            let timestamp = api::system_time().unwrap_or(0) - 20;
+            let timestamp = api::system_time(moosync_edk::types::SystemTimeRequest {})
+                .map(|r| r.timestamp)
+                .unwrap_or(0)
+                - 20;
             let sk = session.key.clone();
             let album = song.album.clone().and_then(|a| a.album_name);
             let duration = song.song.clone().and_then(|s| s.duration).map(|d| {

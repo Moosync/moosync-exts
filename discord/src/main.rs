@@ -306,7 +306,10 @@ impl DiscordRPC {
             }
         );
 
-        let start_time = api::system_time().unwrap_or(0) - start_time;
+        let start_time = api::system_time(moosync_edk::types::SystemTimeRequest {})
+            .map(|r| r.timestamp)
+            .unwrap_or(0)
+            - start_time;
 
         let mut buttons = vec![];
         if song_inner.playback_url.is_some() {
