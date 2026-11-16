@@ -1,7 +1,6 @@
 common --experimental_isolated_extension_usages
 common --@aspect_rules_ts//ts:default_to_tsc_transpiler
 common:linux --repo_env=BAZEL_CONLYOPTS="-std=gnu17"
-common --registry=https://raw.githubusercontent.com/bazelbuild/bazel-central-registry/main
 
 try-import %workspace%/.bazelrc.user
 try-import %workspace%/.bazelrc.local
