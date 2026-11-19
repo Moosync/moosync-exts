@@ -313,7 +313,8 @@ def test_oauth_flow(entry: Moounit):
             perform_account_login=PerformAccountLoginRequest(login_status=True)
         )
     )
-    assert ret.perform_account_login.status == "ZXS-XFK-XTHK"
+    assert ret.perform_account_login.url == "https://www.google.com/device"
+    assert ret.perform_account_login.device_code == "ZXS-XFK-XTHK"
 
     cb_ret = entry.send_command(
         ExtensionCommand(oauth_callback=OauthCallbackRequest(callback_uri="done"))
@@ -366,7 +367,8 @@ def test_requested_playlists(entry: Moounit):
             perform_account_login=PerformAccountLoginRequest(login_status=True)
         )
     )
-    assert ret.perform_account_login.status == "ZXS-XFK-XTHK"
+    assert ret.perform_account_login.url == "https://www.google.com/device"
+    assert ret.perform_account_login.device_code == "ZXS-XFK-XTHK"
 
     cb_ret = entry.send_command(
         ExtensionCommand(oauth_callback=OauthCallbackRequest(callback_uri="done"))

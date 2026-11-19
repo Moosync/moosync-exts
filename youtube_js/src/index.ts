@@ -403,7 +403,8 @@ class YoutubeJsExtension {
             );
           }
           return new PerformAccountLoginResponse({
-            status: deviceCode.user_code,
+            url: deviceCode.verification_url ?? "",
+            deviceCode: deviceCode.user_code,
           });
         } catch (e) {
           console.error("failed to start oauth flow", e);
