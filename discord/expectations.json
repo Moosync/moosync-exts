@@ -3,38 +3,1211 @@
   "tests": {
     "test_get_provider_scopes": [
       {
-        "type": "open_clientfd",
-        "request": "/discord-ipc-0",
-        "response": 0
-      },
-      {
-        "type": "write_sock",
+        "type": "send_main_command",
         "request": {
-          "sock_id": 0,
-          "buf": {
-            "__bytes__": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
           }
         },
-        "response": 48
-      },
-      {
-        "type": "read_sock",
-        "request": {
-          "sock_id": 0,
-          "read_len": 457
-        },
         "response": {
-          "__bytes__": "AQAAAIABAAB7ImNtZCI6IkRJU1BBVENIIiwiZGF0YSI6eyJ2IjoxLCJjb25maWciOnsiY2RuX2hvc3QiOiJjZG4uZGlzY29yZGFwcC5jb20iLCJhcGlfZW5kcG9pbnQiOiIvL2Rpc2NvcmQuY29tL2FwaSIsImVudmlyb25tZW50IjoicHJvZHVjdGlvbiJ9LCJ1c2VyIjp7ImlkIjoiMjA3ODQwNDQwNTY3NzI2MDgwIiwidXNlcm5hbWUiOiJvdmVub2JveW8iLCJkaXNjcmltaW5hdG9yIjoiMCIsImdsb2JhbF9uYW1lIjoiT3Zlbm9ib3lvIiwiYXZhdGFyIjoiOWQ4Y2NmYjE3YjI3ODE3NzYzM2Q2ZWQ3ZDRkMmY0ZGQiLCJhdmF0YXJfZGVjb3JhdGlvbl9kYXRhIjpudWxsLCJib3QiOmZhbHNlLCJmbGFncyI6MzA0LCJwcmVtaXVtX3R5cGUiOjB9fSwiZXZ0IjoiUkVBRFkiLCJub25jZSI6bnVsbH0="
+          "open_client_fd": {}
         }
       },
       {
-        "type": "read_sock",
+        "type": "send_main_command",
         "request": {
-          "sock_id": 0,
-          "read_len": 901
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
         },
         "response": {
-          "__bytes__": ""
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwMjl9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDgyMTk4fSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDI5MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      }
+    ],
+    "test_song_changed": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
+          }
+        },
+        "response": {
+          "open_client_fd": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwMjl9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDgyMTk4fSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDI5MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_current_song": {}
+        },
+        "response": {
+          "get_current_song": {
+            "song": {
+              "song": {
+                "id": "spotify:12345",
+                "title": "Test Track",
+                "type": "SPOTIFY",
+                "url": "4uLU6hMCjMI75M1A2tKUQC"
+              },
+              "album": {
+                "album_name": "Test Album"
+              },
+              "artists": [
+                {
+                  "artist_name": "Test Artist"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_player_state": {}
+        },
+        "response": {
+          "get_player_state": {
+            "state": "PLAYING"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_time": {}
+        },
+        "response": {
+          "get_time": {
+            "time": 10.0
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAAKoBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiJUZXN0IEFydGlzdCAtIFRlc3QgQWxidW0iLCJkZXRhaWxzIjoiVGVzdCBUcmFjayAiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDE5fSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoibG9nb19ib3JkZXIiLCJsYXJnZV90ZXh0IjoiVGl0bGUiLCJzbWFsbF9pbWFnZSI6ImxvZ29fY2lyY2xlIiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwiYnV0dG9ucyI6W3sibGFiZWwiOiJTaG93IG9uIFNwb3RpZnkiLCJ1cmwiOiJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJ9XSwiaW5zdGFuY2UiOnRydWV9LCJwaWQiOjQ4MjE5OH0sIm5vbmNlIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "434"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAAgCAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "520"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiVGVzdCBBcnRpc3QgLSBUZXN0IEFsYnVtIiwiZGV0YWlscyI6IlRlc3QgVHJhY2sgIiwidGltZXN0YW1wcyI6eyJzdGFydCI6MTc5NTI0NDAxOTAwMH0sImFzc2V0cyI6eyJsYXJnZV9pbWFnZSI6Ijg3MzY2NzI5MDU5MDIyNDQ2NCIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoiOTczMzMyMjQzODYwODMyMzE2Iiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwibmFtZSI6Ik1vb3N5bmMiLCJ0eXBlIjowLCJhcHBsaWNhdGlvbl9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCIsInBsYXRmb3JtIjoiZGVza3RvcCIsImZsYWdzIjoxLCJidXR0b25zIjpbIlNob3cgb24gU3BvdGlmeSJdLCJtZXRhZGF0YSI6eyJidXR0b25fdXJscyI6WyJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJdfX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      }
+    ],
+    "test_player_state_changed": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
+          }
+        },
+        "response": {
+          "open_client_fd": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244077"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwNzd9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDg0NzQxfSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDc3MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_current_song": {}
+        },
+        "response": {
+          "get_current_song": {
+            "song": {
+              "song": {
+                "id": "spotify:12345",
+                "title": "Test Track",
+                "type": "SPOTIFY",
+                "url": "4uLU6hMCjMI75M1A2tKUQC"
+              },
+              "album": {
+                "album_name": "Test Album"
+              },
+              "artists": [
+                {
+                  "artist_name": "Test Artist"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_player_state": {}
+        },
+        "response": {
+          "get_player_state": {
+            "state": "PAUSED"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_time": {}
+        },
+        "response": {
+          "get_time": {
+            "time": 15.0
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244077"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAALIBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiJUZXN0IEFydGlzdCAtIFRlc3QgQWxidW0iLCJkZXRhaWxzIjoiVGVzdCBUcmFjayAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwNjJ9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJidXR0b25zIjpbeyJsYWJlbCI6IlNob3cgb24gU3BvdGlmeSIsInVybCI6Imh0dHBzOi8vb3Blbi5zcG90aWZ5LmNvbS90cmFjay80dUxVNmhNQ2pNSTc1TTFBMnRLVVFDIn1dLCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDg0NzQxfSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "442"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAABACAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "528"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiVGVzdCBBcnRpc3QgLSBUZXN0IEFsYnVtIiwiZGV0YWlscyI6IlRlc3QgVHJhY2sgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDYyMDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsImJ1dHRvbnMiOlsiU2hvdyBvbiBTcG90aWZ5Il0sIm1ldGFkYXRhIjp7ImJ1dHRvbl91cmxzIjpbImh0dHBzOi8vb3Blbi5zcG90aWZ5LmNvbS90cmFjay80dUxVNmhNQ2pNSTc1TTFBMnRLVVFDIl19fSwiZXZ0IjpudWxsLCJub25jZSI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCJ9"
+          }
+        }
+      }
+    ],
+    "test_seeked": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
+          }
+        },
+        "response": {
+          "open_client_fd": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244095"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwOTV9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDg2NjczfSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDk1MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_current_song": {}
+        },
+        "response": {
+          "get_current_song": {
+            "song": {
+              "song": {
+                "id": "spotify:12345",
+                "title": "Test Track",
+                "type": "SPOTIFY",
+                "url": "4uLU6hMCjMI75M1A2tKUQC"
+              },
+              "album": {
+                "album_name": "Test Album"
+              },
+              "artists": [
+                {
+                  "artist_name": "Test Artist"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_player_state": {}
+        },
+        "response": {
+          "get_player_state": {
+            "state": "PLAYING"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_time": {}
+        },
+        "response": {
+          "get_time": {
+            "time": 42.0
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244095"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAAKoBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiJUZXN0IEFydGlzdCAtIFRlc3QgQWxidW0iLCJkZXRhaWxzIjoiVGVzdCBUcmFjayAiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDUzfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoibG9nb19ib3JkZXIiLCJsYXJnZV90ZXh0IjoiVGl0bGUiLCJzbWFsbF9pbWFnZSI6ImxvZ29fY2lyY2xlIiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwiYnV0dG9ucyI6W3sibGFiZWwiOiJTaG93IG9uIFNwb3RpZnkiLCJ1cmwiOiJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJ9XSwiaW5zdGFuY2UiOnRydWV9LCJwaWQiOjQ4NjY3M30sIm5vbmNlIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "434"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAAgCAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "520"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiVGVzdCBBcnRpc3QgLSBUZXN0IEFsYnVtIiwiZGV0YWlscyI6IlRlc3QgVHJhY2sgIiwidGltZXN0YW1wcyI6eyJzdGFydCI6MTc5NTI0NDA1MzAwMH0sImFzc2V0cyI6eyJsYXJnZV9pbWFnZSI6Ijg3MzY2NzI5MDU5MDIyNDQ2NCIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoiOTczMzMyMjQzODYwODMyMzE2Iiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwibmFtZSI6Ik1vb3N5bmMiLCJ0eXBlIjowLCJhcHBsaWNhdGlvbl9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCIsInBsYXRmb3JtIjoiZGVza3RvcCIsImZsYWdzIjoxLCJidXR0b25zIjpbIlNob3cgb24gU3BvdGlmeSJdLCJtZXRhZGF0YSI6eyJidXR0b25fdXJscyI6WyJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJdfX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      }
+    ],
+    "test_local_song_cover_art": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
+          }
+        },
+        "response": {
+          "open_client_fd": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwMjl9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDgyMTk4fSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDI5MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_current_song": {}
+        },
+        "response": {
+          "get_current_song": {
+            "song": {
+              "song": {
+                "id": "spotify:12345",
+                "title": "Test Track",
+                "type": "SPOTIFY",
+                "url": "4uLU6hMCjMI75M1A2tKUQC"
+              },
+              "album": {
+                "album_name": "Test Album"
+              },
+              "artists": [
+                {
+                  "artist_name": "Test Artist"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_player_state": {}
+        },
+        "response": {
+          "get_player_state": {
+            "state": "PLAYING"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_time": {}
+        },
+        "response": {
+          "get_time": {
+            "time": 10.0
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAAKoBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiJUZXN0IEFydGlzdCAtIFRlc3QgQWxidW0iLCJkZXRhaWxzIjoiVGVzdCBUcmFjayAiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDE5fSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoibG9nb19ib3JkZXIiLCJsYXJnZV90ZXh0IjoiVGl0bGUiLCJzbWFsbF9pbWFnZSI6ImxvZ29fY2lyY2xlIiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwiYnV0dG9ucyI6W3sibGFiZWwiOiJTaG93IG9uIFNwb3RpZnkiLCJ1cmwiOiJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJ9XSwiaW5zdGFuY2UiOnRydWV9LCJwaWQiOjQ4MjE5OH0sIm5vbmNlIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "434"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAAgCAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "520"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiVGVzdCBBcnRpc3QgLSBUZXN0IEFsYnVtIiwiZGV0YWlscyI6IlRlc3QgVHJhY2sgIiwidGltZXN0YW1wcyI6eyJzdGFydCI6MTc5NTI0NDAxOTAwMH0sImFzc2V0cyI6eyJsYXJnZV9pbWFnZSI6Ijg3MzY2NzI5MDU5MDIyNDQ2NCIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoiOTczMzMyMjQzODYwODMyMzE2Iiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwibmFtZSI6Ik1vb3N5bmMiLCJ0eXBlIjowLCJhcHBsaWNhdGlvbl9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCIsInBsYXRmb3JtIjoiZGVza3RvcCIsImZsYWdzIjoxLCJidXR0b25zIjpbIlNob3cgb24gU3BvdGlmeSJdLCJtZXRhZGF0YSI6eyJidXR0b25fdXJscyI6WyJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJdfX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      }
+    ],
+    "test_local_song_imgbb_upload": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_client_fd": {
+            "path": "/discord-ipc-0"
+          }
+        },
+        "response": {
+          "open_client_fd": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AAAAACgAAAB7InYiOjEsImNsaWVudF9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCJ9"
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "48"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJMBAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "403"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJESVNQQVRDSCIsImRhdGEiOnsidiI6MSwiY29uZmlnIjp7ImNkbl9ob3N0IjoiY2RuLmRpc2NvcmRhcHAuY29tIiwiYXBpX2VuZHBvaW50IjoiLy9kaXNjb3JkLmNvbS9hcGkiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifSwidXNlciI6eyJpZCI6IjIwNzg0MDQ0MDU2NzcyNjA4MCIsInVzZXJuYW1lIjoib3Zlbm9ib3lvIiwiZGlzY3JpbWluYXRvciI6IjAiLCJnbG9iYWxfbmFtZSI6Ik92ZW5vYm95byIsImF2YXRhciI6IjlkOGNjZmIxN2IyNzgxNzc2MzNkNmVkN2Q0ZDJmNGRkIiwiYXZhdGFyX2RlY29yYXRpb25fZGF0YSI6bnVsbCwiYm90IjpmYWxzZSwiZmxhZ3MiOjI1NiwicHVibGljX2ZsYWdzIjoyNTYsInByZW1pdW1fdHlwZSI6MH19LCJldnQiOiJSRUFEWSIsIm5vbmNlIjpudWxsfQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAADEBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiIgLSBNaXNjIiwiZGV0YWlscyI6IiAoUGF1c2VkKSIsInRpbWVzdGFtcHMiOnsic3RhcnQiOjE3OTUyNDQwMjl9LCJhc3NldHMiOnsibGFyZ2VfaW1hZ2UiOiJsb2dvX2JvcmRlciIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoibG9nb19jaXJjbGUiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJpbnN0YW5jZSI6dHJ1ZX0sInBpZCI6NDgyMTk4fSwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "313"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAJABAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "400"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiIC0gTWlzYyIsImRldGFpbHMiOiIgKFBhdXNlZCkiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDI5MDAwfSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoiODczNjY3MjkwNTkwMjI0NDY0IiwibGFyZ2VfdGV4dCI6IlRpdGxlIiwic21hbGxfaW1hZ2UiOiI5NzMzMzIyNDM4NjA4MzIzMTYiLCJzbWFsbF90ZXh0IjoiTW9vc3luYyJ9LCJuYW1lIjoiTW9vc3luYyIsInR5cGUiOjAsImFwcGxpY2F0aW9uX2lkIjoiODY3NzU3ODM4Njc5NjcwNzg0IiwicGxhdGZvcm0iOiJkZXNrdG9wIiwiZmxhZ3MiOjEsIm1ldGFkYXRhIjp7fX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "ImgBB API Key",
+                "id": "imgbb_api_key",
+                "subtitle": "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_current_song": {}
+        },
+        "response": {
+          "get_current_song": {
+            "song": {
+              "song": {
+                "id": "spotify:12345",
+                "title": "Test Track",
+                "type": "SPOTIFY",
+                "url": "4uLU6hMCjMI75M1A2tKUQC"
+              },
+              "album": {
+                "album_name": "Test Album"
+              },
+              "artists": [
+                {
+                  "artist_name": "Test Artist"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_player_state": {}
+        },
+        "response": {
+          "get_player_state": {
+            "state": "PLAYING"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_time": {}
+        },
+        "response": {
+          "get_time": {
+            "time": 10.0
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "system_time": {}
+        },
+        "response": {
+          "system_time": {
+            "timestamp": "1795244029"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "write_sock": {
+            "buf": "AQAAAKoBAAB7ImNtZCI6IlNFVF9BQ1RJVklUWSIsImFyZ3MiOnsiYWN0aXZpdHkiOnsic3RhdGUiOiJUZXN0IEFydGlzdCAtIFRlc3QgQWxidW0iLCJkZXRhaWxzIjoiVGVzdCBUcmFjayAiLCJ0aW1lc3RhbXBzIjp7InN0YXJ0IjoxNzk1MjQ0MDE5fSwiYXNzZXRzIjp7ImxhcmdlX2ltYWdlIjoibG9nb19ib3JkZXIiLCJsYXJnZV90ZXh0IjoiVGl0bGUiLCJzbWFsbF9pbWFnZSI6ImxvZ29fY2lyY2xlIiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwiYnV0dG9ucyI6W3sibGFiZWwiOiJTaG93IG9uIFNwb3RpZnkiLCJ1cmwiOiJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJ9XSwiaW5zdGFuY2UiOnRydWV9LCJwaWQiOjQ4MjE5OH0sIm5vbmNlIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0="
+          }
+        },
+        "response": {
+          "write_sock": {
+            "bytes_written": "434"
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "8"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "AQAAAAgCAAA="
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "read_sock": {
+            "read_len": "520"
+          }
+        },
+        "response": {
+          "read_sock": {
+            "data": "eyJjbWQiOiJTRVRfQUNUSVZJVFkiLCJkYXRhIjp7InN0YXRlIjoiVGVzdCBBcnRpc3QgLSBUZXN0IEFsYnVtIiwiZGV0YWlscyI6IlRlc3QgVHJhY2sgIiwidGltZXN0YW1wcyI6eyJzdGFydCI6MTc5NTI0NDAxOTAwMH0sImFzc2V0cyI6eyJsYXJnZV9pbWFnZSI6Ijg3MzY2NzI5MDU5MDIyNDQ2NCIsImxhcmdlX3RleHQiOiJUaXRsZSIsInNtYWxsX2ltYWdlIjoiOTczMzMyMjQzODYwODMyMzE2Iiwic21hbGxfdGV4dCI6Ik1vb3N5bmMifSwibmFtZSI6Ik1vb3N5bmMiLCJ0eXBlIjowLCJhcHBsaWNhdGlvbl9pZCI6Ijg2Nzc1NzgzODY3OTY3MDc4NCIsInBsYXRmb3JtIjoiZGVza3RvcCIsImZsYWdzIjoxLCJidXR0b25zIjpbIlNob3cgb24gU3BvdGlmeSJdLCJtZXRhZGF0YSI6eyJidXR0b25fdXJscyI6WyJodHRwczovL29wZW4uc3BvdGlmeS5jb20vdHJhY2svNHVMVTZoTUNqTUk3NU0xQTJ0S1VRQyJdfX0sImV2dCI6bnVsbCwibm9uY2UiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAifQ=="
+          }
         }
       }
     ]

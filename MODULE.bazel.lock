@@ -3902,10 +3902,6 @@
             "https://files.pythonhosted.org/packages/d5/d2/cc4dc1271e464942db7ee278baae2daa99ee77cb2af744025c04da585a3e/websocket_client-1.9.2-py3-none-any.whl": "sha256:e1a673830a9c7bfa47b1cd3d5e4178f4c9651d80a4eab02c9c23a1c3ec6250ce",
             "https://files.pythonhosted.org/packages/d8/cb/a5abcc2891249f393827c650c6296660ce40374ac22d99ab9aea41f9d2a2/websocket_client-1.9.2.tar.gz": "sha256:0fcb57545848be86992e128218fd96dd87a6769ffdb1a968dff79632b85604d0"
           },
-          "yt-dlp-remote-cipher": {
-            "https://files.pythonhosted.org/packages/24/17/088ca907be92c6c1b6373d2a2c2b08b162cd859ccca3cf4fe413db8f35eb/yt_dlp_remote_cipher-0.0.1.tar.gz": "sha256:5c10176fa882ef1cfbac4426f285c1c77e8ad4da281325855aee28510ec20b6b",
-            "https://files.pythonhosted.org/packages/e8/ef/3b597a240ccb5fb51aace19091e72dafc93c4ee47f9cc15e0304b14b957e/yt_dlp_remote_cipher-0.0.1-py3-none-any.whl": "sha256:3e819c315a0aa0efff7912f2ce7d0530a70bbcd0c941b1bd9748fd2785ab2dd0"
-          },
           "zipp": {
             "https://files.pythonhosted.org/packages/3a/13/547360d81e6d88d58492968ffda9f9542854f11310ee556fef14260cc886/zipp-4.1.0-py3-none-any.whl": "sha256:25ad4e16390cd314347dd8f1de67a2ac538ae658ed4ab9db16029c07c188e97f",
             "https://files.pythonhosted.org/packages/b9/d8/eab98a517c14134c0b2eb4e2387bc5f457334293ec5d2dd3857ec2966802/zipp-4.1.0.tar.gz": "sha256:4cb57381f544315db7688e976e922a2b18cdb513d21cc194eb42232ba2a3e602"

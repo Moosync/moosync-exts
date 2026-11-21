@@ -13,8 +13,7 @@ filegroup(
         "//radio",
         "//soundcloud",
         "//spotify",
-        "//youtube",
-        "//youtube_dl",
+        "//youtube_js",
     ],
 )
 
@@ -37,8 +36,6 @@ dev_registry(
         "//radio",
         "//soundcloud",
         "//spotify",
-        # "//youtube",
-        # "//youtube_dl",
-        "//youtube_js"
+        "//youtube_js",
     ],
 )

@@ -1,18 +1,21 @@
-use std::sync::Mutex;
+use std::{path::Path, sync::Mutex};
 
 use bytes::BytesMut;
 use moosync_edk::{
     api::{
-        self, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
-        PreferenceEvents, Provider,
+        self, get_preference, host_get_cache, host_set_cache, register_user_preference, Accounts,
+        ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider, PreferenceEvents,
+        Provider,
     },
     config,
     handler::register_extension,
-    info,
+    http, info,
     socket::SocketClient,
     types::{
-        GetCurrentSongRequest, GetPlayerStateRequest, GetTimeRequest, PlayerState,
-        PlayerStateChangedRequest, SeekedRequest, Song, SongChangedRequest, SongType,
+        GetCacheRequest, GetCurrentSongRequest, GetPlayerStateRequest, GetPreferenceRequest,
+        GetTimeRequest, PlayerState, PlayerStateChangedRequest, PreferenceData, PreferenceItem,
+        PreferenceType, RegisterUserPreferenceRequest, SeekedRequest, SetCacheRequest, Song,
+        SongChangedRequest, SongType, value::Kind as PreferenceValueKind,
     },
     MoosyncError, MoosyncResult,
 };
@@ -222,6 +225,10 @@ struct Activity {
     secrets: Option<Secrets>,
     #[serde(skip_serializing_if = "Option::is_none")]
     buttons: Option<Vec<ActivityButton>>,
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
+    activity_type: Option<u8>,
+    #[serde(rename = "status_display_type", skip_serializing_if = "Option::is_none")]
+    status_display_type: Option<u8>,
     instance: bool,
 }
 
@@ -230,6 +237,247 @@ struct Activity {
 struct SetActivityRequest {
     activity: Activity,
     pid: u64,
+}
+
+fn base64_encode(input: &[u8]) -> String {
+    const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut out = String::with_capacity(input.len().div_ceil(3) * 4);
+    for chunk in input.chunks(3) {
+        let b0 = chunk[0] as usize;
+        let b1 = chunk.get(1).copied().unwrap_or(0) as usize;
+        let b2 = chunk.get(2).copied().unwrap_or(0) as usize;
+        let triple = (b0 << 16) | (b1 << 8) | b2;
+        out.push(TABLE[(triple >> 18) & 0x3F] as char);
+        out.push(TABLE[(triple >> 12) & 0x3F] as char);
+        out.push(if chunk.len() > 1 {
+            TABLE[(triple >> 6) & 0x3F] as char
+        } else {
+            '='
+        });
+        out.push(if chunk.len() > 2 {
+            TABLE[triple & 0x3F] as char
+        } else {
+            '='
+        });
+    }
+    out
+}
+
+fn read_local_thumbnail(song: &Song) -> Option<(String, Vec<u8>)> {
+    let song_inner = song.song.as_ref()?;
+    let raw_path = song_inner
+        .song_cover_path_high
+        .as_deref()
+        .or(song_inner.song_cover_path_low.as_deref())
+        .or_else(|| {
+            song.album.as_ref().and_then(|a| {
+                a.album_coverpath_high
+                    .as_deref()
+                    .or(a.album_coverpath_low.as_deref())
+            })
+        })?;
+    if raw_path.is_empty() || raw_path.starts_with("http://") || raw_path.starts_with("https://") {
+        return None;
+    }
+
+    let filename = Path::new(raw_path).file_name()?.to_string_lossy().to_string();
+    let mapped_path = format!("/thumbnails/{filename}");
+    let bytes = std::fs::read(&mapped_path)
+        .or_else(|_| std::fs::read(raw_path))
+        .ok()?;
+    if bytes.is_empty() {
+        return None;
+    }
+    Some((filename, bytes))
+}
+
+fn get_imgbb_api_key() -> String {
+    get_preference(GetPreferenceRequest {
+        data: Some(PreferenceData {
+            key: "imgbb_api_key".into(),
+            ..Default::default()
+        }),
+    })
+    .ok()
+    .and_then(|res| res.data)
+    .and_then(|data| data.value)
+    .and_then(|val| val.kind)
+    .and_then(|v| match v {
+        PreferenceValueKind::StringValue(s) => Some(s.trim().to_string()),
+        _ => None,
+    })
+    .unwrap_or_default()
+}
+
+fn upload_to_imgbb(api_key: &str, bytes: &[u8]) -> Option<String> {
+    let url = format!(
+        "https://api.imgbb.com/1/upload?key={}&expiration=86400",
+        encode_query_component(api_key)
+    );
+    let body = format!("image={}", encode_query_component(&base64_encode(bytes)));
+    let req = http::HttpRequest::post(url)
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .body(body.into_bytes());
+    let resp = http::request(&req).ok()?;
+    if resp.status_code < 200 || resp.status_code >= 300 {
+        return None;
+    }
+    let parsed: Value = serde_json::from_slice(&resp.body).ok()?;
+    parsed
+        .get("data")?
+        .get("url")?
+        .as_str()
+        .filter(|u| u.starts_with("http://") || u.starts_with("https://"))
+        .map(|u| u.to_string())
+}
+
+fn upload_to_litterbox(filename: &str, bytes: &[u8]) -> Option<String> {
+    let boundary = "----MoosyncDiscordCoverBoundary";
+    let mut body = Vec::with_capacity(bytes.len() + 256);
+    body.extend_from_slice(
+        format!(
+            "--{boundary}\r\nContent-Disposition: form-data; name=\"reqtype\"\r\n\r\nfileupload\r\n\
+             --{boundary}\r\nContent-Disposition: form-data; name=\"time\"\r\n\r\n24h\r\n\
+             --{boundary}\r\nContent-Disposition: form-data; name=\"fileToUpload\"; filename=\"{filename}\"\r\n\
+             Content-Type: application/octet-stream\r\n\r\n"
+        )
+        .as_bytes(),
+    );
+    body.extend_from_slice(bytes);
+    body.extend_from_slice(format!("\r\n--{boundary}--\r\n").as_bytes());
+
+    let req = http::HttpRequest::post("https://litterbox.catbox.moe/resources/internals/api.php")
+        .header(
+            "Content-Type",
+            format!("multipart/form-data; boundary={boundary}"),
+        )
+        .body(body);
+    let resp = http::request(&req).ok()?;
+    if resp.status_code < 200 || resp.status_code >= 300 {
+        return None;
+    }
+    let url = String::from_utf8(resp.body).ok()?.trim().to_string();
+    if url.starts_with("http://") || url.starts_with("https://") {
+        Some(url)
+    } else {
+        None
+    }
+}
+
+fn upload_local_cover_art(song: &Song) -> Option<String> {
+    let (filename, bytes) = read_local_thumbnail(song)?;
+    let cache_key = format!("discord_upload:{filename}");
+    if let Ok(resp) = host_get_cache(GetCacheRequest {
+        key: cache_key.clone(),
+    }) {
+        if let Some(cached_bytes) = resp.data {
+            if let Ok(url) = String::from_utf8(cached_bytes) {
+                if url.starts_with("http://") || url.starts_with("https://") {
+                    return Some(url);
+                }
+            }
+        }
+    }
+
+    let api_key = get_imgbb_api_key();
+    let uploaded_url = if !api_key.is_empty() {
+        upload_to_imgbb(&api_key, &bytes).or_else(|| upload_to_litterbox(&filename, &bytes))
+    } else {
+        upload_to_litterbox(&filename, &bytes)
+    }?;
+
+    let _ = host_set_cache(SetCacheRequest {
+        key: cache_key,
+        data: uploaded_url.as_bytes().to_vec(),
+        ttl_seconds: Some(82800),
+    });
+
+    Some(uploaded_url)
+}
+
+fn encode_query_component(input: &str) -> String {
+    let mut encoded = String::with_capacity(input.len());
+    for byte in input.as_bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                encoded.push(*byte as char);
+            }
+            b' ' => encoded.push('+'),
+            _ => encoded.push_str(&format!("%{:02X}", byte)),
+        }
+    }
+    encoded
+}
+
+fn fetch_local_cover_art(song: &Song) -> Option<String> {
+    let title = song
+        .song
+        .as_ref()
+        .and_then(|s| s.title.as_deref())
+        .map(str::trim)
+        .unwrap_or_default();
+    let artist = song
+        .artists
+        .first()
+        .and_then(|a| a.artist_name.as_deref())
+        .map(str::trim)
+        .unwrap_or_default();
+    let album = song
+        .album
+        .as_ref()
+        .and_then(|a| a.album_name.as_deref())
+        .map(str::trim)
+        .unwrap_or_default();
+
+    let query = match (artist.is_empty(), album.is_empty(), title.is_empty()) {
+        (false, false, _) => format!("{artist} {album}"),
+        (false, true, false) => format!("{artist} {title}"),
+        (true, false, _) => album.to_string(),
+        (true, true, false) => title.to_string(),
+        (false, true, true) => artist.to_string(),
+        (true, true, true) => return None,
+    };
+
+    let cache_key = format!("discord_cover:{}", query.to_lowercase());
+    if let Ok(resp) = host_get_cache(GetCacheRequest {
+        key: cache_key.clone(),
+    }) {
+        if let Some(bytes) = resp.data {
+            if let Ok(url) = String::from_utf8(bytes) {
+                if !url.is_empty() {
+                    return Some(url);
+                }
+            }
+        }
+    }
+
+    let url = format!(
+        "https://api.deezer.com/search?q={}&limit=1",
+        encode_query_component(&query)
+    );
+    let resp = http::get(&url, None).ok()?;
+    if resp.status_code < 200 || resp.status_code >= 300 {
+        return None;
+    }
+
+    let parsed: Value = serde_json::from_slice(&resp.body).ok()?;
+    let first = parsed.get("data")?.as_array()?.first()?;
+    let album_obj = first.get("album")?;
+    let cover_url = album_obj
+        .get("cover_big")
+        .or_else(|| album_obj.get("cover_medium"))
+        .or_else(|| album_obj.get("cover"))
+        .and_then(|v| v.as_str())
+        .filter(|u| u.starts_with("http://") || u.starts_with("https://"))?
+        .to_string();
+
+    let _ = host_set_cache(SetCacheRequest {
+        key: cache_key,
+        data: cover_url.as_bytes().to_vec(),
+        ttl_seconds: Some(86400),
+    });
+
+    Some(cover_url)
 }
 
 impl DiscordRPC {
@@ -262,18 +510,27 @@ impl DiscordRPC {
 
         let mut sock_mutex = self.sock.lock().unwrap();
         if let Some(sock) = sock_mutex.as_ref() {
-            sock.write(
-                Operation::HANDSHAKE,
-                HandshakeRequest {
-                    v: 1,
-                    client_id: CLIENT_ID.to_string(),
-                },
-            )?;
+            let handshake_res = sock
+                .write(
+                    Operation::HANDSHAKE,
+                    HandshakeRequest {
+                        v: 1,
+                        client_id: CLIENT_ID.to_string(),
+                    },
+                )
+                .and_then(|_| sock.read_and_decode::<HandshakeResponse>());
 
-            let data = sock.read_and_decode::<HandshakeResponse>()?;
-            info!("Got res {:?}", data.data);
-            if let Operation::CLOSE = data.op {
-                *sock_mutex = None
+            match handshake_res {
+                Ok(data) => {
+                    info!("Got res {:?}", data.data);
+                    if let Operation::CLOSE = data.op {
+                        *sock_mutex = None;
+                    }
+                }
+                Err(e) => {
+                    *sock_mutex = None;
+                    return Err(e);
+                }
             }
         }
 
@@ -284,7 +541,17 @@ impl DiscordRPC {
         let artists = song.artists.clone();
         let song_inner = song.song.clone().unwrap_or_default();
 
-        let state = format!(
+        let truncate_128 = |s: String| -> String {
+            if s.chars().count() <= 128 {
+                s
+            } else {
+                let mut out: String = s.chars().take(125).collect();
+                out.push_str("...");
+                out
+            }
+        };
+
+        let state = truncate_128(format!(
             "{} - {}",
             artists
                 .iter()
@@ -292,11 +559,11 @@ impl DiscordRPC {
                 .collect::<Vec<String>>()
                 .join(", "),
             song.album
-                .unwrap_or_default()
-                .album_name
-                .unwrap_or("Misc".into())
-        );
-        let details = format!(
+                .as_ref()
+                .and_then(|a| a.album_name.as_deref())
+                .unwrap_or("Misc")
+        ));
+        let details = truncate_128(format!(
             "{} {}",
             song_inner.title.clone().unwrap_or_default(),
             if let PlayerState::Paused = status {
@@ -304,12 +571,12 @@ impl DiscordRPC {
             } else {
                 ""
             }
-        );
+        ));
 
         let start_time = api::system_time(moosync_edk::types::SystemTimeRequest {})
             .map(|r| r.timestamp)
             .unwrap_or(0)
-            - start_time;
+            .saturating_sub(start_time);
 
         let mut buttons = vec![];
         if song_inner.playback_url.is_some() {
@@ -331,15 +598,44 @@ impl DiscordRPC {
 
         if song_inner.url.is_some() {
             if song_inner.r#type == SongType::Spotify as i32 {
+                let raw_url = song_inner.url.as_ref().unwrap();
+                let track_id = raw_url.strip_prefix("spotify:track:").unwrap_or(raw_url);
                 buttons.push(ActivityButton {
                     label: "Show on Spotify".into(),
-                    url: format!(
-                        "https://open.spotify.com/track/{}",
-                        song_inner.url.as_ref().unwrap()
-                    ),
+                    url: format!("https://open.spotify.com/track/{track_id}"),
                 });
             }
         }
+
+        let large_image = song_inner
+            .song_cover_path_high
+            .as_deref()
+            .or(song_inner.song_cover_path_low.as_deref())
+            .or_else(|| {
+                song.album.as_ref().and_then(|a| {
+                    a.album_coverpath_high
+                        .as_deref()
+                        .or(a.album_coverpath_low.as_deref())
+                })
+            })
+            .filter(|u| u.starts_with("http://") || u.starts_with("https://"))
+            .map(|u| u.to_string())
+            .or_else(|| {
+                if song_inner.r#type == SongType::Local as i32 {
+                    upload_local_cover_art(&song).or_else(|| fetch_local_cover_art(&song))
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| "logo_border".to_string());
+
+        let large_text = song
+            .album
+            .as_ref()
+            .and_then(|a| a.album_name.as_deref())
+            .filter(|s| !s.is_empty())
+            .unwrap_or("Moosync")
+            .to_string();
 
         Activity {
             state: Some(state),
@@ -349,8 +645,8 @@ impl DiscordRPC {
                 end: None,
             }),
             assets: Some(Assets {
-                large_image: "logo_border".to_string(),
-                large_text: "Title".into(),
+                large_image,
+                large_text,
                 small_image: "logo_circle".into(),
                 small_text: "Moosync".into(),
             }),
@@ -361,6 +657,8 @@ impl DiscordRPC {
             } else {
                 None
             },
+            activity_type: Some(2),
+            status_display_type: Some(2),
             instance: true,
         }
     }
@@ -373,16 +671,15 @@ impl DiscordRPC {
     ) -> MoosyncResult<()> {
         self.connect_rpc()?;
 
-        if let Some(sock) = self.sock.lock().unwrap().as_ref() {
-            let pid = config::get("pid")
-                .expect("Missing pid config")
-                .unwrap()
-                .parse::<u64>()
-                .unwrap();
+        let mut sock_mutex = self.sock.lock().unwrap();
+        if let Some(sock) = sock_mutex.as_ref() {
+            let pid = config::get("pid")?
+                .and_then(|p| p.parse::<u64>().ok())
+                .unwrap_or(0);
 
-            if let Some(song) = song {
+            let res = if let Some(song) = song {
                 let activity = self.parse_song(song, state, start_time);
-                sock.request("SET_ACTIVITY", SetActivityRequest { pid, activity })?;
+                sock.request("SET_ACTIVITY", SetActivityRequest { pid, activity })
             } else {
                 sock.request(
                     "SET_ACTIVITY",
@@ -390,7 +687,11 @@ impl DiscordRPC {
                         pid,
                         activity: Activity::default(),
                     },
-                )?;
+                )
+            };
+            if let Err(e) = res {
+                *sock_mutex = None;
+                return Err(e);
             }
         }
 
@@ -441,9 +742,16 @@ pub extern "C" fn init() {
     }
 
     register_extension(Box::new(extension)).unwrap();
+    let _ = register_user_preference(RegisterUserPreferenceRequest {
+        prefs: vec![PreferenceItem {
+            pref_type: PreferenceType::TextInputGroup as i32,
+            title: "ImgBB API Key".into(),
+            id: "imgbb_api_key".into(),
+            subtitle: "Optional ImgBB API key for uploading local cover art (falls back to 24h Litterbox upload if empty)".into(),
+            ..Default::default()
+        }],
+    });
     info!("Initialized discord rpc");
 }
 
-pub fn main() {
-    // init();
-}
+pub fn main() {}

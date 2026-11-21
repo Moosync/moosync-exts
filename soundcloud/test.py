@@ -12,21 +12,20 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    scopes = list(entry.manifest.scopes)
-    scopes.sort()
+    scopes = sorted(s.scope for s in entry.manifest.scopes)
 
     assert len(scopes) == 3
-    expected = [
-        pb.ExtensionProviderScope.SEARCH,
-        pb.ExtensionProviderScope.PLAYBACK_DETAILS,
-        pb.ExtensionProviderScope.PLAYLIST_SONGS,
-    ]
-    expected.sort()
+    expected = sorted(
+        [
+            pb.ExtensionProviderScope.SEARCH,
+            pb.ExtensionProviderScope.PLAYBACK_DETAILS,
+            pb.ExtensionProviderScope.PLAYLIST_SONGS,
+        ]
+    )
     assert scopes == expected
 
 
 def test_search(entry: Moounit):
-    entry.expect_system_time(return_value=1234567890, times=-1)
     ret = entry.send_command(
         pb.ExtensionCommand(
             requested_search_result=pb.RequestedSearchResultRequest(query="test")
@@ -34,6 +33,9 @@ def test_search(entry: Moounit):
     )
 
     assert len(ret.requested_search_result.songs) > 0
+    assert ret.requested_search_result.songs[0].song.id.startswith(
+        "moosync.soundcloud:"
+    )
 
 
 def test_search_cache_hit(entry: Moounit):

@@ -51,7 +51,6 @@ func (s *SoundcloudExtension) RequestedSearchResult(req *extensions.RequestedSea
 		return cached, nil
 	}
 
-	api.LogInfo("Got here")
 	term := req.Query
 	res = &extensions.RequestedSearchResultResponse{}
 	sc, err := s.getSc()

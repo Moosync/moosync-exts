@@ -7,6 +7,7 @@ import {
   PerformAccountLoginResponse,
   PlaybackDetailsRequestedResponse,
   PreferenceData,
+  RegisterOauthRequest,
   RequestedAlbumSongsResponse,
   RequestedArtistSongsResponse,
   RequestedPlaylistSongsResponse,
@@ -16,6 +17,7 @@ import {
   SetAccountRequest,
   SetSecureRequest,
   Song,
+  SongType,
   getApi,
 } from "wasm-extension-js";
 import {
@@ -159,9 +161,45 @@ class YoutubeJsExtension {
     });
 
     try {
+      await api.registerOauth(
+        new RegisterOauthRequest({ url: "moosync.youtube.js" }),
+      );
+      const baseFetch = Platform.shim.fetch;
+      const fetchWithAuthFallback: typeof Platform.shim.fetch = async (
+        input,
+        init,
+      ) => {
+        const isReq = input instanceof Request;
+        const clonedBody =
+          isReq && typeof input.clone === "function" && input.body !== null
+            ? await input.clone().text()
+            : undefined;
+        const response = await baseFetch(input, init);
+        if (response.status !== 400) {
+          return response;
+        }
+        const headers = new Headers(
+          init?.headers ?? (isReq ? input.headers : undefined),
+        );
+        if (!headers.has("authorization") && !headers.has("Authorization")) {
+          return response;
+        }
+        headers.delete("authorization");
+        headers.delete("Authorization");
+        const retryInput = isReq ? input.url : input;
+        const retryInit: RequestInit = isReq
+          ? {
+              method: init?.method ?? input.method,
+              headers,
+              body: init?.body ?? clonedBody,
+            }
+          : { ...init, headers };
+        return baseFetch(retryInput, retryInit);
+      };
       this.innertube = await Innertube.create({
         timezone: "UTC",
         generate_session_locally: true,
+        fetch: fetchWithAuthFallback,
       });
 
       this.innertube.session.on("auth-pending", async (data) => {
@@ -596,8 +634,28 @@ class YoutubeJsExtension {
         return cached;
       }
       try {
-        const feed = await this.innertube.getPlaylists();
-        const playlists = feed.playlists.map(parsePlaylist).filter(Boolean);
+        const innertube = this.innertube;
+        const playlists = await innertube
+          .getPlaylists()
+          .then((feed) => feed.playlists.map(parsePlaylist).filter(Boolean))
+          .catch(async (primaryError) => {
+            console.warn(
+              "getPlaylists failed, falling back to music.getLibrary",
+              primaryError,
+            );
+            const library = await innertube.music.getLibrary();
+            const libraryItems =
+              library.contents?.flatMap((section) => {
+                if ("items" in section && Array.isArray(section.items)) {
+                  return section.items;
+                }
+                if ("contents" in section && Array.isArray(section.contents)) {
+                  return section.contents;
+                }
+                return [];
+              }) ?? [];
+            return libraryItems.map(parsePlaylist).filter(Boolean);
+          });
         const resp = new RequestedPlaylistsResponse({ playlists });
         if (playlists.length > 0) {
           await api.setCache(cacheKey, resp, CACHE_TTL_SECONDS);
@@ -660,9 +718,44 @@ class YoutubeJsExtension {
         return new PlaybackDetailsRequestedResponse();
       }
 
+      const ext = song.song?.extension ?? "";
+      const isYoutubeOrigin =
+        !ext ||
+        ext === "moosync.youtube.js" ||
+        ext === "youtube_js" ||
+        ext === "youtube";
+      const songType = song.song?.type;
+      const isYoutubeType = songType !== SongType.SPOTIFY;
       const rawId =
         song.song?.id ?? song.song?.playbackUrl ?? song.song?.url ?? "";
-      const videoId = extractVideoId(rawId);
+      const cleanId = sanitizeId(rawId);
+      const isYoutubeUrlOrStrictId =
+        /^[a-zA-Z0-9_-]{11}$/.test(cleanId) ||
+        cleanId.includes("youtube.com") ||
+        cleanId.includes("youtu.be");
+
+      let videoId =
+        isYoutubeOrigin && isYoutubeType && isYoutubeUrlOrStrictId
+          ? extractVideoId(rawId)
+          : "";
+      if (!videoId) {
+        const title = song.song?.title ?? "";
+        const artists = song.artists
+          .map((a) => a.artistName ?? "")
+          .filter(Boolean)
+          .join(" ");
+        const searchQuery = `${artists} ${title}`.trim();
+        if (!searchQuery) {
+          return new PlaybackDetailsRequestedResponse();
+        }
+        const searchRes = await this.innertube.music.search(searchQuery, {
+          type: "song",
+        });
+        const firstSong = searchRes.songs?.contents
+          .map(parseSong)
+          .find((s) => Boolean(s?.song?.id));
+        videoId = extractVideoId(firstSong?.song?.id ?? "");
+      }
       if (!videoId) {
         return new PlaybackDetailsRequestedResponse();
       }

@@ -9,7 +9,8 @@ use moosync_edk::{
     info,
     types::{
         CustomRequest, CustomRequestResponse, PerformAccountLoginRequest,
-        PerformAccountLoginResponse, PreferenceItem, PreferenceType,
+        PerformAccountLoginResponse, PlaybackDetailsRequestedRequest,
+        PlaybackDetailsRequestedResponse, PreferenceItem, PreferenceType,
         RegisterUserPreferenceRequest, RequestedAlbumSongsRequest, RequestedAlbumSongsResponse,
         RequestedArtistSongsRequest, RequestedArtistSongsResponse, RequestedPlaylistSongsRequest,
         RequestedPlaylistSongsResponse, RequestedPlaylistsRequest, RequestedPlaylistsResponse,
@@ -69,12 +70,16 @@ impl Provider for KoelExtension {
         &self,
         _: RequestedPlaylistsRequest,
     ) -> MoosyncResult<RequestedPlaylistsResponse> {
+        let mut inner = self.inner.lock().unwrap();
+        if !inner.is_logged_in() {
+            return Err("Not logged in".into());
+        }
+
         let cache_key = cache_keys::user_playlists();
         if let Ok(Some(cached)) = get_cache::<RequestedPlaylistsResponse>(&cache_key) {
             return Ok(cached);
         }
 
-        let mut inner = self.inner.lock().unwrap();
         let playlists = inner.get_playlists()?;
         let resp = RequestedPlaylistsResponse { playlists };
         let _ = set_cache_with_ttl(&cache_key, &resp, Some(3600));
@@ -143,15 +148,48 @@ impl Provider for KoelExtension {
         Ok(resp)
     }
 
+    fn playback_details_requested(
+        &self,
+        req: PlaybackDetailsRequestedRequest,
+    ) -> MoosyncResult<PlaybackDetailsRequestedResponse> {
+        let song = req.song.ok_or("No song provided")?;
+        let inner = song.song.ok_or("No inner song provided")?;
+        let is_koel_ext = matches!(
+            inner.extension.as_deref(),
+            Some("moosync.koel") | Some("koel")
+        );
+        let id_or_url = inner
+            .playback_url
+            .or(inner.id)
+            .ok_or("No song id or playback_url")?;
+        let is_koel_url = id_or_url.starts_with("extension://moosync.koel/")
+            || id_or_url.starts_with("moosync.koel:");
+        if !is_koel_ext && !is_koel_url {
+            return Err("Not a Koel song".into());
+        }
+        let cleaned = id_or_url.replace("moosync.koel:", "");
+        let stream_url = self.inner.lock().unwrap().handle_custom_request(cleaned)?;
+        Ok(PlaybackDetailsRequestedResponse {
+            url: stream_url,
+            duration: inner.duration,
+            decryption_key: None,
+        })
+    }
+
     fn custom_request(&self, req: CustomRequest) -> MoosyncResult<CustomRequestResponse> {
         let inner = self.inner.lock().unwrap();
-        let payload = req.payload.ok_or("No payload provided")?;
-        let url_val = utils::google_struct_to_serde(payload);
-        let url = url_val
-            .get("url")
-            .and_then(|v| v.as_str())
-            .map(|s| s.to_string())
-            .ok_or("Invalid payload")?;
+        let url = req
+            .payload
+            .and_then(|payload| {
+                utils::google_struct_to_serde(payload)
+                    .get("url")
+                    .and_then(|v| v.as_str())
+                    .map(|s| s.to_string())
+            })
+            .unwrap_or(req.request_id);
+        if url.is_empty() {
+            return Err("No url or request_id provided".into());
+        }
         Ok(CustomRequestResponse {
             mime_type: None,
             data: None,
@@ -170,7 +208,10 @@ impl Accounts for KoelExtension {
         let mut inner = self.inner.lock().unwrap();
         let resp = inner.perform_account_login(args.login_status);
         info!("Got resp {:?}", resp);
-        Ok(PerformAccountLoginResponse { status: resp? })
+        Ok(PerformAccountLoginResponse {
+            url: resp?,
+            device_code: None,
+        })
     }
 }
 impl Extension for KoelExtension {}

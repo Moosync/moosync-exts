@@ -8,9 +8,9 @@ use crate::{
 use futures::executor::block_on;
 use moosync_edk::{
     api::{
-        get_preference, get_secure, register_user_preference, set_account, set_secure, Accounts,
-        ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider, PreferenceEvents,
-        Provider,
+        get_preference, get_secure, register_oauth, register_user_preference, set_account,
+        set_secure, Accounts, ContextMenu, DatabaseEvents, Extension, PlayerEvents, PlayerProvider,
+        PreferenceEvents, Provider,
     },
     cache::{get_cache, set_cache, set_cache_with_ttl},
     error,
@@ -24,7 +24,8 @@ use moosync_edk::{
         PlayerPlayRequest, PlayerPlayResponse, PlayerSeekRequest, PlayerSeekResponse,
         PlayerSetVolumeRequest, PlayerSetVolumeResponse, PlayerStopRequest, PlayerStopResponse,
         Playlist, PreferenceChangedRequest, PreferenceData, PreferenceItem, PreferenceType,
-        PreferenceValue, RegisterUserPreferenceRequest, RequestedAlbumSongsRequest,
+        PreferenceValue, RegisterOauthRequest, RegisterUserPreferenceRequest,
+        RequestedAlbumSongsRequest,
         RequestedAlbumSongsResponse, RequestedArtistSongsRequest, RequestedArtistSongsResponse,
         RequestedPlaylistSongsRequest, RequestedPlaylistSongsResponse, RequestedPlaylistsRequest,
         RequestedPlaylistsResponse, RequestedRecommendationsRequest,
@@ -45,9 +46,10 @@ struct SpotifyExtension {
     soloist_player: Arc<SoloistPlayer>,
 }
 
-fn register_prefs() -> MoosyncResult<()> {
+fn register_prefs(status_item: PreferenceItem) -> MoosyncResult<()> {
     register_user_preference(RegisterUserPreferenceRequest {
         prefs: vec![
+            status_item,
             PreferenceItem {
                 pref_type: PreferenceType::TextInputGroup as i32,
                 title: "Client ID".into(),
@@ -74,6 +76,9 @@ fn register_prefs() -> MoosyncResult<()> {
                 title: "Soloist WebSocket Port".into(),
                 id: "soloist_ws_port".into(),
                 subtitle: "WebSocket port for Spotify Soloist (default: 9090)".into(),
+                value: Some(PreferenceValue {
+                    value: Some(preference_value::Value::StringValue("9090".into())),
+                }),
                 default: Some(PreferenceValue {
                     value: Some(preference_value::Value::StringValue("9090".into())),
                 }),
@@ -95,7 +100,41 @@ impl SpotifyExtension {
         client.create_client_if_possible();
         client.set_client_tokens();
         client.init_soloist_port();
+        client.sync_account();
+        client.ensure_soloist_pairing();
         client
+    }
+
+    fn ensure_soloist_pairing(&self) {
+        if !self.is_premium() {
+            self.soloist_player
+                .set_status(soloist::SoloistStatus::Inactive(
+                    "Spotify Premium required".into(),
+                ));
+            return;
+        }
+        if self.soloist_player.is_paired() {
+            self.soloist_player
+                .set_status(soloist::SoloistStatus::Connected("Paired and ready".into()));
+            return;
+        }
+        let soloist_api_key = self.get_soloist_api_key();
+        if soloist_api_key.is_empty() {
+            self.soloist_player
+                .set_status(soloist::SoloistStatus::Inactive(
+                    "Soloist API Key not configured".into(),
+                ));
+            return;
+        }
+        if let Err(e) = self.soloist_player.start_pairing_mode(true, &soloist_api_key) {
+            warn!("Failed to start soloist pairing mode: {}", e);
+        }
+    }
+
+    fn update_soloist_status(&self) {
+        let _ = register_user_preference(RegisterUserPreferenceRequest {
+            prefs: vec![self.soloist_player.status_preference_item()],
+        });
     }
 
     fn init_soloist_port(&self) {
@@ -129,24 +168,35 @@ impl SpotifyExtension {
         }
     }
 
+    fn get_config_value(&self, key: &str) -> MoosyncResult<Option<String>> {
+        let resp_secure = get_secure(GetSecureRequest {
+            data: Some(PreferenceData {
+                key: key.into(),
+                ..Default::default()
+            }),
+        })?;
+        if let Some(val) = resp_secure
+            .data
+            .and_then(|d| cast_prefdata::<String>(d).ok().flatten())
+        {
+            if !val.is_empty() {
+                return Ok(Some(val));
+            }
+        }
+        let resp_pref = get_preference(GetPreferenceRequest {
+            data: Some(PreferenceData {
+                key: key.into(),
+                ..Default::default()
+            }),
+        })?;
+        Ok(resp_pref
+            .data
+            .and_then(|d| cast_prefdata::<String>(d).ok().flatten()))
+    }
+
     fn get_config(&self) -> MoosyncResult<SpotifyConfig> {
-        let resp_secret = get_secure(GetSecureRequest {
-            data: Some(PreferenceData {
-                key: "client_secret".into(),
-                ..Default::default()
-            }),
-        })?;
-        let client_secret: Option<String> = resp_secret.data.and_then(|d| cast_prefdata(d).ok().flatten());
-
-        let resp_id = get_secure(GetSecureRequest {
-            data: Some(PreferenceData {
-                key: "client_id".into(),
-                ..Default::default()
-            }),
-        })?;
-        let client_id: Option<String> = resp_id.data.and_then(|d| cast_prefdata(d).ok().flatten());
-
-        info!("Got config {:?} {:?}", client_secret, client_id);
+        let client_secret = self.get_config_value("client_secret")?;
+        let client_id = self.get_config_value("client_id")?;
 
         if let (Some(client_secret), Some(client_id)) = (client_secret, client_id) {
             return Ok(SpotifyConfig {
@@ -222,6 +272,13 @@ impl SpotifyExtension {
         let api_client = self.api_client.lock().unwrap();
         api_client.as_ref().map(|c| c.is_premium()).unwrap_or(false)
     }
+
+    fn is_logged_in(&self) -> bool {
+        let api_client = self.api_client.lock().unwrap();
+        api_client
+            .as_ref()
+            .is_some_and(|client| client.get_tokens().is_some())
+    }
 }
 
 impl PlayerEvents for SpotifyExtension {}
@@ -255,6 +312,7 @@ impl PlayerProvider for SpotifyExtension {
             if !paired {
                 let _ = self.soloist_player.start_pairing_mode(is_premium, &api_key);
             }
+            self.update_soloist_status();
             return Ok(CanPlayResponse { can_play: paired });
         }
 
@@ -398,6 +456,10 @@ impl Provider for SpotifyExtension {
     }
 
     fn requested_playlists(&self, _: RequestedPlaylistsRequest) -> MoosyncResult<RequestedPlaylistsResponse> {
+        if !self.is_logged_in() {
+            return Err("Not logged in".into());
+        }
+
         let cache_key = cache_keys::user_playlists();
         if let Ok(Some(cached)) = get_cache::<RequestedPlaylistsResponse>(&cache_key) {
             return Ok(cached);
@@ -475,6 +537,10 @@ impl Provider for SpotifyExtension {
     }
 
     fn requested_recommendations(&self, _: RequestedRecommendationsRequest) -> MoosyncResult<RequestedRecommendationsResponse> {
+        if !self.is_logged_in() {
+            return Err("Not logged in".into());
+        }
+
         let cache_key = cache_keys::recommendations();
         if let Ok(Some(cached)) = get_cache::<RequestedRecommendationsResponse>(&cache_key) {
             return Ok(cached);
@@ -501,9 +567,12 @@ impl DatabaseEvents for SpotifyExtension {}
 impl PreferenceEvents for SpotifyExtension {
     fn preference_changed(&self, req: PreferenceChangedRequest) -> MoosyncResult<()> {
         if let Some(pref) = req.preference {
-            if pref.key == "soloist_ws_port" {
+            if pref.key == "soloist_ws_port" || pref.key.ends_with(":soloist_ws_port") {
                 let port = self.get_soloist_port();
                 self.soloist_player.set_port(port);
+            } else if pref.key == "soloist_api_key" || pref.key.ends_with(":soloist_api_key") {
+                self.ensure_soloist_pairing();
+                self.update_soloist_status();
             }
         }
         Ok(())
@@ -518,8 +587,12 @@ impl SpotifyExtension {
         let mut username = None;
         let mut logged_in = false;
         if let Some(api_client) = api_client.as_mut() {
-            logged_in = true;
-            username = block_on(api_client.get_username()).ok().flatten();
+            if api_client.get_tokens().is_some() {
+                if let Ok(name) = block_on(api_client.get_username()) {
+                    username = name;
+                    logged_in = true;
+                }
+            }
         }
 
         let _ = set_account(SetAccountRequest {
@@ -536,19 +609,46 @@ impl SpotifyExtension {
     }
 }
 
+const PAIRING_INSTRUCTIONS: &str = "\
+**Complete Spotify Pairing**
+
+To play Spotify tracks in Moosync, pair your Spotify account with the **Moosync** playback device:
+
+1. Open the **Spotify** app on your computer or phone (logged into the same Spotify Premium account).
+2. Open the **Now Playing** bar/screen and click or tap the **Connect to a device** icon.
+3. Select **Moosync** from the list of available devices.
+4. Wait a few seconds for pairing to complete, then click **Done** below and play any Spotify track in Moosync.
+
+If **Moosync** does not appear in the device list, verify your **Soloist API Key** in Spotify extension settings and try playing a Spotify track in Moosync to restart pairing mode.";
+
 impl Accounts for SpotifyExtension {
     fn perform_account_login(&self, args: PerformAccountLoginRequest) -> MoosyncResult<PerformAccountLoginResponse> {
         let mut guard = self.api_client.lock().unwrap();
         if let Some(api_client) = guard.as_mut() {
             if args.login_status {
-                let status = api_client.login()?;
-                return Ok(PerformAccountLoginResponse { status });
+                let url = api_client.login()?;
+                return Ok(PerformAccountLoginResponse {
+                    url,
+                    device_code: None,
+                });
             } else {
                 api_client.logout();
                 drop(guard);
+                if let Err(e) = set_secure(SetSecureRequest {
+                    data: Some(PreferenceData {
+                        key: "tokens".into(),
+                        value: None,
+                        ..Default::default()
+                    }),
+                }) {
+                    error!("Failed to clear tokens from secure storage: {}", e);
+                }
                 self.sync_account();
+                self.ensure_soloist_pairing();
+                self.update_soloist_status();
                 return Ok(PerformAccountLoginResponse {
-                    status: "".into(),
+                    url: "".into(),
+                    device_code: None,
                 });
             }
         }
@@ -572,7 +672,17 @@ impl Accounts for SpotifyExtension {
             };
             drop(guard);
             self.sync_account();
-            return Ok(OauthCallbackResponse {});
+            let was_paired = self.soloist_player.is_paired();
+            self.ensure_soloist_pairing();
+            self.update_soloist_status();
+
+            let extra_content = if !was_paired && self.is_premium() {
+                Some(PAIRING_INSTRUCTIONS.to_string())
+            } else {
+                None
+            };
+
+            return Ok(OauthCallbackResponse { extra_content });
         }
         Err("Missing client credentials".into())
     }
@@ -583,10 +693,16 @@ pub extern "C" fn init() {
     info!("Initializing spotify extension");
 
     let extension = SpotifyExtension::new();
-    extension.sync_account();
+    let status_item = extension.soloist_player.status_preference_item();
 
     register_extension(Box::new(extension)).unwrap();
-    register_prefs().unwrap();
+    register_prefs(status_item).unwrap();
+    let _ = register_oauth(RegisterOauthRequest {
+        url: "moosync.app".into(),
+    });
+    let _ = register_oauth(RegisterOauthRequest {
+        url: "moosync.spotify".into(),
+    });
 
     info!("Initialized spotify extension");
 }

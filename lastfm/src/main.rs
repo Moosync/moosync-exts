@@ -51,8 +51,10 @@ impl LastFMExtension {
             if let Some(session) = resp.data.and_then(|d| d.value) {
                 if let Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(session_str)) = session.kind {
                      if let Ok(parsed_session) = serde_json::from_str(&session_str) {
-                         let mut client = self.client.lock().unwrap();
-                         client.set_session(parsed_session);
+                         {
+                             let mut client = self.client.lock().unwrap();
+                             client.set_session(parsed_session);
+                         }
                          self.sync_account();
                      } else {
                          error!("Failed to parse existing sessions {:?}", session_str);
@@ -112,14 +114,22 @@ impl Accounts for LastFMExtension {
         args: PerformAccountLoginRequest,
     ) -> MoosyncResult<PerformAccountLoginResponse> {
         info!("Performing account login {}", args.login_status);
-        let mut client = self.client.lock().unwrap();
         if args.login_status {
-            let res = client.login();
+            let res = {
+                let client = self.client.lock().unwrap();
+                client.login()
+            };
             info!("opening url {}", res);
             api::open_external_url(OpenExternalUrlRequest { url: res.clone() })?;
-            Ok(PerformAccountLoginResponse { status: res })
+            Ok(PerformAccountLoginResponse {
+                url: res,
+                device_code: None,
+            })
         } else {
-            client.logout();
+            {
+                let mut client = self.client.lock().unwrap();
+                client.logout();
+            }
             api::set_secure(SetSecureRequest {
                 data: Some(PreferenceData {
                     key: "session".to_string(),
@@ -128,41 +138,46 @@ impl Accounts for LastFMExtension {
             })?;
             self.sync_account();
             Ok(PerformAccountLoginResponse {
-                status: String::new(),
+                url: String::new(),
+                device_code: None,
             })
         }
     }
 
     fn oauth_callback(&self, req: OauthCallbackRequest) -> MoosyncResult<OauthCallbackResponse> {
         info!("Got oauth callback {:?}", req);
-        let mut client = self.client.lock().unwrap();
-        match client.authorize(req.callback_uri) {
-            Ok(s) => {
-                if let Err(e) = api::set_secure(SetSecureRequest {
-                    data: Some(PreferenceData {
-                        key: "session".to_string(),
-                        value: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
-                             kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(serde_json::to_string(&s).unwrap())),
+        {
+            let mut client = self.client.lock().unwrap();
+            match client.authorize(req.callback_uri) {
+                Ok(s) => {
+                    if let Err(e) = api::set_secure(SetSecureRequest {
+                        data: Some(PreferenceData {
+                            key: "session".to_string(),
+                            value: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::Value {
+                                 kind: Some(moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind::StringValue(serde_json::to_string(&s).unwrap())),
+                            }),
                         }),
-                    }),
-                }) {
-                    error!("Failed to set lastfm token in secure store {}", e);
+                    }) {
+                        error!("Failed to set lastfm token in secure store {}", e);
+                    }
                 }
-            }
-            Err(e) => {
-                error!("Error while authorizing: {}", e);
-                return Err(e);
+                Err(e) => {
+                    error!("Error while authorizing: {}", e);
+                    return Err(e);
+                }
             }
         }
 
         self.sync_account();
-        Ok(OauthCallbackResponse {})
+        Ok(OauthCallbackResponse {
+            extra_content: None,
+        })
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn init() {
-    info!("Initializing SampleExtension");
+    info!("Initializing LastFMExtension");
 
     let extension = LastFMExtension::new();
     extension.fetch_session().unwrap();

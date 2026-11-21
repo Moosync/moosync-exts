@@ -1,4 +1,3 @@
-use futures::executor::block_on;
 use moosync_edk::{
     api, info,
     types::{
@@ -26,7 +25,6 @@ pub struct KoelClient {
     pub token: Option<String>,
     pub koel_url: String,
     username: Option<String>,
-    client: reqwest::Client,
 }
 
 impl Default for KoelClient {
@@ -129,7 +127,6 @@ impl KoelClient {
             token: None,
             username: None,
             koel_url,
-            client: reqwest::Client::new(),
         };
         if let Err(e) = s.login_and_get_token() {
             info!("Error getting token {}", e);
@@ -141,6 +138,21 @@ impl KoelClient {
         if self.token.is_some() {
             info!("Token already exists. Skipping...");
             return Ok(());
+        }
+        if let Some(url) = api::get_preference(GetPreferenceRequest {
+            data: Some(PreferenceData {
+                key: "koel_instance_url".to_string(),
+                value: None,
+            }),
+        })
+        .ok()
+        .and_then(|resp| {
+            resp.data
+                .and_then(|v| v.value.and_then(crate::utils::google_value_to_string))
+        }) {
+            if !url.is_empty() {
+                self.koel_url = url;
+            }
         }
         let email = api::get_preference(GetPreferenceRequest {
             data: Some(PreferenceData {
@@ -157,21 +169,39 @@ impl KoelClient {
             }),
         })
         .ok()
-        .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)));
+        .and_then(|resp| resp.data.and_then(|v| v.value.and_then(crate::utils::google_value_to_string)))
+        .or_else(|| {
+            api::get_preference(GetPreferenceRequest {
+                data: Some(PreferenceData {
+                    key: "koel_password".to_string(),
+                    value: None,
+                }),
+            })
+            .ok()
+            .and_then(|resp| {
+                resp.data
+                    .and_then(|v| v.value.and_then(crate::utils::google_value_to_string))
+            })
+        });
 
-        info!("Loggnig in {:?}, {:?}", email, password);
+        info!("Logging in {:?}", email);
         if email.is_none() || password.is_none() {
             return Err(KoelError::MissingToken);
         }
         let username = email.unwrap();
         let password = password.unwrap();
 
-        let url = format!("{}/api/me", self.koel_url);
         let body = json!({
             "email": username,
             "password": password
         });
-        let v: Value = block_on(block_on(self.client.post(&url).json(&body).send())?.json())?;
+        let v: Value = self.send_json_request(
+            reqwest::Method::POST,
+            "api/me",
+            false,
+            Some(&body),
+            KoelError::MissingToken,
+        )?;
 
         if let Some(token) = v.get("token").and_then(|t| t.as_str()) {
             self.token = Some(token.to_string());
@@ -261,6 +291,10 @@ impl KoelClient {
             }),
         });
         Ok(())
+    }
+
+    pub fn is_logged_in(&self) -> bool {
+        self.token.is_some()
     }
 
     pub fn perform_account_login(&mut self, login_status: bool) -> Result<String, KoelError> {

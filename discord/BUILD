@@ -7,7 +7,11 @@ rust_extension(
     name = "discord",
     package_name = "moosync.discord.rpc",
     srcs = glob(["src/**/*.rs"]),
-    allowed_hosts = [],
+    allowed_hosts = [
+        "api.imgbb.com",
+        "litterbox.catbox.moe",
+        "api.deezer.com",
+    ],
     allowed_paths = {
         "{XDG_RUNTIME_DIR}": "/",
         "/tmp": "/",
@@ -18,6 +22,8 @@ rust_extension(
         "{XDG_RUNTIME_DIR}/app/com.discordapp.Discord": "/",
         "\\\\.\\pipe\\": "/",
         "{XDG_RUNTIME_DIR}/.flatpak/dev.vencord.Vesktop/xdg-run": "/",
+        "{HOME}/.cache/moosync/thumbnails": "/thumbnails",
+        "{XDG_CACHE_HOME}/moosync/thumbnails": "/thumbnails",
     },
     scopes = [
         PROVIDER_SCOPES.PLAYER_UI_EVENTS,

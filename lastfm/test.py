@@ -51,14 +51,16 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    scopes = list(entry.manifest.scopes)
-    scopes.sort()
+    scopes = sorted(s.scope for s in entry.manifest.scopes)
 
-    assert len(scopes) == 2
-    assert scopes == [
-        ExtensionProviderScope.SCROBBLE,
-        ExtensionProviderScope.ACCOUNTS,
-    ]
+    assert len(scopes) == 3
+    assert scopes == sorted(
+        [
+            ExtensionProviderScope.SCROBBLE,
+            ExtensionProviderScope.ACCOUNTS,
+            ExtensionProviderScope.PLAYER_DATA_EVENTS,
+        ]
+    )
 
 
 def test_login(entry: Moounit):
@@ -78,4 +80,4 @@ def test_login(entry: Moounit):
             )
         )
     )
-    assert ret.perform_account_login.status != ""
+    assert ret.perform_account_login.url == url

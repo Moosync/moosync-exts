@@ -140,13 +140,8 @@ impl ApiClient {
     }
 
     pub async fn authorize(&mut self, code: String) -> MoosyncResult<()> {
-        let (client, verifier) = match self.verifier.take() {
-            Some((c, v, _)) => (c, Some(v)),
-            None => (self.get_oauth_client(), None),
-        };
-
-        let code_val = if code.contains("?") || code.contains("code=") || code.contains("&") || code.starts_with("http") {
-            let url_str = if !code.starts_with("http") {
+        let code_val = if code.contains("?") || code.contains("code=") || code.contains("&") || code.starts_with("http") || code.starts_with("moosync://") {
+            let url_str = if !code.starts_with("http") && !code.starts_with("moosync://") {
                 if code.starts_with("?") {
                     format!("https://moosync.app/{}", code)
                 } else if code.contains("code=") {
@@ -168,6 +163,11 @@ impl ApiClient {
 
         info!("Got code {}", code_val);
 
+        let (client, verifier) = match self.verifier.as_ref() {
+            Some((c, v, _)) => (c.clone(), Some(PkceCodeVerifier::new(v.secret().clone()))),
+            None => (self.get_oauth_client(), None),
+        };
+
         let http_client = reqwest::ClientBuilder::new()
             .build()
             .map_err(|e| e.to_string())?;
@@ -181,6 +181,8 @@ impl ApiClient {
             .request_async(&http_client)
             .await
             .map_err(|e| format!("Token exchange failed: {}", e))?;
+
+        self.verifier = None;
 
         let refresh_token = res
             .refresh_token()

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::{collections::HashSet, sync::Mutex};
+
 use futures::executor::block_on;
 use moosync_edk::{
     api::{
@@ -37,6 +39,7 @@ mod cache_keys;
 
 struct CoverArtExtension {
     client: Client,
+    attempted_keys: Mutex<HashSet<String>>,
 }
 
 impl Extension for CoverArtExtension {}
@@ -332,6 +335,11 @@ impl Provider for CoverArtExtension {
             if let Ok(Some(cached)) = get_cache::<RequestedCoverArtResponse>(key) {
                 return Ok(cached);
             }
+            if !self.attempted_keys.lock().unwrap().insert(key.clone()) {
+                return Ok(RequestedCoverArtResponse {
+                    cover_urls: Vec::new(),
+                });
+            }
         }
 
         let mut urls = Vec::new();
@@ -370,6 +378,7 @@ impl Provider for CoverArtExtension {
 pub extern "C" fn init() {
     let extension = CoverArtExtension {
         client: Client::new(),
+        attempted_keys: Mutex::new(HashSet::new()),
     };
     let _ = register_extension(Box::new(extension));
 }

@@ -9,8 +9,9 @@ use moosync_edk::{
     api::{duration_to_proto, get_platform, notify_player_event, spawn_process},
     info,
     types::{
-        player_event, ChildProcess, Duration as ProtoDuration, NotifyPlayerEventRequest,
-        PlayerEvent, Song, WebSocketClient, WebSocketMessage,
+        player_event, preference_value, ChildProcess, Duration as ProtoDuration,
+        NotifyPlayerEventRequest, PlayerEvent, PreferenceItem, PreferenceType, PreferenceValue,
+        Song, StatusDot, StatusDotColor, StatusDotList, WebSocketClient, WebSocketMessage,
     },
     warn, MoosyncError, MoosyncResult,
 };
@@ -27,23 +28,68 @@ pub const DEFAULT_WS_PORT: u16 = 9090;
 pub const SOLOIST_DEVICE_NAME: &str = "Moosync";
 pub const EXPIRATION_EXIT_CODE: i32 = 10;
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SoloistStatus {
+    Inactive(String),
+    Discovery(String),
+    Connected(String),
+    Error(String),
+}
+
 pub struct SoloistPlayer {
     pairing_process: Mutex<Option<ChildProcess>>,
     process: Mutex<Option<ChildProcess>>,
     ws: Mutex<Option<WebSocketClient>>,
     port: Mutex<u16>,
     is_paired: Mutex<bool>,
+    status: Mutex<SoloistStatus>,
 }
 
 impl SoloistPlayer {
     pub fn new() -> Self {
         let is_paired = Self::has_stored_session();
+        let initial_status = if is_paired {
+            SoloistStatus::Connected("Paired and ready".into())
+        } else {
+            SoloistStatus::Inactive("Not running".into())
+        };
         Self {
             pairing_process: Mutex::new(None),
             process: Mutex::new(None),
             ws: Mutex::new(None),
             port: Mutex::new(DEFAULT_WS_PORT),
             is_paired: Mutex::new(is_paired),
+            status: Mutex::new(initial_status),
+        }
+    }
+
+    pub fn set_status(&self, status: SoloistStatus) {
+        *self.status.lock().unwrap() = status;
+    }
+
+    pub fn status_preference_item(&self) -> PreferenceItem {
+        let status = self.status.lock().unwrap().clone();
+        let (title, subtitle, color) = match status {
+            SoloistStatus::Inactive(msg) => ("Inactive", msg, StatusDotColor::Off),
+            SoloistStatus::Discovery(msg) => ("Discovery", msg, StatusDotColor::Warn),
+            SoloistStatus::Connected(msg) => ("Connected", msg, StatusDotColor::Info),
+            SoloistStatus::Error(msg) => ("Error", msg, StatusDotColor::Error),
+        };
+        PreferenceItem {
+            id: "soloist_status".into(),
+            pref_type: PreferenceType::StatusGroup as i32,
+            title: "Soloist Status".into(),
+            subtitle: "Current state of the Spotify Soloist playback daemon".into(),
+            value: Some(PreferenceValue {
+                value: Some(preference_value::Value::StatusList(StatusDotList {
+                    values: vec![StatusDot {
+                        title: title.into(),
+                        subtitle,
+                        color: color as i32,
+                    }],
+                })),
+            }),
+            ..Default::default()
         }
     }
 
@@ -56,6 +102,15 @@ impl SoloistPlayer {
     }
 
     fn has_stored_session() -> bool {
+        let users_dir = Path::new(SOLOIST_DATA_DIR).join("settings").join("Users");
+        if let Ok(user_entries) = fs::read_dir(&users_dir) {
+            for entry in user_entries.flatten() {
+                if !entry.file_name().to_string_lossy().starts_with('.') {
+                    return true;
+                }
+            }
+        }
+
         let path = Path::new(SOLOIST_DATA_DIR);
         if !path.exists() {
             return false;
@@ -65,9 +120,13 @@ impl SoloistPlayer {
             Err(_) => return false,
         };
         for entry in entries.flatten() {
+            if !entry.path().is_file() {
+                continue;
+            }
             let name = entry.file_name();
             let name_str = name.to_string_lossy();
-            if !name_str.ends_with(".pid")
+            if !name_str.starts_with('.')
+                && !name_str.ends_with(".pid")
                 && !name_str.ends_with(".addr")
                 && !name_str.ends_with(".port")
             {
@@ -102,12 +161,20 @@ impl SoloistPlayer {
         let target_url = get_soloist_download_url(&platform.os, &platform.arch)?;
 
         let bytes = block_on(async {
-            reqwest::Client::new()
+            let resp = reqwest::Client::new()
                 .get(&target_url)
                 .send()
                 .await
-                .map_err(|e| MoosyncError::String(format!("Failed to fetch soloist binary: {}", e)))?
-                .bytes()
+                .map_err(|e| {
+                    MoosyncError::String(format!("Failed to fetch soloist binary: {}", e))
+                })?;
+            if !resp.status().is_success() {
+                return Err(MoosyncError::String(format!(
+                    "Failed to fetch soloist binary: HTTP {}",
+                    resp.status()
+                )));
+            }
+            resp.bytes()
                 .await
                 .map_err(|e| MoosyncError::String(format!("Failed to read soloist bytes: {}", e)))
         })?;
@@ -133,15 +200,25 @@ impl SoloistPlayer {
         }
 
         if self.is_paired() {
+            self.set_status(SoloistStatus::Connected("Paired and ready".into()));
             return Ok(());
         }
 
         let mut pairing_guard = self.pairing_process.lock().unwrap();
-        if pairing_guard.is_some() {
-            return Ok(());
+        if let Some(proc) = pairing_guard.as_ref() {
+            if proc.get_status().map(|(running, _)| running).unwrap_or(false) {
+                self.set_status(SoloistStatus::Discovery(
+                    "Advertising 'Moosync' via Spotify Connect".into(),
+                ));
+                return Ok(());
+            }
+            *pairing_guard = None;
         }
 
-        self.ensure_binary_downloaded(is_premium)?;
+        if let Err(e) = self.ensure_binary_downloaded(is_premium) {
+            self.set_status(SoloistStatus::Error(e.to_string()));
+            return Err(e);
+        }
 
         fs::create_dir_all(SOLOIST_DATA_DIR).map_err(|e| {
             MoosyncError::String(format!("Failed to create soloist data dir: {}", e))
@@ -161,14 +238,24 @@ impl SoloistPlayer {
 
         let env = HashMap::new();
         info!("Spawning Spotify Soloist in pairing mode");
-        let child = spawn_process(SOLOIST_BIN_PATH, &args, &env)?;
+        let child = match spawn_process(SOLOIST_BIN_PATH, &args, &env) {
+            Ok(c) => c,
+            Err(e) => {
+                self.set_status(SoloistStatus::Error(e.to_string()));
+                return Err(e);
+            }
+        };
 
         *pairing_guard = Some(child);
+        self.set_status(SoloistStatus::Discovery(
+            "Advertising 'Moosync' via Spotify Connect".into(),
+        ));
         Ok(())
     }
 
     pub fn poll_pairing_status(&self) -> MoosyncResult<bool> {
         if self.is_paired() {
+            self.set_status(SoloistStatus::Connected("Paired and ready".into()));
             return Ok(true);
         }
 
@@ -181,19 +268,27 @@ impl SoloistPlayer {
                     let mut paired = self.is_paired.lock().unwrap();
                     *paired = true;
                     *pairing_guard = None;
+                    self.set_status(SoloistStatus::Connected("Paired and ready".into()));
                     return Ok(true);
                 }
                 if exit_code == Some(EXPIRATION_EXIT_CODE) {
                     handle_expiration_cleanup();
                     *pairing_guard = None;
-                    return Err(MoosyncError::String(
-                        "Spotify Soloist build expired (exit code 10).".into(),
-                    ));
+                    let msg = "Spotify Soloist build expired (exit code 10).".to_string();
+                    self.set_status(SoloistStatus::Error(msg.clone()));
+                    return Err(MoosyncError::String(msg));
                 }
                 warn!("Soloist pairing process exited with code: {:?}", exit_code);
                 *pairing_guard = None;
+                self.set_status(SoloistStatus::Error(format!(
+                    "Pairing exited with code {:?}",
+                    exit_code
+                )));
                 return Ok(false);
             }
+            self.set_status(SoloistStatus::Discovery(
+                "Advertising 'Moosync' via Spotify Connect".into(),
+            ));
             return Ok(false);
         }
 
@@ -204,6 +299,15 @@ impl SoloistPlayer {
         if !is_premium {
             return Err(MoosyncError::String(
                 "Spotify Premium is required for Spotify Soloist".into(),
+            ));
+        }
+
+        if api_key.is_empty() {
+            self.set_status(SoloistStatus::Inactive(
+                "Soloist API Key not configured".into(),
+            ));
+            return Err(MoosyncError::String(
+                "Soloist API Key is required for Spotify Soloist".into(),
             ));
         }
 
@@ -238,32 +342,48 @@ impl SoloistPlayer {
             &ws_arg,
             "--data-dir",
             SOLOIST_DATA_DIR,
+            "--api-key",
+            api_key,
         ];
 
         let mut env = HashMap::new();
-        if !api_key.is_empty() {
-            env.insert("SPOTIFY_SOLOIST_API_KEY".to_string(), api_key.to_string());
-        }
+        env.insert("SPOTIFY_SOLOIST_API_KEY".to_string(), api_key.to_string());
 
         info!("Spawning Spotify Soloist on ws port {}", port);
         let child = spawn_process(SOLOIST_BIN_PATH, &args, &env)?;
 
         let (running, exit_code) = child.get_status().unwrap_or((true, None));
-        if !running && exit_code == Some(EXPIRATION_EXIT_CODE) {
-            handle_expiration_cleanup();
-            return Err(MoosyncError::String(
-                "Spotify Soloist build expired (exit code 10).".into(),
-            ));
+        if !running {
+            if exit_code == Some(EXPIRATION_EXIT_CODE) {
+                handle_expiration_cleanup();
+                return Err(MoosyncError::String(
+                    "Spotify Soloist build expired (exit code 10).".into(),
+                ));
+            }
+            let err_msg = format!(
+                "Spotify Soloist exited immediately (exit code: {:?})",
+                exit_code
+            );
+            self.set_status(SoloistStatus::Error(err_msg.clone()));
+            return Err(MoosyncError::String(err_msg));
         }
 
+        if let Err(e) = self.connect_and_validate_socket(port, Some(&child)) {
+            self.set_status(SoloistStatus::Error(e.to_string()));
+            return Err(e);
+        }
         *proc_guard = Some(child);
-        self.connect_and_validate_socket(port)?;
         let mut paired = self.is_paired.lock().unwrap();
         *paired = true;
+        self.set_status(SoloistStatus::Connected("Paired and ready".into()));
         Ok(())
     }
 
-    pub fn connect_and_validate_socket(&self, port: u16) -> MoosyncResult<()> {
+    pub fn connect_and_validate_socket(
+        &self,
+        port: u16,
+        child: Option<&ChildProcess>,
+    ) -> MoosyncResult<()> {
         let ws_url = format!("ws://127.0.0.1:{}", port);
         info!("Connecting to Soloist WebSocket at {}", ws_url);
 
@@ -277,6 +397,14 @@ impl SoloistPlayer {
 
         let mut last_err = None;
         for attempt in 1..=25 {
+            if let Some(proc) = child {
+                if let Ok((false, exit_code)) = proc.get_status() {
+                    return Err(MoosyncError::String(format!(
+                        "Spotify Soloist exited before WebSocket was ready (exit code: {:?})",
+                        exit_code
+                    )));
+                }
+            }
             std::thread::sleep(Duration::from_millis(100));
 
             let client = match WebSocketClient::connect(&ws_url) {

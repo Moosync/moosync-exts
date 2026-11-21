@@ -13,6 +13,7 @@ rust_extension(
     scopes = [
         PROVIDER_SCOPES.SCROBBLE,
         PROVIDER_SCOPES.ACCOUNTS,
+        PROVIDER_SCOPES.PLAYER_DATA_EVENTS,
     ],
     display_name = "LastFM",
     edition = "2021",

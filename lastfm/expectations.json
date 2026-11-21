@@ -1,0 +1,139 @@
+{
+  "tests": {
+    "test_get_provider_scopes": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.lastfm.session"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "lastfm",
+              "package_name": "moosync.lastfm",
+              "name": "Last.fm",
+              "bg_color": "red"
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_oauth": {
+            "url": "lastfmcallback"
+          }
+        },
+        "response": {
+          "register_oauth": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_oauth": {
+            "url": "lastfm"
+          }
+        },
+        "response": {
+          "register_oauth": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_login": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.lastfm.session"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "lastfm",
+              "package_name": "moosync.lastfm",
+              "name": "Last.fm",
+              "bg_color": "red"
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_oauth": {
+            "url": "lastfmcallback"
+          }
+        },
+        "response": {
+          "register_oauth": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_oauth": {
+            "url": "lastfm"
+          }
+        },
+        "response": {
+          "register_oauth": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "open_external_url": {
+            "url": "http://www.last.fm/api/auth/?api_key=85ac9a982f718673f1cdbb9d8d6fba19&cb=https://moosync.app/lastfm"
+          }
+        },
+        "response": {
+          "open_external_url": {
+            "success": true
+          }
+        }
+      }
+    ]
+  }
+}

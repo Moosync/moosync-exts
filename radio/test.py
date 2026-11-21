@@ -23,8 +23,7 @@ def entry(moounit: Moounit):
 
 
 def test_get_provider_scopes(entry: Moounit):
-    scopes = list(entry.manifest.scopes)
-    scopes.sort()
+    scopes = sorted(s.scope for s in entry.manifest.scopes)
 
     assert len(scopes) == 1
     assert scopes == [ExtensionProviderScope.SEARCH]

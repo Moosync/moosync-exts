@@ -1,4 +1,0 @@
-*.wasm
-.venv
-test
-*.msox

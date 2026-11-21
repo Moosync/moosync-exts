@@ -3,6 +3,7 @@ import pytest
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf.json_format import ParseDict
 from core.types.protos.extensions_pb2 import (
+    BatchHttpRequest,
     BatchHttpResponse,
     ExtensionCommand,
     ExtensionProviderScope,
@@ -18,6 +19,8 @@ from core.types.protos.extensions_pb2 import (
     PlaybackDetailsRequestedRequest,
     PlaybackDetailsRequestedResponse,
     PreferenceData,
+    RegisterOauthRequest,
+    RegisterOauthResponse,
     RequestedAlbumSongsRequest,
     RequestedArtistSongsRequest,
     RequestedPlaylistSongsRequest,
@@ -25,10 +28,11 @@ from core.types.protos.extensions_pb2 import (
     RequestedRecommendationsRequest,
     RequestedSearchResultRequest,
     RequestedSearchResultResponse,
+    SetCacheRequest,
+    SetCacheResponse,
 )
 from core.types.protos.songs_pb2 import Album, Artist, InnerSong, Playlist, Song
 from moounit import Moounit
-from moounit.core import BatchHttpRequest
 
 
 @pytest.fixture
@@ -57,33 +61,38 @@ def entry(moounit: Moounit):
         ),
         times=-1,
     )
+    moounit.expect_command(
+        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.youtube.js")),
+        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
+        times=-1,
+    )
     moounit.call_entry()
     return moounit
 
 
 def test_get_provider_scopes(entry: Moounit):
-    scopes = list(entry.manifest.scopes)
-    scopes.sort()
+    scopes = sorted(s.scope for s in entry.manifest.scopes)
 
-    assert len(scopes) == 10
-    expected = [
-        ExtensionProviderScope.ACCOUNTS,
-        ExtensionProviderScope.ALBUM_SONGS,
-        ExtensionProviderScope.ARTIST_SONGS,
-        ExtensionProviderScope.PLAYBACK_DETAILS,
-        ExtensionProviderScope.PLAYLISTS,
-        ExtensionProviderScope.PLAYLIST_SONGS,
-        ExtensionProviderScope.RECOMMENDATIONS,
-        ExtensionProviderScope.SEARCH,
-    ]
-    expected.sort()
+    assert len(scopes) == 8
+    expected = sorted(
+        [
+            ExtensionProviderScope.ACCOUNTS,
+            ExtensionProviderScope.ALBUM_SONGS,
+            ExtensionProviderScope.ARTIST_SONGS,
+            ExtensionProviderScope.PLAYBACK_DETAILS,
+            ExtensionProviderScope.PLAYLISTS,
+            ExtensionProviderScope.PLAYLIST_SONGS,
+            ExtensionProviderScope.RECOMMENDATIONS,
+            ExtensionProviderScope.SEARCH,
+        ]
+    )
     assert scopes == expected
 
 
 def test_search(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -98,40 +107,28 @@ def test_search(entry: Moounit):
     assert len(songs) == 30
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:kLCx86Uq58w"
-    assert (
-        first.song.title
-        == "Ultimate Four Frequency Sound Check Deep Bass, Stereo, LR Channel & Speaker Test"
-    )
-    assert first.song.duration.seconds == 162
-    assert first.song.url == "https://www.youtube.com/watch?v=kLCx86Uq58w"
+    assert first.song.id == "moosync.youtube.js:youtube:V2c3KVGv0X0"
+    assert first.song.title == "Tested And True"
+    assert first.song.duration.seconds == 480
+    assert first.song.url == "https://www.youtube.com/watch?v=V2c3KVGv0X0"
     assert first.song.song_cover_path_high.startswith("http")
     assert first.song.song_cover_path_low.startswith("http")
-    assert first.album.album_id == "moosync.youtube.js:youtube-album:MPREb_gCVRMLxJPTV"
-    assert (
-        first.album.album_name
-        == "Ultimate Four Frequency Sound Check Deep Bass, Stereo, LR Channel & Speaker Test"
-    )
+    assert first.album.album_id == "moosync.youtube.js:youtube-album:MPREb_4sdpVL4FiGh"
+    assert first.album.album_name == "Tested And True"
     assert len(first.artists) == 1
     assert (
         first.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCLS1b-9ruWzU2XHjkTvmhdw"
+        == "moosync.youtube.js:youtube-artist:UCSxcflkwVWa_U6QtnIfvBeA"
     )
-    assert first.artists[0].artist_name == "DJ LNS"
+    assert first.artists[0].artist_name == "King Terryo"
 
     second = songs[1]
-    assert second.song.id == "moosync.youtube.js:youtube:x8ovxXV7krw"
-    assert second.song.title == "Extreme Bass Impact - Sound Test"
-    assert second.song.duration.seconds == 330
-    assert second.song.url == "https://www.youtube.com/watch?v=x8ovxXV7krw"
-    assert second.album.album_id == "moosync.youtube.js:youtube-album:MPREb_N8XI8uiOaub"
-    assert second.album.album_name == "Extreme Bass Impact - Sound Test"
-    assert len(second.artists) == 1
-    assert (
-        second.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCAd6HZUQ2O4ESM42hk0rCNw"
-    )
-    assert second.artists[0].artist_name == "Fabrício Cesar"
+    assert second.song.id == "moosync.youtube.js:youtube:MqyPl1Kdw7k"
+    assert second.song.title == "Ba Ra Ta Sound Test (feat. DJ FRANCIS ENERIDO)"
+    assert second.song.duration.seconds == 181
+    assert second.song.url == "https://www.youtube.com/watch?v=MqyPl1Kdw7k"
+    assert second.album.album_id == "moosync.youtube.js:youtube-album:MPREb_YsapymF5Ag4"
+    assert second.album.album_name == "Ba Ra Ta Sound Test"
 
     cached_search_resp = RequestedSearchResultResponse(
         songs=[
@@ -158,7 +155,7 @@ def test_search(entry: Moounit):
 def test_playlist_songs(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -172,7 +169,7 @@ def test_playlist_songs(entry: Moounit):
         )
     )
     songs = ret.requested_playlist_songs.songs
-    assert len(songs) == 98
+    assert len(songs) == 97
 
     first = songs[0]
     assert first.song.id == "moosync.youtube.js:youtube:EFqvVSqh6R8"
@@ -192,7 +189,7 @@ def test_playlist_songs(entry: Moounit):
 def test_artist_songs(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -236,7 +233,7 @@ def test_artist_songs(entry: Moounit):
 def test_album_songs(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -262,7 +259,7 @@ def test_album_songs(entry: Moounit):
 def test_recommendations(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -275,21 +272,21 @@ def test_recommendations(entry: Moounit):
     assert len(songs) == 68
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:MPREb_opei2OHmlwY"
-    assert first.song.title == "Fck the Family Name (feat. Ana Ballad)"
-    assert first.song.url == "https://www.youtube.com/watch?v=MPREb_opei2OHmlwY"
+    assert first.song.id == "moosync.youtube.js:youtube:MPREb_3pF7GwaQiMk"
+    assert first.song.title == "Helluva Boss Season Three, Part 1 (Deluxe)"
+    assert first.song.url == "https://www.youtube.com/watch?v=MPREb_3pF7GwaQiMk"
     assert len(first.artists) == 1
     assert (
         first.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCAmgqptIvuZCvst0u6t7sHw"
+        == "moosync.youtube.js:youtube-artist:UCDl4z9JAB6B8zf84A27mv_Q"
     )
-    assert first.artists[0].artist_name == "Seth Ballad"
+    assert first.artists[0].artist_name == "Helluva Boss"
 
 
 def test_oauth_flow(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -334,7 +331,7 @@ def test_oauth_flow(entry: Moounit):
 def test_requested_playlists(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",
@@ -344,19 +341,14 @@ def test_requested_playlists(entry: Moounit):
         request=MainCommand(),
         ignore_fields=["set_secure.data.value.string_value"],
     )
-
-    oauth_calls = entry.recorder.replay_test_calls.get(
-        "test_oauth_flow"
-    ) or entry.recorder.existing_data.get("tests", {}).get("test_oauth_flow", [])
-    for call in oauth_calls:
-        if call.get("type") == "batch_http_request":
-            req = ParseDict(call["request"], BatchHttpRequest())
-            resp = ParseDict(call["response"], BatchHttpResponse())
-            entry.expect_batch_http_request(req, resp)
-        elif call.get("type") == "send_main_command":
-            cmd = ParseDict(call["request"], MainCommand())
-            resp = ParseDict(call["response"], MainCommandResponse())
-            entry.expect_command(cmd, resp)
+    entry.expect_command(
+        MainCommand(get_cache=GetCacheRequest(key="user_playlists")),
+        MainCommandResponse(get_cache=GetCacheResponse()),
+    )
+    entry.expect_command(
+        MainCommand(set_cache=SetCacheRequest(key="user_playlists")),
+        MainCommandResponse(set_cache=SetCacheResponse(success=True)),
+    )
 
     pre_login_account = entry.accounts.get("youtube")
     assert pre_login_account is not None
@@ -411,7 +403,7 @@ def test_requested_playlists(entry: Moounit):
 def test_playback_details(entry: Moounit):
     entry.replay_ignore(
         request=BatchHttpRequest(),
-        ignore_field=[
+        ignore_fields=[
             "headers.X-Goog-Visitor-Id",
             "body",
             "headers.user-agent",

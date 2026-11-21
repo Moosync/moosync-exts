@@ -21,6 +21,21 @@
         "request": {
           "get_preference": {
             "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
               "key": "moosync.koel.koel_username"
             }
           }
@@ -49,12 +64,1745 @@
       {
         "type": "send_main_command",
         "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
           "set_account": {
             "account": {
               "id": "koel",
               "package_name": "moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3"
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      }
+    ],
+    "test_search": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "9",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjU1fElia0sycmJXT3RsNzBEME1CdWUwUDB1ZU5qRXZYRmdYdmJLYXdmQnQyMGM2YzJiOSIsImF1ZGlvLXRva2VuIjoiNTZ8bkEzeU5PVU5mMGlqeGVMRjlwdTN0eHpCVVg0R0podldqVGtOTWppdmFiOGMxNmQ4In0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.search:moosync"
+          }
+        },
+        "response": {
+          "get_cache": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/search?q=Moosync",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 55|IbkK2rbWOtl70D0MBue0P0ueNjEvXFgXvbKawfBt20c6c2b9"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJzb25ncyI6W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1dLCJhcnRpc3RzIjpbXSwiYWxidW1zIjpbXSwicG9kY2FzdHMiOltdLCJyYWRpb19zdGF0aW9ucyI6W119"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_cache": {
+            "key": "moosync.koel.search:moosync",
+            "data": "CpcBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAAA==",
+            "ttl_seconds": "7200"
+          }
+        },
+        "response": {
+          "set_cache": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_requested_playlists": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "8",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjU3fFpkaGhtZFgyQnNhMTdTdTZFM2g1Uk9HV3RudUI0eHIwampoZTZkTkhkNThmMzc2OSIsImF1ZGlvLXRva2VuIjoiNTh8R1N1NlBVSjlrN3VXdjQ0dk0zR0lTR2wxbFNLczFDQlhzU2Nsa0loNzhiOThjNDhkIn0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.user_playlists"
+          }
+        },
+        "response": {
+          "get_cache": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/playlists",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 57|ZdhhmdX2Bsa17Su6E3h5ROGWtnuB4xr0jjhe6dNHd58f3769"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "W3sidHlwZSI6InBsYXlsaXN0cyIsImlkIjoiMDFhMWZjZWUtM2Y5Yi03MGJhLWFiYzMtZDIxY2QyN2E4M2ExIiwibmFtZSI6Ik1vb3N5bmMgVGVzdCBQbGF5bGlzdCIsImRlc2NyaXB0aW9uIjoiIiwiZm9sZGVyX2lkIjpudWxsLCJ1c2VyX2lkIjoiNDY4Y2U0NmItMGFlZi00MGQ0LWI1ZjMtZjY5OTlkYTYzNDcwIiwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJpc19zbWFydCI6ZmFsc2UsImlzX2NvbGxhYm9yYXRpdmUiOmZhbHNlLCJydWxlcyI6bnVsbCwiY292ZXIiOm51bGwsImNyZWF0ZWRfYXQiOiIyMDI2LTExLTIxVDA3OjA3OjE0LjAwMDAwMFoiLCJwZXJtaXNzaW9ucyI6eyJlZGl0Ijp0cnVlLCJkZWxldGUiOnRydWV9fSx7InR5cGUiOiJwbGF5bGlzdHMiLCJpZCI6IjAxYTFmY2VlLTU5NjQtNzNjMy1hNjA5LWRhNjAxOTlmYzQ5YyIsIm5hbWUiOiJNb29zeW5jIFRlc3QgUGxheWxpc3QiLCJkZXNjcmlwdGlvbiI6IiIsImZvbGRlcl9pZCI6bnVsbCwidXNlcl9pZCI6IjQ2OGNlNDZiLTBhZWYtNDBkNC1iNWYzLWY2OTk5ZGE2MzQ3MCIsIm93bmVyX2lkIjoiNDY4Y2U0NmItMGFlZi00MGQ0LWI1ZjMtZjY5OTlkYTYzNDcwIiwiaXNfc21hcnQiOmZhbHNlLCJpc19jb2xsYWJvcmF0aXZlIjpmYWxzZSwicnVsZXMiOm51bGwsImNvdmVyIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNzoyMS4wMDAwMDBaIiwicGVybWlzc2lvbnMiOnsiZWRpdCI6dHJ1ZSwiZGVsZXRlIjp0cnVlfX1d"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_cache": {
+            "key": "moosync.koel.user_playlists",
+            "data": "ChYKCWFsbF9zb25ncxIJQWxsIHNvbmdzCkUKJDAxYTFmY2VlLTNmOWItNzBiYS1hYmMzLWQyMWNkMjdhODNhMRIVTW9vc3luYyBUZXN0IFBsYXlsaXN0OgRrb2VsSAEKRQokMDFhMWZjZWUtNTk2NC03M2MzLWE2MDktZGE2MDE5OWZjNDljEhVNb29zeW5jIFRlc3QgUGxheWxpc3Q6BGtvZWxIAQ==",
+            "ttl_seconds": "3600"
+          }
+        },
+        "response": {
+          "set_cache": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_playlist_songs": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "7",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjU5fFdmVFB4SzJhVm1zTk5wZklmSjNHTlc0cVd5ZnZubWFBcnpoVGgzSUwyMGMxMjFhMSIsImF1ZGlvLXRva2VuIjoiNjB8YkZVc1pTTFVKNVdxcnViUVl6dDhyY3dGRW1hTlo2Sk1EZ1VwYkdITDM0ODIwYjAyIn0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:"
+          }
+        },
+        "response": {
+          "get_cache": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/playlists/01a1fcee-5964-73c3-a609-da60199fc49c/songs",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 59|WfTPxK2aVmsNNpfIfJ3GNW4qWyfvnmaArzhTh3IL20c121a1"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1d"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_cache": {
+            "key": "moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:",
+            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3Q=",
+            "ttl_seconds": "3600"
+          }
+        },
+        "response": {
+          "set_cache": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_album_songs": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "6",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjYxfGpoV25qNmRQSDJINVBMeXNWZ0NFcVBheVVjb3d5OE9wZndwT21MMWM2ZDYyNGViYyIsImF1ZGlvLXRva2VuIjoiNjJ8Wnhhd2FERUFvWUFVak1EZzRnSWFQVXp1RDlqQnFFSUFKY255UFNLRWQxYTUyOWExIn0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.album_songs:Test Album:"
+          }
+        },
+        "response": {
+          "get_cache": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/search?q=Test%20Album",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 61|jhWnj6dPH2H5PLysVgCEqPayUcowy8OpfwpOmL1c6d624ebc"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJzb25ncyI6W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1dLCJhcnRpc3RzIjpbeyJ0eXBlIjoiYXJ0aXN0cyIsImlkIjoiMDFtN3lldnQxbnBodDhjemVjcnlxZjZiNHYiLCJuYW1lIjoiVGVzdCBBcnRpc3QiLCJpbWFnZSI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjYtMTEtMjFUMDc6MDY6NTIuMDAwMDAwWiIsIm1iaWQiOm51bGwsImlzX2V4dGVybmFsIjpmYWxzZSwiZmF2b3JpdGUiOmZhbHNlLCJyYXRpbmciOjAsInBlcm1pc3Npb25zIjp7ImVkaXQiOnRydWV9fV0sImFsYnVtcyI6W3sidHlwZSI6ImFsYnVtcyIsImlkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJuYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImNvdmVyIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1Mi4wMDAwMDBaIiwibWJpZCI6bnVsbCwieWVhciI6MjAxNiwiaXNfZXh0ZXJuYWwiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsImxlbmd0aCI6MTg3LjA4ODk4MDY3MzY0LCJyYXRpbmciOjAsInBlcm1pc3Npb25zIjp7ImVkaXQiOnRydWV9fV0sInBvZGNhc3RzIjpbXSwicmFkaW9fc3RhdGlvbnMiOltdfQ=="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/albums/01m7yevtnwnstze9cvf1cd0k3v/songs?page=1",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 61|jhWnj6dPH2H5PLysVgCEqPayUcowy8OpfwpOmL1c6d624ebc"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1d"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_cache": {
+            "key": "moosync.koel.album_songs:Test Album:",
+            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3QSATI="
+          }
+        },
+        "response": {
+          "set_cache": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_artist_songs": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "5",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjYzfGRqZm5jS2VxR3dmZmg4NEdWTEZ2QnNDMlJiMEQ0TlltcVUzQ0tFYUc4ZDcxMTMyOCIsImF1ZGlvLXRva2VuIjoiNjR8RU9DTmpyaXRVMTBkZkZpMTRjeEZVVmRvM3NVM21sd29PZHhRQnY3MDlhYjJmZTcyIn0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_cache": {
+            "key": "moosync.koel.artist_songs:Test Artist:"
+          }
+        },
+        "response": {
+          "get_cache": {}
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/search?q=Test%20Artist",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 63|djfncKeqGwffh84GVLFvBsC2Rb0D4NYmqU3CKEaG8d711328"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJzb25ncyI6W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1dLCJhcnRpc3RzIjpbeyJ0eXBlIjoiYXJ0aXN0cyIsImlkIjoiMDFtN3lldnQxbnBodDhjemVjcnlxZjZiNHYiLCJuYW1lIjoiVGVzdCBBcnRpc3QiLCJpbWFnZSI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjYtMTEtMjFUMDc6MDY6NTIuMDAwMDAwWiIsIm1iaWQiOm51bGwsImlzX2V4dGVybmFsIjpmYWxzZSwiZmF2b3JpdGUiOmZhbHNlLCJyYXRpbmciOjAsInBlcm1pc3Npb25zIjp7ImVkaXQiOnRydWV9fV0sImFsYnVtcyI6W3sidHlwZSI6ImFsYnVtcyIsImlkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJuYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImNvdmVyIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1Mi4wMDAwMDBaIiwibWJpZCI6bnVsbCwieWVhciI6MjAxNiwiaXNfZXh0ZXJuYWwiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsImxlbmd0aCI6MTg3LjA4ODk4MDY3MzY0LCJyYXRpbmciOjAsInBlcm1pc3Npb25zIjp7ImVkaXQiOnRydWV9fV0sInBvZGNhc3RzIjpbXSwicmFkaW9fc3RhdGlvbnMiOltdfQ=="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/artists/01m7yevt1npht8czecryqf6b4v/songs?page=1",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer 63|djfncKeqGwffh84GVLFvBsC2Rb0D4NYmqU3CKEaG8d711328"
+                }
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "Vary": "Authorization,Accept-Encoding",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "Access-Control-Allow-Origin": "*",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "W3sidHlwZSI6InNvbmdzIiwiaWQiOiIwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YiLCJ0aXRsZSI6Ik1vb3N5bmMgVGVzdCBUcmFjayIsImx5cmljcyI6IiIsImFsYnVtX2lkIjoiMDFtN3lldnRud25zdHplOWN2ZjFjZDBrM3YiLCJhbGJ1bV9uYW1lIjoiVGVzdCBBbGJ1bSIsImFydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2FydGlzdF9pZCI6IjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2IiwiYWxidW1fYXJ0aXN0X25hbWUiOiJUZXN0IEFydGlzdCIsImFsYnVtX2NvdmVyIjpudWxsLCJsZW5ndGgiOjE4Ny4wODg5ODA2NzM2NCwibGlrZWQiOmZhbHNlLCJmYXZvcml0ZSI6ZmFsc2UsInJhdGluZyI6MCwicGxheV9jb3VudCI6MCwidHJhY2siOjAsImRpc2MiOjEsImdlbnJlIjoiIiwieWVhciI6MjAxNiwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNi0xMS0yMVQwNzowNjo1My4wMDAwMDBaIiwibWJpZCI6bnVsbCwib3duZXJfaWQiOiI0NjhjZTQ2Yi0wYWVmLTQwZDQtYjVmMy1mNjk5OWRhNjM0NzAiLCJmaWxlX3NpemUiOjI5OTQ2MzMsImlzX2V4dGVybmFsIjpmYWxzZX1d"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_cache": {
+            "key": "moosync.koel.artist_songs:Test Artist:",
+            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3QSATI=",
+            "ttl_seconds": "86400"
+          }
+        },
+        "response": {
+          "set_cache": {
+            "success": true
+          }
+        }
+      }
+    ],
+    "test_custom_request": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "4",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjY1fEs0anN6MVRqU2d6M3M3VVhpWDVrRXMyeU9nR1FkMXg5Tjg2amtsR3EwNDkwZDQyMyIsImF1ZGlvLXRva2VuIjoiNjZ8ekxiQzRPTEVtWHZ6NlluWnlUWGtHSjhhcDJiR2daQXRaNVR2Zkh1c2QyNjU2NjA3In0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "register_user_preference": {
+            "prefs": [
+              {
+                "id": "koel_instance_url",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Instance URL",
+                "subtitle": "Full URL to your koel instance"
+              },
+              {
+                "id": "koel_username",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Email",
+                "subtitle": "Email for your koel account"
+              },
+              {
+                "id": "koel_password",
+                "pref_type": "PREFERENCE_TYPE_TEXT_INPUT_GROUP",
+                "title": "Password",
+                "subtitle": "Password for your koel account"
+              }
+            ]
+          }
+        },
+        "response": {
+          "register_user_preference": {}
+        }
+      }
+    ],
+    "test_playback_details_requested": [
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_instance_url",
+              "value": "http://localhost"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_username"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {
+              "key": "koel_username",
+              "value": "admin@koel.dev"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_secure": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_secure": {
+            "data": {
+              "key": "koel_password",
+              "value": "KoelIsCool"
+            }
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "batch_http_request": {
+            "requests": [
+              {
+                "url": "http://localhost/api/me",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": "eyJlbWFpbCI6ImFkbWluQGtvZWwuZGV2IiwicGFzc3dvcmQiOiJLb2VsSXNDb29sIn0="
+              }
+            ]
+          }
+        },
+        "response": {
+          "batch_http_request": {
+            "responses": [
+              {
+                "response": {
+                  "status_code": 200,
+                  "status_text": "OK",
+                  "headers": {
+                    "Date": "Sat, 21 Nov 2026 22:22:41 GMT",
+                    "Server": "Apache/2.4.68 (Debian)",
+                    "X-Powered-By": "PHP/8.4.27",
+                    "Cache-Control": "no-cache, private",
+                    "X-Koel-Build": "c4ce1f2806667f8f",
+                    "X-RateLimit-Limit": "10",
+                    "X-RateLimit-Remaining": "3",
+                    "Access-Control-Allow-Origin": "*",
+                    "Vary": "Accept-Encoding",
+                    "Connection": "close",
+                    "Transfer-Encoding": "chunked",
+                    "Content-Type": "application/json"
+                  },
+                  "body": "eyJ0b2tlbiI6IjY3fHJhZ21vTXZYMHh1enl1ZXp4Z0tJU09saXVqendpM3RTWUc5RUNHeEk1MGY1MjdjOSIsImF1ZGlvLXRva2VuIjoiNjh8ZDNwWkdvbGc2MDh0VjNocDUzVkZ4RVVKczJpWmtxZlR0WDJHaHp0RmNiM2U1ZThlIn0="
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
+            }
+          }
+        },
+        "response": {
+          "set_account": {
+            "success": true
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "set_account": {
+            "account": {
+              "id": "koel",
+              "package_name": "moosync.koel",
+              "name": "Koel",
+              "bg_color": "#2196f3",
+              "logged_in": true
             }
           }
         },
@@ -116,6 +1864,21 @@
         "request": {
           "get_preference": {
             "data": {
+              "key": "moosync.koel.koel_instance_url"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
               "key": "moosync.koel.koel_username"
             }
           }
@@ -137,6 +1900,21 @@
         },
         "response": {
           "get_secure": {
+            "data": {}
+          }
+        }
+      },
+      {
+        "type": "send_main_command",
+        "request": {
+          "get_preference": {
+            "data": {
+              "key": "moosync.koel.koel_password"
+            }
+          }
+        },
+        "response": {
+          "get_preference": {
             "data": {}
           }
         }
