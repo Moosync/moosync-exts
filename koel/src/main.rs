@@ -160,6 +160,7 @@ impl Provider for KoelExtension {
         );
         let id_or_url = inner
             .playback_url
+            .map(|p| p.url)
             .or(inner.id)
             .ok_or("No song id or playback_url")?;
         let is_koel_url = id_or_url.starts_with("extension://moosync.koel/")
@@ -173,6 +174,7 @@ impl Provider for KoelExtension {
             url: stream_url,
             duration: inner.duration,
             decryption_key: None,
+            ..Default::default()
         })
     }
 

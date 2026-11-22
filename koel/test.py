@@ -17,7 +17,14 @@ from core.types.protos.extensions_pb2 import (
     RequestedSearchResultRequest,
 )
 from core.types.protos.preferences_pb2 import PreferenceItem, PreferenceType
-from core.types.protos.songs_pb2 import Album, Artist, InnerSong, SearchResult, Song
+from core.types.protos.songs_pb2 import (
+    Album,
+    Artist,
+    InnerSong,
+    PlaybackUrl,
+    SearchResult,
+    Song,
+)
 from google.protobuf.struct_pb2 import Value
 import pytest
 from moounit import Moounit
@@ -291,7 +298,9 @@ def test_playback_details_requested(logged_in_entry: Moounit):
                 song=Song(
                     song=InnerSong(
                         id=f"moosync.koel:{song_id}",
-                        playback_url=f"extension://moosync.koel/{song_id}",
+                        playback_url=PlaybackUrl(
+                            url=f"extension://moosync.koel/{song_id}"
+                        ),
                     )
                 )
             )

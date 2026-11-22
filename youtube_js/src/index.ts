@@ -18,6 +18,7 @@ import {
   SetSecureRequest,
   Song,
   SongType,
+  Timestamp,
   getApi,
 } from "wasm-extension-js";
 import {
@@ -727,7 +728,7 @@ class YoutubeJsExtension {
       const songType = song.song?.type;
       const isYoutubeType = songType !== SongType.SPOTIFY;
       const rawId =
-        song.song?.id ?? song.song?.playbackUrl ?? song.song?.url ?? "";
+        song.song?.id ?? song.song?.playbackUrl?.url ?? song.song?.url ?? "";
       const cleanId = sanitizeId(rawId);
       const isYoutubeUrlOrStrictId =
         /^[a-zA-Z0-9_-]{11}$/.test(cleanId) ||
@@ -778,6 +779,10 @@ class YoutubeJsExtension {
         return new PlaybackDetailsRequestedResponse();
       }
 
+      const ttlSeconds =
+        expiresInSeconds && expiresInSeconds > 0 ? expiresInSeconds : 20 * 60;
+      const expiresAtSeconds = Math.floor(Date.now() / 1000) + ttlSeconds;
+
       const resp = new PlaybackDetailsRequestedResponse({
         url: streamUrl,
         duration:
@@ -786,6 +791,9 @@ class YoutubeJsExtension {
                 seconds: BigInt(Math.floor(durationSeconds)),
               })
             : undefined,
+        expiresAt: new Timestamp({
+          seconds: BigInt(expiresAtSeconds),
+        }),
       });
 
       if (expiresInSeconds && expiresInSeconds > 60) {

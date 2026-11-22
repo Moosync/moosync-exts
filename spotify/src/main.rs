@@ -113,17 +113,18 @@ impl SpotifyExtension {
                 ));
             return;
         }
-        if self.soloist_player.is_paired() {
-            self.soloist_player
-                .set_status(soloist::SoloistStatus::Connected("Paired and ready".into()));
-            return;
-        }
         let soloist_api_key = self.get_soloist_api_key();
         if soloist_api_key.is_empty() {
             self.soloist_player
                 .set_status(soloist::SoloistStatus::Inactive(
                     "Soloist API Key not configured".into(),
                 ));
+            return;
+        }
+        if self.soloist_player.is_paired() {
+            if let Err(e) = self.soloist_player.start_soloist(true, &soloist_api_key) {
+                warn!("Failed to start soloist daemon: {}", e);
+            }
             return;
         }
         if let Err(e) = self.soloist_player.start_pairing_mode(true, &soloist_api_key) {
@@ -309,7 +310,9 @@ impl PlayerProvider for SpotifyExtension {
         if !self.soloist_player.is_paired() {
             let api_key = self.get_soloist_api_key();
             let paired = self.soloist_player.poll_pairing_status().unwrap_or(false);
-            if !paired {
+            if paired {
+                let _ = self.soloist_player.start_soloist(is_premium, &api_key);
+            } else {
                 let _ = self.soloist_player.start_pairing_mode(is_premium, &api_key);
             }
             self.update_soloist_status();
@@ -570,6 +573,8 @@ impl PreferenceEvents for SpotifyExtension {
             if pref.key == "soloist_ws_port" || pref.key.ends_with(":soloist_ws_port") {
                 let port = self.get_soloist_port();
                 self.soloist_player.set_port(port);
+                self.ensure_soloist_pairing();
+                self.update_soloist_status();
             } else if pref.key == "soloist_api_key" || pref.key.ends_with(":soloist_api_key") {
                 self.ensure_soloist_pairing();
                 self.update_soloist_status();

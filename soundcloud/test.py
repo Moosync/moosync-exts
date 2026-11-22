@@ -36,6 +36,27 @@ def test_search(entry: Moounit):
     assert ret.requested_search_result.songs[0].song.id.startswith(
         "moosync.soundcloud:"
     )
+    assert not ret.requested_search_result.songs[0].song.HasField("playback_url")
+
+
+def test_playback_details(entry: Moounit):
+    ret = entry.send_command(
+        pb.ExtensionCommand(
+            playback_details_requested=pb.PlaybackDetailsRequestedRequest(
+                song=Song(
+                    song=InnerSong(
+                        id="moosync.soundcloud:2428757886",
+                    )
+                )
+            )
+        )
+    )
+
+    assert ret.HasField("playback_details_requested")
+    assert ret.playback_details_requested.url.startswith("https://")
+    assert ret.playback_details_requested.duration.seconds == 180
+    assert ret.playback_details_requested.HasField("expires_at")
+    assert ret.playback_details_requested.expires_at.seconds > 0
 
 
 def test_search_cache_hit(entry: Moounit):

@@ -579,7 +579,7 @@ impl DiscordRPC {
             .saturating_sub(start_time);
 
         let mut buttons = vec![];
-        if song_inner.playback_url.is_some() {
+        if let Some(ref playback_url) = song_inner.playback_url {
             if song_inner.r#type == SongType::Url as i32
                 && song_inner
                     .id
@@ -588,10 +588,7 @@ impl DiscordRPC {
             {
                 buttons.push(ActivityButton {
                     label: "Show on YouTube".into(),
-                    url: format!(
-                        "https://www.youtube.com/watch?v={}",
-                        song_inner.playback_url.as_ref().unwrap()
-                    ),
+                    url: format!("https://www.youtube.com/watch?v={}", playback_url.url),
                 });
             }
         }

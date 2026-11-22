@@ -367,7 +367,7 @@
         "request": {
           "set_cache": {
             "key": "moosync.koel.search:moosync",
-            "data": "CpcBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAAA==",
+            "data": "CpkBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAA",
             "ttl_seconds": "7200"
           }
         },
@@ -873,7 +873,7 @@
         "request": {
           "set_cache": {
             "key": "moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:",
-            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3Q=",
+            "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdA==",
             "ttl_seconds": "3600"
           }
         },
@@ -1167,7 +1167,7 @@
         "request": {
           "set_cache": {
             "key": "moosync.koel.album_songs:Test Album:",
-            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3QSATI="
+            "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdBIBMg=="
           }
         },
         "response": {
@@ -1460,7 +1460,7 @@
         "request": {
           "set_cache": {
             "key": "moosync.koel.artist_songs:Test Artist:",
-            "data": "CvIBCpQBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT1leHRlbnNpb246Ly9tb29zeW5jLmtvZWwvMDFhMWZjZWQtZWJjYS03MTlhLWIzMDQtODY3Yjc2YmYwYjNm0QEAAAAAAAAAABIuChowMW03eWV2dG53bnN0emU5Y3ZmMWNkMGszdhIKVGVzdCBBbGJ1bTIEMjAxNhopChowMW03eWV2dDFucGh0OGN6ZWNyeXFmNmI0dhoLVGVzdCBBcnRpc3QSATI=",
+            "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdBIBMg==",
             "ttl_seconds": "86400"
           }
         },

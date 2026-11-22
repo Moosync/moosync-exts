@@ -98,6 +98,10 @@ def test_search(entry: Moounit):
             "headers.user-agent",
         ],
     )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
+    )
     ret = entry.send_command(
         ExtensionCommand(
             requested_search_result=RequestedSearchResultRequest(query="test")
@@ -161,6 +165,10 @@ def test_playlist_songs(entry: Moounit):
             "headers.user-agent",
         ],
     )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
+    )
     ret = entry.send_command(
         ExtensionCommand(
             requested_playlist_songs=RequestedPlaylistSongsRequest(
@@ -194,6 +202,10 @@ def test_artist_songs(entry: Moounit):
             "body",
             "headers.user-agent",
         ],
+    )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
     )
     ret = entry.send_command(
         ExtensionCommand(
@@ -239,6 +251,10 @@ def test_album_songs(entry: Moounit):
             "headers.user-agent",
         ],
     )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
+    )
     ret = entry.send_command(
         ExtensionCommand(
             requested_album_songs=RequestedAlbumSongsRequest(
@@ -264,6 +280,10 @@ def test_recommendations(entry: Moounit):
             "body",
             "headers.user-agent",
         ],
+    )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
     )
     ret = entry.send_command(
         ExtensionCommand(requested_recommendations=RequestedRecommendationsRequest())
@@ -291,6 +311,10 @@ def test_oauth_flow(entry: Moounit):
             "body",
             "headers.user-agent",
         ],
+    )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
     )
     entry.replay_ignore(
         request=MainCommand(),
@@ -336,6 +360,10 @@ def test_requested_playlists(entry: Moounit):
             "body",
             "headers.user-agent",
         ],
+    )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
     )
     entry.replay_ignore(
         request=MainCommand(),
@@ -409,6 +437,10 @@ def test_playback_details(entry: Moounit):
             "headers.user-agent",
         ],
     )
+    entry.replay_ignore(
+        request=SetCacheRequest(),
+        ignore_fields=["data"],
+    )
     ret = entry.send_command(
         ExtensionCommand(
             playback_details_requested=PlaybackDetailsRequestedRequest(
@@ -421,6 +453,8 @@ def test_playback_details(entry: Moounit):
     assert "googlevideo.com" in playback.url
     assert playback.url.endswith(".m3u8")
     assert playback.duration.seconds == 213
+    assert playback.HasField("expires_at")
+    assert playback.expires_at.seconds > 0
 
 
 def test_playback_details_cache_hit(entry: Moounit):

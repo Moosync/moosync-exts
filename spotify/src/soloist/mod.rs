@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use std::sync::Mutex;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
 use std::time::Duration;
 
 use futures::executor::block_on;
@@ -9,7 +12,7 @@ use moosync_edk::{
     api::{duration_to_proto, get_platform, notify_player_event, spawn_process},
     info,
     types::{
-        player_event, preference_value, ChildProcess, Duration as ProtoDuration,
+        player_event, preference_value, ChildProcess, Duration as ProtoDuration, LoadingEvent,
         NotifyPlayerEventRequest, PlayerEvent, PreferenceItem, PreferenceType, PreferenceValue,
         Song, StatusDot, StatusDotColor, StatusDotList, WebSocketClient, WebSocketMessage,
     },
@@ -19,7 +22,7 @@ use moosync_edk::{
 mod client;
 mod downloader;
 
-pub use client::{SoloistWsCommand, SoloistWsResponse};
+pub use client::{SoloistPosition, SoloistWsCommand, SoloistWsEvent, SoloistWsResponse};
 pub use downloader::{extract_soloist_binary, get_soloist_download_url};
 
 pub const SOLOIST_BIN_PATH: &str = "/cache/bin/soloist";
@@ -42,7 +45,9 @@ pub struct SoloistPlayer {
     ws: Mutex<Option<WebSocketClient>>,
     port: Mutex<u16>,
     is_paired: Mutex<bool>,
+    is_active: Arc<AtomicBool>,
     status: Mutex<SoloistStatus>,
+    pending_uri: Mutex<Option<String>>,
 }
 
 impl SoloistPlayer {
@@ -59,7 +64,9 @@ impl SoloistPlayer {
             ws: Mutex::new(None),
             port: Mutex::new(DEFAULT_WS_PORT),
             is_paired: Mutex::new(is_paired),
+            is_active: Arc::new(AtomicBool::new(false)),
             status: Mutex::new(initial_status),
+            pending_uri: Mutex::new(None),
         }
     }
 
@@ -387,16 +394,11 @@ impl SoloistPlayer {
         let ws_url = format!("ws://127.0.0.1:{}", port);
         info!("Connecting to Soloist WebSocket at {}", ws_url);
 
-        let status_cmd = serde_json::to_string(&SoloistWsCommand {
-            command: "status",
-            uri: None,
-            position_ms: None,
-            volume: None,
-        })
-        .map_err(|e| MoosyncError::String(e.to_string()))?;
+        let status_cmd = serde_json::to_string(&SoloistWsCommand::new("get_state"))
+            .map_err(|e| MoosyncError::String(e.to_string()))?;
 
         let mut last_err = None;
-        for attempt in 1..=25 {
+        for _attempt in 1..=25 {
             if let Some(proc) = child {
                 if let Ok((false, exit_code)) = proc.get_status() {
                     return Err(MoosyncError::String(format!(
@@ -415,43 +417,33 @@ impl SoloistPlayer {
                 }
             };
 
+            let status_cmd_clone = status_cmd.clone();
+            let client_for_msg = client.clone();
+            let is_active_for_msg = Arc::clone(&self.is_active);
+            client.on_message(move |msg| {
+                if let WebSocketMessage::Text(text) = msg {
+                    info!("Received msg from Soloist WebSocket: {}", text);
+                    handle_ws_message(
+                        &text,
+                        &client_for_msg,
+                        &status_cmd_clone,
+                        &is_active_for_msg,
+                    );
+                }
+            });
+
+            client.on_close(|event| {
+                warn!("Soloist WebSocket closed: {:?}", event);
+            });
+
             if let Err(e) = client.send_text(&status_cmd) {
                 last_err = Some(e);
                 continue;
             }
 
-            let msg = match client.receive(Some(2000)) {
-                Ok(m) => m,
-                Err(e) => {
-                    last_err = Some(e);
-                    continue;
-                }
-            };
-
-            info!("Received msg from Soloist WebSocket: {:?}", msg);
-            let is_valid = match &msg {
-                Some(WebSocketMessage::Text(text)) => serde_json::from_str::<SoloistWsResponse>(text)
-                    .ok()
-                    .and_then(|r| r.device_name)
-                    .map(|d| d == SOLOIST_DEVICE_NAME)
-                    .unwrap_or(false),
-                _ => false,
-            };
-
-            if is_valid {
-                info!(
-                    "Soloist WebSocket validated for device '{}' (attempt {})",
-                    SOLOIST_DEVICE_NAME, attempt
-                );
-                let mut ws_guard = self.ws.lock().unwrap();
-                *ws_guard = Some(client);
-                return Ok(());
-            }
-
-            last_err = Some(MoosyncError::String(format!(
-                "Socket validation failed: expected device '{}', got: {:?}",
-                SOLOIST_DEVICE_NAME, msg
-            )));
+            let mut ws_guard = self.ws.lock().unwrap();
+            *ws_guard = Some(client);
+            return Ok(());
         }
 
         Err(last_err.unwrap_or_else(|| {
@@ -464,16 +456,11 @@ impl SoloistPlayer {
 
     pub fn load_track(&self, src: &str, song: Option<&Song>) -> MoosyncResult<()> {
         let uri = resolve_spotify_uri(src, song);
-        self.send_command(&SoloistWsCommand {
-            command: "load",
-            uri: Some(&uri),
-            position_ms: None,
-            volume: None,
-        })?;
+        *self.pending_uri.lock().unwrap() = Some(uri);
 
         let _ = notify_player_event(NotifyPlayerEventRequest {
             event: Some(PlayerEvent {
-                event: Some(player_event::Event::Loading(true)),
+                event: Some(player_event::Event::Loading(LoadingEvent {})),
             }),
         });
 
@@ -481,29 +468,24 @@ impl SoloistPlayer {
     }
 
     pub fn play(&self) -> MoosyncResult<()> {
+        if !self.is_active.load(Ordering::SeqCst) {
+            self.send_command(&SoloistWsCommand::new("activate"))?;
+            self.is_active.store(true, Ordering::SeqCst);
+        }
+
+        let uri = self.pending_uri.lock().unwrap().take();
         self.send_command(&SoloistWsCommand {
-            command: "play",
-            uri: None,
-            position_ms: None,
-            volume: None,
+            uri: uri.as_deref(),
+            ..SoloistWsCommand::new("play")
         })?;
 
-        let _ = notify_player_event(NotifyPlayerEventRequest {
-            event: Some(PlayerEvent {
-                event: Some(player_event::Event::Play(true)),
-            }),
-        });
+        emit_player_event(player_event::Event::Play(true));
 
         Ok(())
     }
 
     pub fn pause(&self) -> MoosyncResult<()> {
-        self.send_command(&SoloistWsCommand {
-            command: "pause",
-            uri: None,
-            position_ms: None,
-            volume: None,
-        })?;
+        self.send_command(&SoloistWsCommand::new("pause"))?;
 
         let _ = notify_player_event(NotifyPlayerEventRequest {
             event: Some(PlayerEvent {
@@ -515,12 +497,8 @@ impl SoloistPlayer {
     }
 
     pub fn stop(&self) -> MoosyncResult<()> {
-        self.send_command(&SoloistWsCommand {
-            command: "stop",
-            uri: None,
-            position_ms: None,
-            volume: None,
-        })?;
+        *self.pending_uri.lock().unwrap() = None;
+        self.send_command(&SoloistWsCommand::new("pause"))?;
 
         let _ = notify_player_event(NotifyPlayerEventRequest {
             event: Some(PlayerEvent {
@@ -537,10 +515,8 @@ impl SoloistPlayer {
             .unwrap_or(0);
 
         self.send_command(&SoloistWsCommand {
-            command: "seek",
-            uri: None,
             position_ms: Some(ms),
-            volume: None,
+            ..SoloistWsCommand::new("seek")
         })?;
 
         let _ = notify_player_event(NotifyPlayerEventRequest {
@@ -556,10 +532,8 @@ impl SoloistPlayer {
 
     pub fn set_volume(&self, volume: u32) -> MoosyncResult<()> {
         self.send_command(&SoloistWsCommand {
-            command: "volume",
-            uri: None,
-            position_ms: None,
             volume: Some(volume),
+            ..SoloistWsCommand::new("set_volume")
         })?;
         Ok(())
     }
@@ -595,4 +569,152 @@ pub fn resolve_spotify_uri(src: &str, song: Option<&Song>) -> String {
 pub fn handle_expiration_cleanup() {
     warn!("Cleaning up expired Spotify Soloist binary");
     let _ = fs::remove_file(SOLOIST_BIN_PATH);
+}
+
+fn emit_player_event(event: player_event::Event) {
+    let _ = notify_player_event(NotifyPlayerEventRequest {
+        event: Some(PlayerEvent { event: Some(event) }),
+    });
+}
+
+fn emit_position_update(pos: &SoloistPosition) {
+    emit_player_event(player_event::Event::TimeUpdate(duration_to_proto(
+        Duration::from_millis(pos.position_ms),
+    )));
+}
+
+fn is_valid_device_name(device_name: Option<&str>) -> bool {
+    match device_name {
+        Some(name) if name != SOLOIST_DEVICE_NAME => {
+            warn!(
+                "Soloist WebSocket device mismatch: expected '{}', got '{}'",
+                SOLOIST_DEVICE_NAME, name
+            );
+            false
+        }
+        _ => true,
+    }
+}
+
+fn apply_active_state(active: Option<bool>, is_active: &Arc<AtomicBool>) -> bool {
+    match active {
+        Some(false) => {
+            is_active.store(false, Ordering::SeqCst);
+            emit_player_event(player_event::Event::Pause(true));
+            false
+        }
+        Some(true) => {
+            is_active.store(true, Ordering::SeqCst);
+            true
+        }
+        None => is_active.load(Ordering::SeqCst),
+    }
+}
+
+fn apply_playback_status(status: Option<&str>, is_active: bool) {
+    match status {
+        Some("paused") => emit_player_event(player_event::Event::Pause(true)),
+        Some("buffering") => emit_player_event(player_event::Event::Loading(LoadingEvent {})),
+        Some("playing") if is_active => emit_player_event(player_event::Event::Play(true)),
+        _ => {}
+    }
+}
+
+fn handle_ws_message(
+    text: &str,
+    client: &WebSocketClient,
+    status_cmd: &str,
+    is_active: &Arc<AtomicBool>,
+) {
+    let Ok(resp) = serde_json::from_str::<SoloistWsResponse>(text) else {
+        return;
+    };
+
+    match resp {
+        SoloistWsResponse::Event(SoloistWsEvent::AuthState {
+            logged_in,
+            device_name,
+            is_active: active,
+        }) => {
+            if !is_valid_device_name(device_name.as_deref()) {
+                return;
+            }
+            if !logged_in {
+                let _ = client.send_text(status_cmd);
+                return;
+            }
+            apply_active_state(active, is_active);
+        }
+        SoloistWsResponse::Event(SoloistWsEvent::PlaybackState {
+            device_name,
+            is_active: active,
+            logged_in,
+            status,
+            position,
+            ..
+        }) => {
+            if !is_valid_device_name(device_name.as_deref()) {
+                return;
+            }
+            if logged_in == Some(false) {
+                let _ = client.send_text(status_cmd);
+                return;
+            }
+            let currently_active = apply_active_state(active, is_active);
+            apply_playback_status(status.as_deref(), currently_active);
+            if let Some(pos) = position.as_ref() {
+                emit_position_update(pos);
+            }
+        }
+        SoloistWsResponse::Event(SoloistWsEvent::PlaybackChanged {
+            status,
+            is_active: active,
+            position,
+            ..
+        }) => {
+            let currently_active = apply_active_state(active, is_active);
+            apply_playback_status(status.as_deref(), currently_active);
+            if let Some(pos) = position.as_ref() {
+                emit_position_update(pos);
+            }
+        }
+        SoloistWsResponse::Event(SoloistWsEvent::DeviceChanged {
+            device_name,
+            is_active: active,
+        }) => {
+            if !is_valid_device_name(device_name.as_deref()) {
+                return;
+            }
+            apply_active_state(active, is_active);
+        }
+        SoloistWsResponse::Event(SoloistWsEvent::PositionSync { position }) => {
+            emit_position_update(&position);
+        }
+        SoloistWsResponse::Event(SoloistWsEvent::TrackChanged { position, .. }) => {
+            if let Some(pos) = position.as_ref() {
+                emit_position_update(pos);
+            }
+        }
+        SoloistWsResponse::Event(
+            SoloistWsEvent::ContextChanged { .. }
+            | SoloistWsEvent::OptionsChanged { .. }
+            | SoloistWsEvent::QueueChanged {}
+            | SoloistWsEvent::VolumeChanged { .. }
+            | SoloistWsEvent::Unknown,
+        ) => {}
+        SoloistWsResponse::Snapshot(snap) => {
+            if !is_valid_device_name(snap.device_name.as_deref()) {
+                return;
+            }
+            if snap.logged_in == Some(false) {
+                let _ = client.send_text(status_cmd);
+                return;
+            }
+            let currently_active = apply_active_state(snap.is_active, is_active);
+            apply_playback_status(snap.status.as_deref(), currently_active);
+            if let Some(pos) = snap.position.as_ref() {
+                emit_position_update(pos);
+            }
+        }
+    }
 }

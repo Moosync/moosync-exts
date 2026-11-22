@@ -4,44 +4,66 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Moosync/extensions-sdk/wasm-extension-go/pkg/api"
 	extensions "github.com/moosync/moosync/types/extensions"
 	soundcloudapi "github.com/zackradisic/soundcloud-api"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type SoundcloudExtension struct {
 	sc *soundcloudapi.API
 }
 
-func (s *SoundcloudExtension) CustomRequest(req *extensions.CustomRequest) (ret *extensions.CustomRequestResponse, err error) {
-	id, err := strconv.ParseInt(strings.Replace(req.RequestId, "extension://moosync.soundcloud/", "", 1), 10, 64)
+func (s *SoundcloudExtension) PlaybackDetailsRequested(req *extensions.PlaybackDetailsRequestedRequest) (*extensions.PlaybackDetailsRequestedResponse, error) {
+	if req == nil || req.Song == nil || req.Song.Song == nil || req.Song.Song.Id == nil {
+		return nil, fmt.Errorf("missing song id")
+	}
+
+	rawId := strings.TrimPrefix(*req.Song.Song.Id, "moosync.soundcloud:")
+	id, err := strconv.ParseInt(rawId, 10, 64)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	trackInfo, err := s.getTrackFromId(id)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	api.LogInfo("Track streamable %v", trackInfo.Streamable)
 
+	var redirectUrl string
 	streamURL, err := getStreamUrl(trackInfo)
+	if err == nil {
+		api.LogInfo("streamurl %v", streamURL)
+		redirectUrl, err = getDirectURLFromStream(streamURL)
+	}
 	if err != nil {
-		return
+		sc, scErr := s.getSc()
+		if scErr != nil {
+			return nil, scErr
+		}
+		redirectUrl, err = sc.GetDownloadURL(trackInfo.PermalinkURL, "hls")
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	api.LogInfo("streamurl %v", streamURL)
+	duration := api.DurationToProto(time.Duration(trackInfo.DurationMS) * time.Millisecond)
 
-	redirectUrl, err := getDirectURLFromStream(streamURL)
-	if err != nil {
-		return
+	var expiresAt *timestamppb.Timestamp
+	if timeResp, err := api.SystemTime(&extensions.SystemTimeRequest{}); err == nil && timeResp != nil {
+		expiresAt = &timestamppb.Timestamp{
+			Seconds: int64(timeResp.GetTimestamp()) + 20*60,
+		}
 	}
 
-	return &extensions.CustomRequestResponse{
-		MimeType:    ptr(trackInfo.Media.Transcodings[0].Format.MimeType),
-		RedirectUrl: ptr(redirectUrl),
+	return &extensions.PlaybackDetailsRequestedResponse{
+		Duration:  duration,
+		Url:       redirectUrl,
+		ExpiresAt: expiresAt,
 	}, nil
 }
 

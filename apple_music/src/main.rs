@@ -304,6 +304,7 @@ impl Provider for AppleMusic {
             url,
             duration: Some(duration_to_proto(duration.unwrap_or_default())),
             decryption_key: drm_key,
+            ..Default::default()
         })
     }
 

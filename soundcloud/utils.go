@@ -33,7 +33,6 @@ func scTracksToSong(track soundcloudapi.Track) *songs.Song {
 			Type:              songs.SongType_URL, // Assuming URL type for HLS, or check if HLS enum exists
 			Url:               ptr(track.PermalinkURL),
 			SongCoverPathHigh: ptr(track.ArtworkURL),
-			PlaybackUrl:       ptr("extension://moosync.soundcloud/" + strconv.Itoa(int(track.ID))),
 			SongCoverPathLow:  ptr(track.ArtworkURL),
 			DateAdded:         &dateAdded,
 		},

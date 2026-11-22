@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use moosync_edk::{
-    types::{Album, Artist, InnerSong, Playlist, PreferenceData, Song, SongType},
+    types::{Album, Artist, InnerSong, PlaybackUrl, Playlist, PreferenceData, Song, SongType},
     MoosyncError, MoosyncResult,
 };
 use serde::de::DeserializeOwned;
@@ -160,7 +160,10 @@ pub fn parse_track(item: FullTrack) -> Song {
             r#type: SongType::Spotify as i32,
             url: Some(id.clone()),
             song_cover_path_high: item.album.images.first().map(|i| i.url.clone()),
-            playback_url: Some(id),
+            playback_url: Some(PlaybackUrl {
+                url: id,
+                ..Default::default()
+            }),
             track_no: Some(item.disc_number as f64),
             ..Default::default()
         }),

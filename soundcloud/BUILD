@@ -28,6 +28,7 @@ go_extension(
         "@com_github_zackradisic_soundcloud_api//:soundcloud-api",
         "@org_golang_google_protobuf//proto",
         "@org_golang_google_protobuf//types/known/durationpb",
+        "@org_golang_google_protobuf//types/known/timestamppb",
     ],
 )
 

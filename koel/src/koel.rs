@@ -1,9 +1,9 @@
 use moosync_edk::{
     api, info,
     types::{
-        Album, Artist, ExtensionAccountDetail, Genre, InnerSong, Playlist, PreferenceData,
-        RequestedPlaylistSongsResponse, SearchResult, SetAccountRequest, SetPreferenceRequest,
-        SetSecureRequest, Song, GetPreferenceRequest, GetSecureRequest,
+        Album, Artist, ExtensionAccountDetail, Genre, InnerSong, PlaybackUrl, Playlist,
+        PreferenceData, RequestedPlaylistSongsResponse, SearchResult, SetAccountRequest,
+        SetPreferenceRequest, SetSecureRequest, Song, GetPreferenceRequest, GetSecureRequest,
     },
 };
 use serde_json::{Value, json};
@@ -80,10 +80,10 @@ impl KoelClient {
                 track_no: ks.track.map(|t| t as f64),
                 year: ks.year.clone().map(|v| v.to_string()),
                 song_cover_path_high: ks.album_cover.clone(),
-                playback_url: ks
-                    .id
-                    .clone()
-                    .map(|id| format!("extension://moosync.koel/{id}")),
+                playback_url: ks.id.clone().map(|id| PlaybackUrl {
+                    url: format!("extension://moosync.koel/{id}"),
+                    ..Default::default()
+                }),
                 ..Default::default()
             }),
             album: Some(Album {

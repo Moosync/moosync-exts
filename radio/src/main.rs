@@ -9,7 +9,8 @@ use moosync_edk::{
     handler::register_extension,
     info,
     types::{
-        InnerSong, RequestedSearchResultRequest, RequestedSearchResultResponse, Song, SongType,
+        InnerSong, PlaybackUrl, RequestedSearchResultRequest, RequestedSearchResultResponse, Song,
+        SongType,
     },
     MoosyncError, MoosyncResult,
 };
@@ -94,7 +95,10 @@ impl RadioExtension {
                     duration: Some(duration_to_proto(std::time::Duration::from_secs(0))),
                     r#type: SongType::Url.into(),
                     url: Some(s.url),
-                    playback_url: Some(s.url_resolved),
+                    playback_url: Some(PlaybackUrl {
+                        url: s.url_resolved,
+                        ..Default::default()
+                    }),
                     song_cover_path_low: Some(s.favicon),
                     ..Default::default()
                 }),

@@ -1,4 +1,6 @@
-use moosync_edk::types::{Album, Artist, InnerSong, LyricLine, Lyrics, Playlist, Value as ProtoValue};
+use moosync_edk::types::{
+    Album, Artist, InnerSong, LyricLine, Lyrics, PlaybackUrl, Playlist, Value as ProtoValue,
+};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -114,6 +116,7 @@ pub fn string_to_lyrics(s: &str) -> Option<Lyrics> {
     Some(Lyrics {
         lines,
         is_synced: false,
+        offset: None,
     })
 }
 
@@ -141,7 +144,10 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
             playback_url: ks
                 .get("id")
                 .and_then(|id| id.as_str())
-                .map(|id| format!("extension://moosync.koel/{id}")),
+                .map(|id| PlaybackUrl {
+                    url: format!("extension://moosync.koel/{id}"),
+                    ..Default::default()
+                }),
             ..Default::default()
         })
         .collect()

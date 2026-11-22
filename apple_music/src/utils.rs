@@ -2,7 +2,7 @@
 
 use moosync_edk::{
     api::duration_to_proto,
-    types::{Album, Artist, InnerSong, Playlist, PreferenceData, Song, SongType},
+    types::{Album, Artist, InnerSong, PlaybackUrl, Playlist, PreferenceData, Song, SongType},
     MoosyncError, MoosyncResult,
 };
 use moosync_edk::extensions_proto::struct_proto::google::protobuf::value::Kind;
@@ -145,7 +145,13 @@ pub fn song_from_ramdl(song: &songs::Songs) -> Song {
             duration,
             r#type: SongType::Url as i32,
             url: Some(attr.url.clone()),
-            playback_url: preview_url.clone().or_else(|| Some(attr.url.clone())),
+            playback_url: preview_url
+                .clone()
+                .or_else(|| Some(attr.url.clone()))
+                .map(|url| PlaybackUrl {
+                    url,
+                    ..Default::default()
+                }),
             song_cover_path_high: Some(cover),
             track_no: attr.track_number.map(|n| n as f64),
             date: attr.release_date.clone(),
@@ -184,7 +190,13 @@ pub fn song_from_search(song: &search::Song) -> Song {
             duration: Some(duration),
             r#type: SongType::Url as i32,
             url: Some(attr.url.clone()),
-            playback_url: preview_url.clone().or_else(|| Some(attr.url.clone())),
+            playback_url: preview_url
+                .clone()
+                .or_else(|| Some(attr.url.clone()))
+                .map(|url| PlaybackUrl {
+                    url,
+                    ..Default::default()
+                }),
             song_cover_path_high: Some(cover),
             track_no: Some(attr.track_number as f64),
             date: Some(attr.release_date.clone()),
