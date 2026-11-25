@@ -11,3 +11,9 @@ py_binary(
         "@extensions_sdk//protos:moosync_python_root",
     ],
 )
+
+py_binary(
+    name = "check_git_override",
+    srcs = ["check_git_override.py"],
+    main = "check_git_override.py",
+)
