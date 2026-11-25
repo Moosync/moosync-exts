@@ -26,12 +26,20 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.16.0
+        with:
+          bazelisk-cache: true
+          disk-cache: true
+          repository-cache: true
+
       - name: Build extensions and manifest
         run: |
           bazel build //:all //:manifest
           mkdir -p dist
-          find bazel-bin -name "*.msxt" -exec cp -f {} dist/ \;
+          find -L bazel-bin -maxdepth 2 -name "*.msxt" -exec cp -f {} dist/ \;
           cp -f bazel-bin/manifest.pb dist/
+          ls -1 dist/*.msxt dist/manifest.pb
 
       - name: Get release name
         id: date
