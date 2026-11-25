@@ -5,15 +5,17 @@ module(
 
 # Core Moosync dependencies
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
-local_path_override(
+git_override(
     module_name = "extensions_sdk",
-    path = "/home/ovenoboyo/projects/extensions-sdk",
+    branch = "main",
+    remote = "https://github.com/Moosync/extensions-sdk",
 )
 
 bazel_dep(name = "moosync")
-local_path_override(
+git_override(
     module_name = "moosync",
-    path = "/home/ovenoboyo/projects/Moosync",
+    branch = "main",
+    remote = "https://github.com/Moosync/Moosync",
 )
 
 # Shared foundation rules
