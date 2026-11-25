@@ -5,17 +5,15 @@ module(
 
 # Core Moosync dependencies
 bazel_dep(name = "extensions_sdk", version = "1.0.0")
-git_override(
+local_path_override(
     module_name = "extensions_sdk",
-    branch = "main",
-    remote = "https://github.com/Moosync/extensions-sdk",
+    path = "/home/ovenoboyo/projects/extensions-sdk",
 )
 
 bazel_dep(name = "moosync")
-git_override(
+local_path_override(
     module_name = "moosync",
-    branch = "main",
-    remote = "https://github.com/Moosync/Moosync",
+    path = "/home/ovenoboyo/projects/Moosync",
 )
 
 # Shared foundation rules
@@ -34,6 +32,10 @@ single_version_override(
     patch_strip = 1,
     patches = ["//patches:rules_android_ndk_dummy.patch"],
 )
+
+bazel_dep(name = "rules_android_ndk", version = "0.1.5")
+android_ndk_repository_extension = use_extension("@rules_android_ndk//:extension.bzl", "android_ndk_repository_extension")
+use_repo(android_ndk_repository_extension, "androidndk")
 
 register_toolchains(
     "@rules_foreign_cc//toolchains:preinstalled_pkgconfig_toolchain",

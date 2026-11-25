@@ -153,6 +153,13 @@ impl SpotifyExtension {
         }
     }
 
+    fn refresh_api_client(&self) {
+        if let Ok(config) = self.get_config() {
+            *self.api_client.lock().unwrap() = Some(ApiClient::new(config));
+            self.set_client_tokens();
+        }
+    }
+
     fn set_client_tokens(&self) {
         let tokens = self.get_tokens();
         match tokens {
@@ -304,6 +311,7 @@ impl PlayerProvider for SpotifyExtension {
 
         let is_premium = self.is_premium();
         if !is_premium {
+            warn!("can_play: user is not premium");
             return Ok(CanPlayResponse { can_play: false });
         }
 
@@ -311,9 +319,11 @@ impl PlayerProvider for SpotifyExtension {
             let api_key = self.get_soloist_api_key();
             let paired = self.soloist_player.poll_pairing_status().unwrap_or(false);
             if paired {
-                let _ = self.soloist_player.start_soloist(is_premium, &api_key);
-            } else {
-                let _ = self.soloist_player.start_pairing_mode(is_premium, &api_key);
+                if let Err(err) = self.soloist_player.start_soloist(is_premium, &api_key) {
+                    error!("start_soloist failed: {}", err);
+                }
+            } else if let Err(err) = self.soloist_player.start_pairing_mode(is_premium, &api_key) {
+                error!("start_pairing_mode failed: {}", err);
             }
             self.update_soloist_status();
             return Ok(CanPlayResponse { can_play: paired });
@@ -566,18 +576,29 @@ impl Provider for SpotifyExtension {
     }
 }
 
+fn is_pref_key(key: &str, name: &str) -> bool {
+    key == name
+        || key
+            .strip_suffix(name)
+            .is_some_and(|prefix| prefix.ends_with(':'))
+}
+
 impl DatabaseEvents for SpotifyExtension {}
 impl PreferenceEvents for SpotifyExtension {
     fn preference_changed(&self, req: PreferenceChangedRequest) -> MoosyncResult<()> {
         if let Some(pref) = req.preference {
-            if pref.key == "soloist_ws_port" || pref.key.ends_with(":soloist_ws_port") {
+            if is_pref_key(&pref.key, "soloist_ws_port") {
                 let port = self.get_soloist_port();
                 self.soloist_player.set_port(port);
                 self.ensure_soloist_pairing();
                 self.update_soloist_status();
-            } else if pref.key == "soloist_api_key" || pref.key.ends_with(":soloist_api_key") {
+            } else if is_pref_key(&pref.key, "soloist_api_key") {
                 self.ensure_soloist_pairing();
                 self.update_soloist_status();
+            } else if is_pref_key(&pref.key, "client_id")
+                || is_pref_key(&pref.key, "client_secret")
+            {
+                self.refresh_api_client();
             }
         }
         Ok(())
@@ -628,6 +649,9 @@ If **Moosync** does not appear in the device list, verify your **Soloist API Key
 
 impl Accounts for SpotifyExtension {
     fn perform_account_login(&self, args: PerformAccountLoginRequest) -> MoosyncResult<PerformAccountLoginResponse> {
+        if self.api_client.lock().unwrap().is_none() {
+            self.refresh_api_client();
+        }
         let mut guard = self.api_client.lock().unwrap();
         if let Some(api_client) = guard.as_mut() {
             if args.login_status {

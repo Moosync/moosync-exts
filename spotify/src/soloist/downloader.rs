@@ -4,6 +4,8 @@ use std::path::Path;
 
 use moosync_edk::{MoosyncError, MoosyncResult};
 
+pub use super::elf_align::align_elf_16k_if_needed;
+
 // Platform tags sourced from Rust std documentation:
 // https://doc.rust-lang.org/std/env/consts/constant.OS.html
 // https://doc.rust-lang.org/std/env/consts/constant.ARCH.html
@@ -11,8 +13,8 @@ use moosync_edk::{MoosyncError, MoosyncResult};
 // https://developer.spotify.com/documentation/soloist/reference/downloads-and-updates
 pub fn get_soloist_download_url(os: &str, arch: &str) -> MoosyncResult<String> {
     let archive_name = match (os, arch) {
-        ("linux", "x86_64") => "soloist_release_x86_64.tar.gz",
-        ("linux", "aarch64") => "soloist_release_arm64.tar.gz",
+        ("linux" | "android", "x86_64") => "soloist_release_x86_64.tar.gz",
+        ("linux" | "android", "aarch64") => "soloist_release_arm64.tar.gz",
         ("darwin" | "macos", "x86_64") => "soloist_release_osx_x86_64.tar.gz",
         ("darwin" | "macos", "aarch64") => "soloist_release_osx_arm64.tar.gz",
         ("windows", "x86_64") => "soloist_release_windows_x86_64.zip",

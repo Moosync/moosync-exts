@@ -1,3 +1,29 @@
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "termux_glibc_x86_64",
+    sha256 = "a09a3649a0febc5b04e30756f1599958f33f2f50a7db1b271c2320337d6cf0de",
+    urls = ["https://service.termux-pacman.dev/gpkg/x86_64/glibc-2.44-0-x86_64.pkg.tar.xz"],
+)
+
+http_file(
+    name = "termux_gcc_libs_x86_64",
+    sha256 = "5f7fd3600a4ac83357c91cd30641eae488c9afc1e2549e62429cafa4d0badf5a",
+    urls = ["https://service.termux-pacman.dev/gpkg/x86_64/gcc-libs-glibc-14.2.1-1-x86_64.pkg.tar.xz"],
+)
+
+http_file(
+    name = "termux_glibc_arm64",
+    sha256 = "8725a20d85fa35a094cf092286295668fd5292247128c4bb8101585ba063799c",
+    urls = ["https://service.termux-pacman.dev/gpkg/aarch64/glibc-2.44-0-aarch64.pkg.tar.xz"],
+)
+
+http_file(
+    name = "termux_gcc_libs_arm64",
+    sha256 = "9316728ceeb23c320756aa0bb03460f9767b6efdc44a478c86f7fcc44c6e11ec",
+    urls = ["https://service.termux-pacman.dev/gpkg/aarch64/gcc-libs-glibc-14.2.1-1-aarch64.pkg.tar.xz"],
+)
+
 spotify_crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate", isolate = True)
 spotify_crate.from_cargo(
     name = "spotify_crates",

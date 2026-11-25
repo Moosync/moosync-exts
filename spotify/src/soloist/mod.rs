@@ -1,3 +1,5 @@
+pub mod elf_align;
+
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
@@ -23,10 +25,15 @@ mod client;
 mod downloader;
 
 pub use client::{SoloistPosition, SoloistWsCommand, SoloistWsEvent, SoloistWsResponse};
-pub use downloader::{extract_soloist_binary, get_soloist_download_url};
+pub use downloader::{align_elf_16k_if_needed, extract_soloist_binary, get_soloist_download_url};
 
 pub const SOLOIST_BIN_PATH: &str = "/cache/bin/soloist";
+pub const SOLOIST_ANDROID_X86_64_BIN_PATH: &str = "/cache/bin/soloist_android_x86_64";
+pub const AAUDIO_SINK_BIN_PATH: &str = "/cache/bin/aaudio_sink";
+pub const SOLOIST_GLIBC_DIR: &str = "/cache/glibc";
+pub const PW_ANDROID_SOCK_PATH: &str = "@moosync_pw_aaudio";
 pub const SOLOIST_DATA_DIR: &str = "/cache/soloist_data";
+pub const SOLOIST_CACHE_DIR: &str = "/cache/soloist_data/cache";
 pub const DEFAULT_WS_PORT: u16 = 9090;
 pub const SOLOIST_DEVICE_NAME: &str = "Moosync";
 pub const EXPIRATION_EXIT_CODE: i32 = 10;
@@ -39,14 +46,46 @@ pub enum SoloistStatus {
     Error(String),
 }
 
+#[derive(Clone)]
+struct SoloistConnectContext {
+    ws: Arc<Mutex<Option<WebSocketClient>>>,
+    is_active: Arc<AtomicBool>,
+    connected: Arc<AtomicBool>,
+    status: Arc<Mutex<SoloistStatus>>,
+    is_paired: Arc<Mutex<bool>>,
+    port: u16,
+}
+
+impl SoloistConnectContext {
+    fn on_output(&self, data: &[u8]) {
+        if self.connected.load(Ordering::SeqCst) {
+            return;
+        }
+        let text = String::from_utf8_lossy(data);
+        if text.contains("websocket server listening on")
+            && connect_socket_once(&self.ws, &self.is_active, self.port).is_ok()
+        {
+            self.connected.store(true, Ordering::SeqCst);
+            *self.is_paired.lock().unwrap() = true;
+            *self.status.lock().unwrap() = SoloistStatus::Connected("Paired and ready".into());
+        }
+    }
+
+    fn on_exit(&self, code: i32) {
+        *self.status.lock().unwrap() =
+            SoloistStatus::Error(format!("Spotify Soloist exited (code: {})", code));
+    }
+}
+
 pub struct SoloistPlayer {
     pairing_process: Mutex<Option<ChildProcess>>,
     process: Mutex<Option<ChildProcess>>,
-    ws: Mutex<Option<WebSocketClient>>,
+    aaudio_process: Mutex<Option<ChildProcess>>,
+    ws: Arc<Mutex<Option<WebSocketClient>>>,
     port: Mutex<u16>,
-    is_paired: Mutex<bool>,
+    is_paired: Arc<Mutex<bool>>,
     is_active: Arc<AtomicBool>,
-    status: Mutex<SoloistStatus>,
+    status: Arc<Mutex<SoloistStatus>>,
     pending_uri: Mutex<Option<String>>,
 }
 
@@ -61,11 +100,12 @@ impl SoloistPlayer {
         Self {
             pairing_process: Mutex::new(None),
             process: Mutex::new(None),
-            ws: Mutex::new(None),
+            aaudio_process: Mutex::new(None),
+            ws: Arc::new(Mutex::new(None)),
             port: Mutex::new(DEFAULT_WS_PORT),
-            is_paired: Mutex::new(is_paired),
+            is_paired: Arc::new(Mutex::new(is_paired)),
             is_active: Arc::new(AtomicBool::new(false)),
-            status: Mutex::new(initial_status),
+            status: Arc::new(Mutex::new(initial_status)),
             pending_uri: Mutex::new(None),
         }
     }
@@ -110,37 +150,28 @@ impl SoloistPlayer {
 
     fn has_stored_session() -> bool {
         let users_dir = Path::new(SOLOIST_DATA_DIR).join("settings").join("Users");
-        if let Ok(user_entries) = fs::read_dir(&users_dir) {
-            for entry in user_entries.flatten() {
-                if !entry.file_name().to_string_lossy().starts_with('.') {
-                    return true;
-                }
-            }
+        if let Ok(user_entries) = fs::read_dir(&users_dir)
+            && user_entries
+                .flatten()
+                .any(|entry| !entry.file_name().to_string_lossy().starts_with('.'))
+        {
+            return true;
         }
 
-        let path = Path::new(SOLOIST_DATA_DIR);
-        if !path.exists() {
+        let Ok(entries) = fs::read_dir(SOLOIST_DATA_DIR) else {
             return false;
-        }
-        let entries = match fs::read_dir(path) {
-            Ok(e) => e,
-            Err(_) => return false,
         };
-        for entry in entries.flatten() {
+        entries.flatten().any(|entry| {
             if !entry.path().is_file() {
-                continue;
+                return false;
             }
             let name = entry.file_name();
             let name_str = name.to_string_lossy();
-            if !name_str.starts_with('.')
+            !name_str.starts_with('.')
                 && !name_str.ends_with(".pid")
                 && !name_str.ends_with(".addr")
                 && !name_str.ends_with(".port")
-            {
-                return true;
-            }
-        }
-        false
+        })
     }
 
     pub fn set_port(&self, port: u16) {
@@ -152,6 +183,78 @@ impl SoloistPlayer {
         *self.port.lock().unwrap()
     }
 
+    fn soloist_bin_path() -> &'static str {
+        if let Ok(platform) = get_platform() {
+            if platform.os == "android" && platform.arch == "x86_64" {
+                return SOLOIST_ANDROID_X86_64_BIN_PATH;
+            }
+        }
+        SOLOIST_BIN_PATH
+    }
+
+    fn extract_glibc_archive(arch: &str) -> MoosyncResult<()> {
+        let glibc_dir = Path::new(SOLOIST_GLIBC_DIR);
+        if glibc_dir.join("libpipewire-0.3.so.0").exists() && glibc_dir.join("libc.so.6").exists() {
+            return Ok(());
+        }
+        let archive_bytes = glibc_bundle::get_glibc_tar_gz(arch).ok_or_else(|| {
+            MoosyncError::String(format!("Bundled glibc not yet available for arch: {}", arch))
+        })?;
+        fs::create_dir_all(glibc_dir).map_err(|e| {
+            MoosyncError::String(format!("Failed to create glibc directory: {}", e))
+        })?;
+        let gz = flate2::read::GzDecoder::new(std::io::Cursor::new(archive_bytes));
+        let mut archive = tar::Archive::new(gz);
+        let entries = archive.entries().map_err(|e| {
+            MoosyncError::String(format!("Failed to read bundled glibc entries: {}", e))
+        })?;
+        for entry_res in entries {
+            let mut entry = entry_res.map_err(|e| {
+                MoosyncError::String(format!("Failed to read bundled glibc entry: {}", e))
+            })?;
+            if !entry.header().entry_type().is_file() {
+                continue;
+            }
+            let entry_path = entry.path().map_err(|e| {
+                MoosyncError::String(format!("Failed to read bundled glibc entry path: {}", e))
+            })?;
+            let Some(file_name) = entry_path.file_name() else {
+                continue;
+            };
+            let dest = glibc_dir.join(file_name);
+            let mut out_file = fs::File::create(&dest).map_err(|e| {
+                MoosyncError::String(format!("Failed to create {}: {}", dest.display(), e))
+            })?;
+            std::io::copy(&mut entry, &mut out_file).map_err(|e| {
+                MoosyncError::String(format!("Failed to write {}: {}", dest.display(), e))
+            })?;
+        }
+        Ok(())
+    }
+
+    fn extract_aaudio_sink(arch: &str) -> MoosyncResult<()> {
+        let sink_path = Path::new(AAUDIO_SINK_BIN_PATH);
+        if sink_path.exists() {
+            return Ok(());
+        }
+        let Some(sink_bytes) = glibc_bundle::get_aaudio_sink_bin(arch) else {
+            return Ok(());
+        };
+        if let Some(parent) = sink_path.parent() {
+            fs::create_dir_all(parent).map_err(|e| {
+                MoosyncError::String(format!("Failed to create aaudio_sink directory: {}", e))
+            })?;
+        }
+        fs::write(sink_path, sink_bytes).map_err(|e| {
+            MoosyncError::String(format!("Failed to write aaudio_sink binary: {}", e))
+        })
+    }
+
+    pub fn ensure_glibc_extracted(&self, arch: &str) -> MoosyncResult<()> {
+        Self::extract_glibc_archive(arch)?;
+        Self::extract_aaudio_sink(arch)
+    }
+
     pub fn ensure_binary_downloaded(&self, is_premium: bool) -> MoosyncResult<()> {
         if !is_premium {
             return Err(MoosyncError::String(
@@ -159,12 +262,16 @@ impl SoloistPlayer {
             ));
         }
 
-        if Path::new(SOLOIST_BIN_PATH).exists() {
+        let platform = get_platform()?;
+        if platform.os == "android" {
+            self.ensure_glibc_extracted(&platform.arch)?;
+        }
+        let bin_path = Self::soloist_bin_path();
+        if Path::new(bin_path).exists() {
             return Ok(());
         }
 
         info!("Downloading Spotify Soloist binary");
-        let platform = get_platform()?;
         let target_url = get_soloist_download_url(&platform.os, &platform.arch)?;
 
         let bytes = block_on(async {
@@ -186,17 +293,69 @@ impl SoloistPlayer {
                 .map_err(|e| MoosyncError::String(format!("Failed to read soloist bytes: {}", e)))
         })?;
 
-        if let Some(parent) = Path::new(SOLOIST_BIN_PATH).parent() {
+        if let Some(parent) = Path::new(bin_path).parent() {
             fs::create_dir_all(parent).map_err(|e| {
                 MoosyncError::String(format!("Failed to create bin directory: {}", e))
             })?;
         }
 
         let is_zip = target_url.ends_with(".zip");
-        extract_soloist_binary(&bytes, is_zip, Path::new(SOLOIST_BIN_PATH))?;
+        extract_soloist_binary(&bytes, is_zip, Path::new(bin_path))?;
+        if platform.os == "android" {
+            if let Ok(raw) = fs::read(bin_path) {
+                if let Some(aligned) = align_elf_16k_if_needed(&raw) {
+                    let _ = fs::write(bin_path, aligned);
+                }
+            }
+        }
 
         info!("Spotify Soloist binary downloaded successfully");
         Ok(())
+    }
+
+    fn ensure_aaudio_sink_started(&self) -> MoosyncResult<()> {
+        let mut sink_guard = self.aaudio_process.lock().unwrap();
+        if let Some(proc) = sink_guard.as_ref() {
+            if proc.get_status().map(|(running, _)| running).unwrap_or(false) {
+                return Ok(());
+            }
+            *sink_guard = None;
+        }
+        let args = ["--socket", PW_ANDROID_SOCK_PATH];
+        let env = HashMap::new();
+        info!("Spawning AAudio sink for Spotify Soloist");
+        let child = spawn_process(AAUDIO_SINK_BIN_PATH, &args, &env)?;
+        *sink_guard = Some(child);
+        Ok(())
+    }
+
+    fn build_soloist_env(api_key: Option<&str>) -> MoosyncResult<HashMap<String, String>> {
+        let mut env = HashMap::new();
+        if let Some(key) = api_key {
+            env.insert("SPOTIFY_SOLOIST_API_KEY".to_string(), key.to_string());
+        }
+        if let Ok(platform) = get_platform() {
+            if platform.os == "android" {
+                env.insert("LD_LIBRARY_PATH".to_string(), SOLOIST_GLIBC_DIR.to_string());
+                env.insert(
+                    "LD_PRELOAD".to_string(),
+                    "/cache/glibc/libpipewire-0.3.so.0".to_string(),
+                );
+                env.insert(
+                    "GLIBC_TUNABLES".to_string(),
+                    "glibc.pthread.rseq=0".to_string(),
+                );
+                env.insert(
+                    "PW_ANDROID_SOCK_PATH".to_string(),
+                    PW_ANDROID_SOCK_PATH.to_string(),
+                );
+                env.insert(
+                    "SSL_CERT_DIR".to_string(),
+                    "/system/etc/security/cacerts".to_string(),
+                );
+            }
+        }
+        Ok(env)
     }
 
     pub fn start_pairing_mode(&self, is_premium: bool, api_key: &str) -> MoosyncResult<()> {
@@ -231,6 +390,9 @@ impl SoloistPlayer {
             MoosyncError::String(format!("Failed to create soloist data dir: {}", e))
         })?;
 
+        let is_android = get_platform()
+            .map(|p| p.os == "android")
+            .unwrap_or(false);
         let mut args = vec![
             "--pair",
             "--device-name",
@@ -238,14 +400,18 @@ impl SoloistPlayer {
             "--data-dir",
             SOLOIST_DATA_DIR,
         ];
+        if is_android {
+            args.push("--cache-dir");
+            args.push(SOLOIST_CACHE_DIR);
+        }
         if !api_key.is_empty() {
             args.push("--api-key");
             args.push(api_key);
         }
 
-        let env = HashMap::new();
+        let env = Self::build_soloist_env(None)?;
         info!("Spawning Spotify Soloist in pairing mode");
-        let child = match spawn_process(SOLOIST_BIN_PATH, &args, &env) {
+        let child = match spawn_process(Self::soloist_bin_path(), &args, &env) {
             Ok(c) => c,
             Err(e) => {
                 self.set_status(SoloistStatus::Error(e.to_string()));
@@ -341,6 +507,9 @@ impl SoloistPlayer {
             MoosyncError::String(format!("Failed to create soloist data dir: {}", e))
         })?;
 
+        let is_android = get_platform()
+            .map(|p| p.os == "android")
+            .unwrap_or(false);
         let ws_arg = format!("127.0.0.1:{}", port);
         let args = vec![
             "--device-name",
@@ -349,15 +518,20 @@ impl SoloistPlayer {
             &ws_arg,
             "--data-dir",
             SOLOIST_DATA_DIR,
+            "--cache-dir",
+            SOLOIST_CACHE_DIR,
             "--api-key",
             api_key,
         ];
 
-        let mut env = HashMap::new();
-        env.insert("SPOTIFY_SOLOIST_API_KEY".to_string(), api_key.to_string());
+        if is_android {
+            self.ensure_aaudio_sink_started()?;
+        }
+
+        let env = Self::build_soloist_env(Some(api_key))?;
 
         info!("Spawning Spotify Soloist on ws port {}", port);
-        let child = spawn_process(SOLOIST_BIN_PATH, &args, &env)?;
+        let child = spawn_process(Self::soloist_bin_path(), &args, &env)?;
 
         let (running, exit_code) = child.get_status().unwrap_or((true, None));
         if !running {
@@ -375,83 +549,42 @@ impl SoloistPlayer {
             return Err(MoosyncError::String(err_msg));
         }
 
-        if let Err(e) = self.connect_and_validate_socket(port, Some(&child)) {
-            self.set_status(SoloistStatus::Error(e.to_string()));
-            return Err(e);
+        let ctx = SoloistConnectContext {
+            ws: Arc::clone(&self.ws),
+            is_active: Arc::clone(&self.is_active),
+            connected: Arc::new(AtomicBool::new(false)),
+            status: Arc::clone(&self.status),
+            is_paired: Arc::clone(&self.is_paired),
+            port,
+        };
+
+        let stderr_ctx = ctx.clone();
+        child.on_stderr(move |data| stderr_ctx.on_output(data));
+
+        let stdout_ctx = ctx.clone();
+        child.on_stdout(move |data| stdout_ctx.on_output(data));
+
+        let exit_ctx = ctx.clone();
+        child.on_exit(move |code| exit_ctx.on_exit(code));
+
+        if connect_socket_once(&self.ws, &self.is_active, port).is_ok() {
+            ctx.connected.store(true, Ordering::SeqCst);
+            let mut paired = self.is_paired.lock().unwrap();
+            *paired = true;
+            self.set_status(SoloistStatus::Connected("Paired and ready".into()));
+        } else {
+            self.set_status(SoloistStatus::Connected("Waiting for Soloist...".into()));
         }
         *proc_guard = Some(child);
-        let mut paired = self.is_paired.lock().unwrap();
-        *paired = true;
-        self.set_status(SoloistStatus::Connected("Paired and ready".into()));
         Ok(())
     }
 
     pub fn connect_and_validate_socket(
         &self,
         port: u16,
-        child: Option<&ChildProcess>,
+        _child: Option<&ChildProcess>,
     ) -> MoosyncResult<()> {
-        let ws_url = format!("ws://127.0.0.1:{}", port);
-        info!("Connecting to Soloist WebSocket at {}", ws_url);
-
-        let status_cmd = serde_json::to_string(&SoloistWsCommand::new("get_state"))
-            .map_err(|e| MoosyncError::String(e.to_string()))?;
-
-        let mut last_err = None;
-        for _attempt in 1..=25 {
-            if let Some(proc) = child {
-                if let Ok((false, exit_code)) = proc.get_status() {
-                    return Err(MoosyncError::String(format!(
-                        "Spotify Soloist exited before WebSocket was ready (exit code: {:?})",
-                        exit_code
-                    )));
-                }
-            }
-            std::thread::sleep(Duration::from_millis(100));
-
-            let client = match WebSocketClient::connect(&ws_url) {
-                Ok(c) => c,
-                Err(e) => {
-                    last_err = Some(e);
-                    continue;
-                }
-            };
-
-            let status_cmd_clone = status_cmd.clone();
-            let client_for_msg = client.clone();
-            let is_active_for_msg = Arc::clone(&self.is_active);
-            client.on_message(move |msg| {
-                if let WebSocketMessage::Text(text) = msg {
-                    info!("Received msg from Soloist WebSocket: {}", text);
-                    handle_ws_message(
-                        &text,
-                        &client_for_msg,
-                        &status_cmd_clone,
-                        &is_active_for_msg,
-                    );
-                }
-            });
-
-            client.on_close(|event| {
-                warn!("Soloist WebSocket closed: {:?}", event);
-            });
-
-            if let Err(e) = client.send_text(&status_cmd) {
-                last_err = Some(e);
-                continue;
-            }
-
-            let mut ws_guard = self.ws.lock().unwrap();
-            *ws_guard = Some(client);
-            return Ok(());
-        }
-
-        Err(last_err.unwrap_or_else(|| {
-            MoosyncError::String(format!(
-                "Socket validation timed out for device '{}'",
-                SOLOIST_DEVICE_NAME
-            ))
-        }))
+        connect_socket_once(&self.ws, &self.is_active, port)
     }
 
     pub fn load_track(&self, src: &str, song: Option<&Song>) -> MoosyncResult<()> {
@@ -717,4 +850,39 @@ fn handle_ws_message(
             }
         }
     }
+}
+
+fn connect_socket_once(
+    ws_slot: &Arc<Mutex<Option<WebSocketClient>>>,
+    is_active: &Arc<AtomicBool>,
+    port: u16,
+) -> MoosyncResult<()> {
+    let ws_url = format!("ws://127.0.0.1:{}", port);
+    info!("Connecting to Soloist WebSocket at {}", ws_url);
+
+    let status_cmd = serde_json::to_string(&SoloistWsCommand::new("get_state"))
+        .map_err(|e| MoosyncError::String(e.to_string()))?;
+
+    let client = WebSocketClient::connect(&ws_url)?;
+    let status_cmd_clone = status_cmd.clone();
+    let client_for_msg = client.clone();
+    let is_active_for_msg = Arc::clone(is_active);
+    client.on_message(move |msg| {
+        if let WebSocketMessage::Text(text) = msg {
+            info!("Received msg from Soloist WebSocket: {}", text);
+            handle_ws_message(
+                &text,
+                &client_for_msg,
+                &status_cmd_clone,
+                &is_active_for_msg,
+            );
+        }
+    });
+    client.on_close(|event| {
+        warn!("Soloist WebSocket closed: {:?}", event);
+    });
+    client.send_text(&status_cmd)?;
+
+    *ws_slot.lock().unwrap() = Some(client);
+    Ok(())
 }

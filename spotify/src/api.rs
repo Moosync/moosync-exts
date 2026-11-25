@@ -77,6 +77,9 @@ impl ApiClient {
 
     pub async fn set_tokens(&mut self, tokens: Option<TokenHolder>) {
         self.tokens = tokens.clone();
+        self.api_client.creds =
+            rspotify::Credentials::new(&self.config.client_id, &self.config.client_secret);
+        self.api_client.config.token_refreshing = true;
         if let Some(token_holder) = tokens {
             let mut api_client_tokens = self.api_client.token.lock().await.unwrap();
             let expires_at_dt = DateTime::<Utc>::from_timestamp_millis(token_holder.expires_at)

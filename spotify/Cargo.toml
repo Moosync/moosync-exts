@@ -17,6 +17,8 @@ regex = "1.12.2"
 flate2 = { version = "1.0", default-features = false, features = ["rust_backend"] }
 tar = "0.4"
 zip = { version = "2.2", default-features = false, features = ["deflate"] }
+object = { version = "0.36", default-features = false, features = ["read_core", "elf"] }
+simple-dns = "0.9"
 
 [patch.crates-io]
 reqwest = { git = "https://github.com/Ovenoboyo/reqwest_extism", branch = "0.12.x" }

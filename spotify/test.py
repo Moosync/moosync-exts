@@ -113,11 +113,15 @@ if IS_RECORD_MODE:
         "SPOTIFY_REFRESH_TOKEN",
         os.environ.get("SPOTIFY_REFRESH_TOKEN", "dummy_spotify_refresh_token"),
     )
+    SOLOIST_API_KEY = _ENV.get(
+        "SPOTIFY_SOLOIST_API_KEY", os.environ.get("SPOTIFY_SOLOIST_API_KEY", "")
+    )
 else:
     CLIENT_ID = "dummy_spotify_client_id"
     CLIENT_SECRET = "dummy_spotify_client_secret"
     ACCESS_TOKEN = "dummy_spotify_access_token"
     REFRESH_TOKEN = "dummy_spotify_refresh_token"
+    SOLOIST_API_KEY = "dummy_soloist_api_key"
 
 
 def update_env_file(access_token: str, refresh_token: str):
@@ -166,84 +170,6 @@ def entry(moounit: Moounit):
         MainCommandResponse(
             get_preference=GetPreferenceResponse(data=PreferenceData())
         ),
-    )
-    moounit.expect_command(
-        MainCommand(
-            set_account=SetAccountRequest(
-                account=ExtensionAccountDetail(
-                    id="spotify",
-                    package_name="moosync.spotify",
-                    name="Spotify",
-                    bg_color="#07C330",
-                    logged_in=False,
-                    icon="",
-                )
-            )
-        ),
-        MainCommandResponse(set_account=SetAccountResponse(success=True)),
-    )
-    moounit.expect_command(
-        MainCommand(
-            register_user_preference=RegisterUserPreferenceRequest(
-                prefs=[
-                    PreferenceItem(
-                        id="soloist_status",
-                        pref_type=PreferenceType.PREFERENCE_TYPE_STATUS_GROUP,
-                        title="Soloist Status",
-                        subtitle="Current state of the Spotify Soloist playback daemon",
-                        value=PreferenceValue(
-                            status_list=StatusDotList(
-                                values=[
-                                    StatusDot(
-                                        title="Inactive",
-                                        subtitle="Spotify Premium required",
-                                        color=StatusDotColor.STATUS_DOT_COLOR_OFF,
-                                    )
-                                ]
-                            )
-                        ),
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client ID",
-                        id="client_id",
-                        subtitle="Client ID for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client Secret",
-                        id="client_secret",
-                        subtitle="Client Secret for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist API Key",
-                        id="soloist_api_key",
-                        subtitle="Spotify Soloist API Key for playback",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist WebSocket Port",
-                        id="soloist_ws_port",
-                        subtitle="WebSocket port for Spotify Soloist (default: 9090)",
-                        value=PreferenceValue(string_value="9090"),
-                        default=PreferenceValue(string_value="9090"),
-                    ),
-                ]
-            )
-        ),
-        MainCommandResponse(register_user_preference=RegisterUserPreferenceResponse()),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.app")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.spotify")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
     )
     moounit.expect_command(
         MainCommand(
@@ -313,84 +239,6 @@ def configured_entry(moounit: Moounit):
         MainCommandResponse(
             get_preference=GetPreferenceResponse(data=PreferenceData())
         ),
-    )
-    moounit.expect_command(
-        MainCommand(
-            set_account=SetAccountRequest(
-                account=ExtensionAccountDetail(
-                    id="spotify",
-                    package_name="moosync.spotify",
-                    name="Spotify",
-                    bg_color="#07C330",
-                    logged_in=False,
-                    icon="",
-                )
-            )
-        ),
-        MainCommandResponse(set_account=SetAccountResponse(success=True)),
-    )
-    moounit.expect_command(
-        MainCommand(
-            register_user_preference=RegisterUserPreferenceRequest(
-                prefs=[
-                    PreferenceItem(
-                        id="soloist_status",
-                        pref_type=PreferenceType.PREFERENCE_TYPE_STATUS_GROUP,
-                        title="Soloist Status",
-                        subtitle="Current state of the Spotify Soloist playback daemon",
-                        value=PreferenceValue(
-                            status_list=StatusDotList(
-                                values=[
-                                    StatusDot(
-                                        title="Inactive",
-                                        subtitle="Spotify Premium required",
-                                        color=StatusDotColor.STATUS_DOT_COLOR_OFF,
-                                    )
-                                ]
-                            )
-                        ),
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client ID",
-                        id="client_id",
-                        subtitle="Client ID for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client Secret",
-                        id="client_secret",
-                        subtitle="Client Secret for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist API Key",
-                        id="soloist_api_key",
-                        subtitle="Spotify Soloist API Key for playback",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist WebSocket Port",
-                        id="soloist_ws_port",
-                        subtitle="WebSocket port for Spotify Soloist (default: 9090)",
-                        value=PreferenceValue(string_value="9090"),
-                        default=PreferenceValue(string_value="9090"),
-                    ),
-                ]
-            )
-        ),
-        MainCommandResponse(register_user_preference=RegisterUserPreferenceResponse()),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.app")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.spotify")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
     )
     moounit.expect_command(
         MainCommand(
@@ -499,33 +347,20 @@ def authed_entry(moounit: Moounit, request: pytest.FixtureRequest):
                 )
             ),
             MainCommandResponse(
-                get_preference=GetPreferenceResponse(data=PreferenceData())
+                get_preference=GetPreferenceResponse(
+                    data=PreferenceData(
+                        key="soloist_api_key",
+                        value=Value(string_value=SOLOIST_API_KEY),
+                    )
+                )
             ),
-            times=1,
+            times=-1,
         )
     if request.node.name == "test_soloist_playback":
         moounit.expect_command(
             MainCommand(get_process_status=GetProcessStatusRequest(process_id=1)),
             MainCommandResponse(
                 get_process_status=GetProcessStatusResponse(is_running=True)
-            ),
-            times=-1,
-        )
-        moounit.expect_command(
-            MainCommand(
-                get_preference=GetPreferenceRequest(
-                    data=PreferenceData(key="soloist_api_key")
-                )
-            ),
-            MainCommandResponse(
-                get_preference=GetPreferenceResponse(
-                    data=PreferenceData(
-                        key="soloist_api_key",
-                        value=Value(
-                            string_value="spak_4u3ItPPoFi12FvkQJlIwBjv5GoXvtbYq"
-                        ),
-                    )
-                )
             ),
             times=-1,
         )
@@ -540,9 +375,7 @@ def authed_entry(moounit: Moounit, request: pytest.FixtureRequest):
                 get_preference=GetPreferenceResponse(
                     data=PreferenceData(
                         key="soloist_api_key",
-                        value=Value(
-                            string_value="spak_4u3ItPPoFi12FvkQJlIwBjv5GoXvtbYq"
-                        ),
+                        value=Value(string_value=SOLOIST_API_KEY),
                     )
                 )
             ),
@@ -574,86 +407,6 @@ def authed_entry(moounit: Moounit, request: pytest.FixtureRequest):
         )
     moounit.expect_command(
         MainCommand(
-            set_account=SetAccountRequest(
-                account=ExtensionAccountDetail(
-                    id="spotify",
-                    package_name="moosync.spotify",
-                    name="Spotify",
-                    bg_color="#07C330",
-                    logged_in=True,
-                    icon="",
-                    username="Moosync Premium User",
-                )
-            )
-        ),
-        MainCommandResponse(set_account=SetAccountResponse(success=True)),
-    )
-    moounit.expect_command(
-        MainCommand(
-            register_user_preference=RegisterUserPreferenceRequest(
-                prefs=[
-                    PreferenceItem(
-                        id="soloist_status",
-                        pref_type=PreferenceType.PREFERENCE_TYPE_STATUS_GROUP,
-                        title="Soloist Status",
-                        subtitle="Current state of the Spotify Soloist playback daemon",
-                        value=PreferenceValue(
-                            status_list=StatusDotList(
-                                values=[
-                                    StatusDot(
-                                        title="Inactive",
-                                        subtitle="Spotify Premium required",
-                                        color=StatusDotColor.STATUS_DOT_COLOR_OFF,
-                                    )
-                                ]
-                            )
-                        ),
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client ID",
-                        id="client_id",
-                        subtitle="Client ID for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Client Secret",
-                        id="client_secret",
-                        subtitle="Client Secret for Spotify",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist API Key",
-                        id="soloist_api_key",
-                        subtitle="Spotify Soloist API Key for playback",
-                    ),
-                    PreferenceItem(
-                        pref_type=PreferenceType.PREFERENCE_TYPE_TEXT_INPUT_GROUP,
-                        title="Soloist WebSocket Port",
-                        id="soloist_ws_port",
-                        subtitle="WebSocket port for Spotify Soloist (default: 9090)",
-                        value=PreferenceValue(string_value="9090"),
-                        default=PreferenceValue(string_value="9090"),
-                    ),
-                ]
-            )
-        ),
-        MainCommandResponse(register_user_preference=RegisterUserPreferenceResponse()),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.app")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.spotify")),
-        MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
-        times=-1,
-    )
-
-    moounit.expect_command(
-        MainCommand(
             get_preference=GetPreferenceRequest(
                 data=PreferenceData(key="client_secret")
             )
@@ -670,22 +423,6 @@ def authed_entry(moounit: Moounit, request: pytest.FixtureRequest):
         MainCommandResponse(
             get_preference=GetPreferenceResponse(data=PreferenceData())
         ),
-        times=-1,
-    )
-    moounit.expect_command(
-        MainCommand(
-            register_user_preference=RegisterUserPreferenceRequest(
-                prefs=[
-                    PreferenceItem(
-                        id="soloist_status",
-                        pref_type=PreferenceType.PREFERENCE_TYPE_STATUS_GROUP,
-                        title="Soloist Status",
-                        subtitle="Current state of the Spotify Soloist playback daemon",
-                    )
-                ]
-            )
-        ),
-        MainCommandResponse(register_user_preference=RegisterUserPreferenceResponse()),
         times=-1,
     )
     try:
@@ -836,6 +573,9 @@ def test_soloist_pairing(authed_entry: Moounit):
     assert can_ret1.can_play.can_play is False
 
     if authed_entry.recorder.record_mode:
+        assert (
+            authed_entry.process_manager.processes
+        ), "Soloist pairing process was not spawned"
         print("\n" + "=" * 60, flush=True)
         print(">>> SOLOIST IS ACTIVE IN PAIRING MODE ('Moosync') <<<", flush=True)
         print(
@@ -867,6 +607,14 @@ def test_soloist_pairing(authed_entry: Moounit):
                         flush=True,
                     )
                     break
+    else:
+        data_dir = authed_entry._mapped_paths.get("/cache/soloist_data")
+        if data_dir:
+            os.makedirs(data_dir, exist_ok=True)
+            with open(
+                os.path.join(data_dir, "session.json"), "w", encoding="utf-8"
+            ) as f:
+                f.write("{}")
 
     # User paired soloist
     can_ret2 = authed_entry.send_command(
@@ -1052,12 +800,6 @@ def test_recommendations(authed_entry: Moounit):
 
 
 def test_soloist_playback(authed_entry: Moounit):
-    data_dir = authed_entry._mapped_paths.get("/cache/soloist_data")
-    if data_dir:
-        os.makedirs(data_dir, exist_ok=True)
-        with open(os.path.join(data_dir, "session.json"), "w", encoding="utf-8") as f:
-            f.write("{}")
-
     can_ret = authed_entry.send_command(
         ExtensionCommand(
             can_play=CanPlayRequest(
@@ -1088,6 +830,14 @@ def test_soloist_playback(authed_entry: Moounit):
                     ]
                     if not running_procs and authed_entry.process_manager.processes:
                         break
+        else:
+            data_dir = authed_entry._mapped_paths.get("/cache/soloist_data")
+            if data_dir:
+                os.makedirs(data_dir, exist_ok=True)
+                with open(
+                    os.path.join(data_dir, "session.json"), "w", encoding="utf-8"
+                ) as f:
+                    f.write("{}")
 
         can_ret2 = authed_entry.send_command(
             ExtensionCommand(
