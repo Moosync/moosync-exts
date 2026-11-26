@@ -62,7 +62,7 @@ def entry(moounit: Moounit):
         times=-1,
     )
     moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.youtube.js")),
+        MainCommand(register_oauth=RegisterOauthRequest(url="app.moosync.youtube.js")),
         MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
         times=-1,
     )
@@ -111,27 +111,27 @@ def test_search(entry: Moounit):
     assert len(songs) == 30
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:V2c3KVGv0X0"
+    assert first.song.id == "app.moosync.youtube.js:youtube:V2c3KVGv0X0"
     assert first.song.title == "Tested And True"
     assert first.song.duration.seconds == 480
     assert first.song.url == "https://www.youtube.com/watch?v=V2c3KVGv0X0"
     assert first.song.song_cover_path_high.startswith("http")
     assert first.song.song_cover_path_low.startswith("http")
-    assert first.album.album_id == "moosync.youtube.js:youtube-album:MPREb_4sdpVL4FiGh"
+    assert first.album.album_id == "app.moosync.youtube.js:youtube-album:MPREb_4sdpVL4FiGh"
     assert first.album.album_name == "Tested And True"
     assert len(first.artists) == 1
     assert (
         first.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCSxcflkwVWa_U6QtnIfvBeA"
+        == "app.moosync.youtube.js:youtube-artist:UCSxcflkwVWa_U6QtnIfvBeA"
     )
     assert first.artists[0].artist_name == "King Terryo"
 
     second = songs[1]
-    assert second.song.id == "moosync.youtube.js:youtube:MqyPl1Kdw7k"
+    assert second.song.id == "app.moosync.youtube.js:youtube:MqyPl1Kdw7k"
     assert second.song.title == "Ba Ra Ta Sound Test (feat. DJ FRANCIS ENERIDO)"
     assert second.song.duration.seconds == 181
     assert second.song.url == "https://www.youtube.com/watch?v=MqyPl1Kdw7k"
-    assert second.album.album_id == "moosync.youtube.js:youtube-album:MPREb_YsapymF5Ag4"
+    assert second.album.album_id == "app.moosync.youtube.js:youtube-album:MPREb_YsapymF5Ag4"
     assert second.album.album_name == "Ba Ra Ta Sound Test"
 
     cached_search_resp = RequestedSearchResultResponse(
@@ -180,7 +180,7 @@ def test_playlist_songs(entry: Moounit):
     assert len(songs) == 97
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:EFqvVSqh6R8"
+    assert first.song.id == "app.moosync.youtube.js:youtube:EFqvVSqh6R8"
     assert first.song.title == "Next Summer (Official Video)"
     assert first.song.duration.seconds == 313
     assert first.song.url == "https://www.youtube.com/watch?v=EFqvVSqh6R8"
@@ -188,7 +188,7 @@ def test_playlist_songs(entry: Moounit):
     assert first.song.song_cover_path_low.startswith("http")
 
     second = songs[1]
-    assert second.song.id == "moosync.youtube.js:youtube:ko70cExuzZM"
+    assert second.song.id == "app.moosync.youtube.js:youtube:ko70cExuzZM"
     assert second.song.title == "The Fate of Ophelia"
     assert second.song.duration.seconds == 239
     assert second.song.url == "https://www.youtube.com/watch?v=ko70cExuzZM"
@@ -218,26 +218,26 @@ def test_artist_songs(entry: Moounit):
     assert len(songs) == 100
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:9kznlAwE-8o"
+    assert first.song.id == "app.moosync.youtube.js:youtube:9kznlAwE-8o"
     assert first.song.title == "Mockingbird"
     assert first.song.duration.seconds == 251
     assert first.song.url == "https://www.youtube.com/watch?v=9kznlAwE-8o"
     assert len(first.artists) == 1
     assert (
         first.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCedvOgsKFzcK3hA5taf3KoQ"
+        == "app.moosync.youtube.js:youtube-artist:UCedvOgsKFzcK3hA5taf3KoQ"
     )
     assert first.artists[0].artist_name == "Eminem"
 
     second = songs[1]
-    assert second.song.id == "moosync.youtube.js:youtube:RnkShwdXfyc"
+    assert second.song.id == "app.moosync.youtube.js:youtube:RnkShwdXfyc"
     assert second.song.title == "Love The Way You Lie (feat. Rihanna)"
     assert second.song.duration.seconds == 264
     assert second.song.url == "https://www.youtube.com/watch?v=RnkShwdXfyc"
     assert len(second.artists) == 1
     assert (
         second.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCedvOgsKFzcK3hA5taf3KoQ"
+        == "app.moosync.youtube.js:youtube-artist:UCedvOgsKFzcK3hA5taf3KoQ"
     )
     assert second.artists[0].artist_name == "Eminem"
 
@@ -266,7 +266,7 @@ def test_album_songs(entry: Moounit):
     assert len(songs) == 1
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:e_CrkgWHEB0"
+    assert first.song.id == "app.moosync.youtube.js:youtube:e_CrkgWHEB0"
     assert first.song.title == "Nevermind, Not Nirvana"
     assert first.song.duration.seconds == 147
     assert first.song.url == "https://www.youtube.com/watch?v=e_CrkgWHEB0"
@@ -292,13 +292,13 @@ def test_recommendations(entry: Moounit):
     assert len(songs) == 68
 
     first = songs[0]
-    assert first.song.id == "moosync.youtube.js:youtube:MPREb_3pF7GwaQiMk"
+    assert first.song.id == "app.moosync.youtube.js:youtube:MPREb_3pF7GwaQiMk"
     assert first.song.title == "Helluva Boss Season Three, Part 1 (Deluxe)"
     assert first.song.url == "https://www.youtube.com/watch?v=MPREb_3pF7GwaQiMk"
     assert len(first.artists) == 1
     assert (
         first.artists[0].artist_id
-        == "moosync.youtube.js:youtube-artist:UCDl4z9JAB6B8zf84A27mv_Q"
+        == "app.moosync.youtube.js:youtube-artist:UCDl4z9JAB6B8zf84A27mv_Q"
     )
     assert first.artists[0].artist_name == "Helluva Boss"
 
@@ -325,7 +325,7 @@ def test_oauth_flow(entry: Moounit):
     assert pre_login_account is not None
     assert pre_login_account.id == "youtube"
     assert pre_login_account.name == "YouTube"
-    assert pre_login_account.package_name == "moosync.youtube.js"
+    assert pre_login_account.package_name == "app.moosync.youtube.js"
     assert pre_login_account.bg_color == "#FF0000"
     assert pre_login_account.logged_in is False
 
@@ -346,7 +346,7 @@ def test_oauth_flow(entry: Moounit):
     assert account is not None
     assert account.id == "youtube"
     assert account.name == "YouTube"
-    assert account.package_name == "moosync.youtube.js"
+    assert account.package_name == "app.moosync.youtube.js"
     assert account.bg_color == "#FF0000"
     assert account.logged_in is True
     assert account.username == "Sahil Gupte"
@@ -408,7 +408,7 @@ def test_requested_playlists(entry: Moounit):
     first = playlists[0]
     assert (
         first.playlist_id
-        == "moosync.youtube.js:youtube-playlist:PLDIoUOhQQPlU2DoseElwLlKXmV9YSEnKI"
+        == "app.moosync.youtube.js:youtube-playlist:PLDIoUOhQQPlU2DoseElwLlKXmV9YSEnKI"
     )
     assert first.playlist_name == "Liked Music"
     assert first.playlist_song_count == 98
@@ -419,7 +419,7 @@ def test_requested_playlists(entry: Moounit):
     second = playlists[1]
     assert (
         second.playlist_id
-        == "moosync.youtube.js:youtube-playlist:PLO0BbVUKhzndecKXOAEm3I76w46RNLkgK"
+        == "app.moosync.youtube.js:youtube-playlist:PLO0BbVUKhzndecKXOAEm3I76w46RNLkgK"
     )
     assert second.playlist_name == "kek"
     assert second.playlist_song_count == 25
@@ -444,7 +444,7 @@ def test_playback_details(entry: Moounit):
     ret = entry.send_command(
         ExtensionCommand(
             playback_details_requested=PlaybackDetailsRequestedRequest(
-                song=Song(song=InnerSong(id="moosync.youtube_js:dQw4w9WgXcQ"))
+                song=Song(song=InnerSong(id="app.moosync.youtube_js:dQw4w9WgXcQ"))
             )
         )
     )
@@ -472,7 +472,7 @@ def test_playback_details_cache_hit(entry: Moounit):
     ret = entry.send_command(
         ExtensionCommand(
             playback_details_requested=PlaybackDetailsRequestedRequest(
-                song=Song(song=InnerSong(id="moosync.youtube_js:cached_vid1"))
+                song=Song(song=InnerSong(id="app.moosync.youtube_js:cached_vid1"))
             )
         )
     )

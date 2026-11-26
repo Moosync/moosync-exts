@@ -34,7 +34,7 @@ def test_search(entry: Moounit):
 
     assert len(ret.requested_search_result.songs) > 0
     assert ret.requested_search_result.songs[0].song.id.startswith(
-        "moosync.soundcloud:"
+        "app.moosync.soundcloud:"
     )
     assert not ret.requested_search_result.songs[0].song.HasField("playback_url")
 
@@ -45,7 +45,7 @@ def test_playback_details(entry: Moounit):
             playback_details_requested=pb.PlaybackDetailsRequestedRequest(
                 song=Song(
                     song=InnerSong(
-                        id="moosync.soundcloud:2428757886",
+                        id="app.moosync.soundcloud:2428757886",
                     )
                 )
             )

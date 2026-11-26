@@ -21,7 +21,7 @@ def build_extension_manifest(ext_info: dict) -> extensions_pb2.ExtensionManifest
         m.extension_entry = ext_info["extension_entry"]
     if ext_info.get("author"):
         m.author = ext_info["author"]
-    m.name = ext_info.get("name", "")
+    m.package_name = ext_info.get("name", "")
     m.version = ext_info.get("version", "")
     if ext_info.get("icon"):
         m.icon = ext_info["icon"]
@@ -80,8 +80,8 @@ class ExtensionRegistry:
                     if "manifest.pb" in zf.namelist():
                         with zf.open("manifest.pb") as pf:
                             pb_manifest = extensions_pb2.ExtensionManifest.FromString(pf.read())
-                            pkg_name = pb_manifest.name
-                            disp_name = pb_manifest.display_name or pb_manifest.name
+                            pkg_name = pb_manifest.package_name
+                            disp_name = pb_manifest.display_name or pb_manifest.package_name
                             version = pb_manifest.version or "0.0.1"
                             desc = pb_manifest.description
                             author = pb_manifest.author

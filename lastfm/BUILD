@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "lastfm",
-    package_name = "moosync.lastfm",
+    package_name = "app.moosync.lastfm",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "ws.audioscrobbler.com",

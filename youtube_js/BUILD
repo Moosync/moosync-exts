@@ -8,7 +8,7 @@ npm_link_all_packages(name = "node_modules")
 
 js_extension(
     name = "youtube_js",
-    package_name = "moosync.youtube.js",
+    package_name = "app.moosync.youtube.js",
     srcs = [
         "src/cache_keys.ts",
         "src/index.ts",

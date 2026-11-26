@@ -69,7 +69,7 @@ impl AppleMusic {
         let _ = api::set_account(SetAccountRequest {
             account: Some(ExtensionAccountDetail {
                 id: "apple_music".into(),
-                package_name: "moosync.apple.music".into(),
+                package_name: "app.moosync.apple.music".into(),
                 name: "Apple Music".into(),
                 bg_color: "#FA233B".into(),
                 logged_in,

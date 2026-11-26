@@ -691,7 +691,7 @@ pub fn resolve_spotify_uri(src: &str, song: Option<&Song>) -> String {
     }
     if let Some(inner) = song.and_then(|s| s.song.as_ref()) {
         if let Some(id) = inner.id.as_deref() {
-            if let Some(raw_id) = id.strip_prefix("moosync.spotify:") {
+            if let Some(raw_id) = id.strip_prefix("app.moosync.spotify:") {
                 return format!("spotify:track:{}", raw_id);
             }
         }

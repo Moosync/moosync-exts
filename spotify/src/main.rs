@@ -294,14 +294,14 @@ impl PlayerEvents for SpotifyExtension {}
 impl PlayerProvider for SpotifyExtension {
     fn can_play(&self, req: CanPlayRequest) -> MoosyncResult<CanPlayResponse> {
         info!("can_play called for src: {}", req.src);
-        let is_spotify = req.src.starts_with("moosync.spotify:")
+        let is_spotify = req.src.starts_with("app.moosync.spotify:")
             || req.src.starts_with("spotify:track:")
             || req
                 .song
                 .as_ref()
                 .and_then(|s| s.song.as_ref())
                 .and_then(|i| i.id.as_deref())
-                .map(|id| id.starts_with("moosync.spotify:"))
+                .map(|id| id.starts_with("app.moosync.spotify:"))
                 .unwrap_or(false);
 
         if !is_spotify {
@@ -624,7 +624,7 @@ impl SpotifyExtension {
         let _ = set_account(SetAccountRequest {
             account: Some(ExtensionAccountDetail {
                 id: "spotify".into(),
-                package_name: "moosync.spotify".into(),
+                package_name: "app.moosync.spotify".into(),
                 name: "Spotify".into(),
                 bg_color: "#07C330".into(),
                 logged_in,
@@ -730,7 +730,7 @@ pub extern "C" fn init() {
         url: "moosync.app".into(),
     });
     let _ = register_oauth(RegisterOauthRequest {
-        url: "moosync.spotify".into(),
+        url: "app.moosync.spotify".into(),
     });
 
     info!("Initialized spotify extension");

@@ -216,7 +216,7 @@ def test_search(logged_in_entry: Moounit):
     assert ret.HasField("requested_search_result")
     songs = ret.requested_search_result.songs
     assert len(songs) == 1
-    assert songs[0].song.id == "moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
+    assert songs[0].song.id == "app.moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
     assert songs[0].song.title == "Moosync Test Track"
 
 
@@ -242,7 +242,7 @@ def test_playlist_songs(logged_in_entry: Moounit):
     assert ret.HasField("requested_playlist_songs")
     songs = ret.requested_playlist_songs.songs
     assert len(songs) == 1
-    assert songs[0].song.id == "moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
+    assert songs[0].song.id == "app.moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
     assert songs[0].song.title == "Moosync Test Track"
 
 
@@ -257,7 +257,7 @@ def test_album_songs(logged_in_entry: Moounit):
     assert ret.HasField("requested_album_songs")
     songs = ret.requested_album_songs.songs
     assert len(songs) == 1
-    assert songs[0].song.id == "moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
+    assert songs[0].song.id == "app.moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
     assert songs[0].song.title == "Moosync Test Track"
 
 
@@ -272,7 +272,7 @@ def test_artist_songs(logged_in_entry: Moounit):
     assert ret.HasField("requested_artist_songs")
     songs = ret.requested_artist_songs.songs
     assert len(songs) == 1
-    assert songs[0].song.id == "moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
+    assert songs[0].song.id == "app.moosync.koel:01a1fced-ebca-719a-b304-867b76bf0b3f"
     assert songs[0].song.title == "Moosync Test Track"
 
 
@@ -280,7 +280,7 @@ def test_custom_request(logged_in_entry: Moounit):
     ret = logged_in_entry.send_command(
         ExtensionCommand(
             custom_request=CustomRequest(
-                request_id="extension://moosync.koel/01a1fced-ebca-719a-b304-867b76bf0b3f"
+                request_id="extension://app.moosync.koel/01a1fced-ebca-719a-b304-867b76bf0b3f"
             )
         )
     )
@@ -297,9 +297,9 @@ def test_playback_details_requested(logged_in_entry: Moounit):
             playback_details_requested=PlaybackDetailsRequestedRequest(
                 song=Song(
                     song=InnerSong(
-                        id=f"moosync.koel:{song_id}",
+                        id=f"app.moosync.koel:{song_id}",
                         playback_url=PlaybackUrl(
-                            url=f"extension://moosync.koel/{song_id}"
+                            url=f"extension://app.moosync.koel/{song_id}"
                         ),
                     )
                 )

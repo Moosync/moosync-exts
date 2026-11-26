@@ -81,7 +81,7 @@ impl KoelClient {
                 year: ks.year.clone().map(|v| v.to_string()),
                 song_cover_path_high: ks.album_cover.clone(),
                 playback_url: ks.id.clone().map(|id| PlaybackUrl {
-                    url: format!("extension://moosync.koel/{id}"),
+                    url: format!("extension://app.moosync.koel/{id}"),
                     ..Default::default()
                 }),
                 ..Default::default()
@@ -402,7 +402,7 @@ impl KoelClient {
     }
 
     pub fn handle_custom_request(&self, url: String) -> Result<String, KoelError> {
-        let id = url.replace("extension://moosync.koel/", "");
+        let id = url.replace("extension://app.moosync.koel/", "");
         if let Some(token) = &self.token {
             Ok(format!("{}/play/{}?t={}", self.koel_url, id, token))
         } else {

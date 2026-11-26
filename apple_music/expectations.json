@@ -124,7 +124,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -278,7 +278,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -499,7 +499,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -720,7 +720,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -941,7 +941,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -1162,7 +1162,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -1383,7 +1383,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -1604,7 +1604,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -1825,7 +1825,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -2046,7 +2046,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }
@@ -2326,7 +2326,7 @@
           "set_account": {
             "account": {
               "id": "apple_music",
-              "package_name": "moosync.apple.music",
+              "package_name": "app.moosync.apple.music",
               "name": "Apple Music",
               "bg_color": "#FA233B"
             }

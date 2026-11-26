@@ -145,7 +145,7 @@ pub fn parse_queryable_songs(value: &Value) -> Vec<InnerSong> {
                 .get("id")
                 .and_then(|id| id.as_str())
                 .map(|id| PlaybackUrl {
-                    url: format!("extension://moosync.koel/{id}"),
+                    url: format!("extension://app.moosync.koel/{id}"),
                     ..Default::default()
                 }),
             ..Default::default()

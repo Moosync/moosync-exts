@@ -6,7 +6,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:song:yesterday:the beatles"
+            "key": "app.moosync.cover_art.cover:song:yesterday:the beatles"
           }
         },
         "response": {
@@ -124,7 +124,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:song:yesterday:the beatles",
+            "key": "app.moosync.cover_art.cover:song:yesterday:the beatles",
             "data": "CmZodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9jb3Zlci80NTU5MWI3MGU5YjQ1ZTg5N2RkN2I2NWI1NDgyNWM0Ny8xMDAweDEwMDAtMDAwMDAwLTgwLTAtMC5qcGcKZmh0dHBzOi8vY2RuLWltYWdlcy5kemNkbi5uZXQvaW1hZ2VzL2NvdmVyL2M2NWIzYmQ4NGU4MTA1NmUwNjBiZTE0NDM4MWMwNmM4LzEwMDB4MTAwMC0wMDAwMDAtODAtMC0wLmpwZwpmaHR0cHM6Ly9jZG4taW1hZ2VzLmR6Y2RuLm5ldC9pbWFnZXMvY292ZXIvZTY3OTA1N2QyNzZiMDRhMmI2NGRhZmMyNmM3Yjg0YTcvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCocBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzEyMi92NC8xYS8xOS9kYi8xYTE5ZGIyNi0xN2FkLWI5ODYtMTFhOS1mNzJhYzdhNjE5NGIvMThVTUdJTTMxMjE0LnJnYi5qcGcvMTAwMHgxMDAwYmIuanBnCoUBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzEyMi92NC8xYS8xOS9kYi8xYTE5ZGIyNi0xN2FkLWI5ODYtMTFhOS1mNzJhYzdhNjE5NGIvMThVTUdJTTMxMjE0LnJnYi5qcGcvMTAweDEwMGJiLmpwZwqHAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMTYvdjQvZjIvOTgvZmIvZjI5OGZiNDgtMWUwZS02YWQ0LTRjZmYtZmI4MjRiNzdmMDJlLzE1VU1HSU01OTU4Ny5yZ2IuanBnLzEwMDB4MTAwMGJiLmpwZwqFAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMTYvdjQvZjIvOTgvZmIvZjI5OGZiNDgtMWUwZS02YWQ0LTRjZmYtZmI4MjRiNzdmMDJlLzE1VU1HSU01OTU4Ny5yZ2IuanBnLzEwMHgxMDBiYi5qcGcKhwFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTE2L3Y0LzdkLzFkLzk5LzdkMWQ5OTg4LTg4ZGYtNzBjYi0zNDMzLTg5NmVkYTA0NzAwMi8yM1VNMUlNMTgwNzMucmdiLmpwZy8xMDAweDEwMDBiYi5qcGcKhQFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTE2L3Y0LzdkLzFkLzk5LzdkMWQ5OTg4LTg4ZGYtNzBjYi0zNDMzLTg5NmVkYTA0NzAwMi8yM1VNMUlNMTgwNzMucmdiLmpwZy8xMDB4MTAwYmIuanBn"
           }
         },
@@ -140,7 +140,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:song:home:michael bubl\u00e9"
+            "key": "app.moosync.cover_art.cover:song:home:michael bubl\u00e9"
           }
         },
         "response": {
@@ -258,7 +258,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:song:home:michael bubl\u00e9",
+            "key": "app.moosync.cover_art.cover:song:home:michael bubl\u00e9",
             "data": "CmZodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9jb3Zlci9mNWFkMWU1OTM3ZDY5Y2VlYmJkZmE2ZWFkNjQyNTk3ZS8xMDAweDEwMDAtMDAwMDAwLTgwLTAtMC5qcGcKZmh0dHBzOi8vY2RuLWltYWdlcy5kemNkbi5uZXQvaW1hZ2VzL2NvdmVyLzRkNzgyMWNhMDdmZmNkNWYyNGUxNzVkNDRjMTRmZTdkLzEwMDB4MTAwMC0wMDAwMDAtODAtMC0wLmpwZwpmaHR0cHM6Ly9jZG4taW1hZ2VzLmR6Y2RuLm5ldC9pbWFnZXMvY292ZXIvMzA0YTE4ZTcyZDk1NDBhZmRjZGY2MmU3Yzg4OWM0ZDAvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCoMBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzEyNS92NC9hNC82Ny82ZC9hNDY3NmQ5NS0yMzNmLTVlNTYtYTZiZi05ZmY3M2M4MTg5YmYvMDkzNjI0OTQyNzU3LmpwZy8xMDAweDEwMDBiYi5qcGcKgQFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTI1L3Y0L2E0LzY3LzZkL2E0Njc2ZDk1LTIzM2YtNWU1Ni1hNmJmLTlmZjczYzgxODliZi8wOTM2MjQ5NDI3NTcuanBnLzEwMHgxMDBiYi5qcGcKhQFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL0ZlYXR1cmVzMTE0L3Y0LzY1LzZkL2JlLzY1NmRiZWUwLTNjNjktMTkyOC05Njc5LWQ0ZTgxNmIxZjFmZS9kai5vd3J3ZW53cC5qcGcvMTAwMHgxMDAwYmIuanBnCoMBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9GZWF0dXJlczExNC92NC82NS82ZC9iZS82NTZkYmVlMC0zYzY5LTE5MjgtOTY3OS1kNGU4MTZiMWYxZmUvZGoub3dyd2Vud3AuanBnLzEwMHgxMDBiYi5qcGcKgwFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTI4L3Y0LzgyLzYzLzgwLzgyNjM4MGQzLTU0ZWMtNjhlMy05MWFkLTA1N2VmMWVkNDYzYi8wOTM2MjQ5MTA2MzMuanBnLzEwMDB4MTAwMGJiLmpwZwqBAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMjgvdjQvODIvNjMvODAvODI2MzgwZDMtNTRlYy02OGUzLTkxYWQtMDU3ZWYxZWQ0NjNiLzA5MzYyNDkxMDYzMy5qcGcvMTAweDEwMGJiLmpwZw=="
           }
         },
@@ -274,7 +274,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:song:nonexistenttrack_xyz_12345:nonexistentartist_xyz_98765"
+            "key": "app.moosync.cover_art.cover:song:nonexistenttrack_xyz_12345:nonexistentartist_xyz_98765"
           }
         },
         "response": {
@@ -393,7 +393,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:album:abbey road:the beatles"
+            "key": "app.moosync.cover_art.cover:album:abbey road:the beatles"
           }
         },
         "response": {
@@ -561,7 +561,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:album:abbey road:the beatles",
+            "key": "app.moosync.cover_art.cover:album:abbey road:the beatles",
             "data": "CmZodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9jb3Zlci9hYTk0YWIyOTM3MzBiYjc4NDVkMmFhOGM2NzJiMmMyOS8xMDAweDEwMDAtMDAwMDAwLTgwLTAtMC5qcGcKZmh0dHBzOi8vY2RuLWltYWdlcy5kemNkbi5uZXQvaW1hZ2VzL2NvdmVyL2NiMTI5MWM3NmQ4M2U1NGUwM2VhMTdlNTNkZjk5Y2YyLzEwMDB4MTAwMC0wMDAwMDAtODAtMC0wLmpwZwpmaHR0cHM6Ly9jZG4taW1hZ2VzLmR6Y2RuLm5ldC9pbWFnZXMvY292ZXIvMTc2ZGViMGVhMTRmNWVjMDY3OWI4NjUyZTgxOTQ5NjQvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCocBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzIxMS92NC80OC81My80My80ODUzNDNlMy1kZDZhLTAwMzQtZmFlYy1mNGI2NDAzZjgxMDgvMTNVTUdJTTYzODkwLnJnYi5qcGcvMTAwMHgxMDAwYmIuanBnCoUBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzIxMS92NC80OC81My80My80ODUzNDNlMy1kZDZhLTAwMzQtZmFlYy1mNGI2NDAzZjgxMDgvMTNVTUdJTTYzODkwLnJnYi5qcGcvMTAweDEwMGJiLmpwZwqHAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMTIvdjQvZGYvZGIvNjEvZGZkYjYxNWQtNDdmOC0wNmU5LTk1MzMtYjk2ZGFjY2MwMjlmLzE4VU1HSU0zMTA3Ni5yZ2IuanBnLzEwMDB4MTAwMGJiLmpwZwqFAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMTIvdjQvZGYvZGIvNjEvZGZkYjYxNWQtNDdmOC0wNmU5LTk1MzMtYjk2ZGFjY2MwMjlmLzE4VU1HSU0zMTA3Ni5yZ2IuanBnLzEwMHgxMDBiYi5qcGcKhwFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTI1L3Y0LzI5Lzc3LzFkLzI5NzcxZDRlLWEzMDEtNmU0OC05OWRlLTEzMDBiM2Y2M2YxNS8xOVVNR0lNNjgzNTYucmdiLmpwZy8xMDAweDEwMDBiYi5qcGcKhQFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMTI1L3Y0LzI5Lzc3LzFkLzI5NzcxZDRlLWEzMDEtNmU0OC05OWRlLTEzMDBiM2Y2M2YxNS8xOVVNR0lNNjgzNTYucmdiLmpwZy8xMDB4MTAwYmIuanBnClJodHRwczovL2NvdmVyYXJ0YXJjaGl2ZS5vcmcvcmVsZWFzZS84YzZhMDBkNS04NjczLTRhYWQtODE5Mi01ZmU4NjQ5YjVlZmEvZnJvbnQtNTAwCk5odHRwczovL2NvdmVyYXJ0YXJjaGl2ZS5vcmcvcmVsZWFzZS84YzZhMDBkNS04NjczLTRhYWQtODE5Mi01ZmU4NjQ5YjVlZmEvZnJvbnQKUmh0dHBzOi8vY292ZXJhcnRhcmNoaXZlLm9yZy9yZWxlYXNlL2IyNWExZTVkLTMyNDctNDFlYS05OTIwLWY5M2M1OGE2ZTQ3OS9mcm9udC01MDAKTmh0dHBzOi8vY292ZXJhcnRhcmNoaXZlLm9yZy9yZWxlYXNlL2IyNWExZTVkLTMyNDctNDFlYS05OTIwLWY5M2M1OGE2ZTQ3OS9mcm9udApSaHR0cHM6Ly9jb3ZlcmFydGFyY2hpdmUub3JnL3JlbGVhc2UvZDc2N2JkOGYtZDUwMy00YTRmLWJlOGEtZTQ5NWY4NTRkYjZmL2Zyb250LTUwMApOaHR0cHM6Ly9jb3ZlcmFydGFyY2hpdmUub3JnL3JlbGVhc2UvZDc2N2JkOGYtZDUwMy00YTRmLWJlOGEtZTQ5NWY4NTRkYjZmL2Zyb250"
           }
         },
@@ -577,7 +577,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:album:greatest hits:queen"
+            "key": "app.moosync.cover_art.cover:album:greatest hits:queen"
           }
         },
         "response": {
@@ -745,7 +745,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:album:greatest hits:queen",
+            "key": "app.moosync.cover_art.cover:album:greatest hits:queen",
             "data": "CmZodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9jb3Zlci8zODU2YmUzYmE5MWM3MDA5YzZlNDY5ZDllNTdjN2VhOS8xMDAweDEwMDAtMDAwMDAwLTgwLTAtMC5qcGcKZmh0dHBzOi8vY2RuLWltYWdlcy5kemNkbi5uZXQvaW1hZ2VzL2NvdmVyL2ExZDllNDA2ODQ2ODE2YzlkNWFiMDhkZjRkODhmNzE0LzEwMDB4MTAwMC0wMDAwMDAtODAtMC0wLmpwZwpmaHR0cHM6Ly9jZG4taW1hZ2VzLmR6Y2RuLm5ldC9pbWFnZXMvY292ZXIvNzBjNjkwOTIwMjE3ZDMxNjM3NGUyZDM3ZjI2Njk4M2MvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCoMBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzIyMS92NC8xNS9jNy81NS8xNWM3NTViYy03NjAzLTNjZTMtZTI0My1lNTlmMWY5ODYzZWEvNjAyNTI3NzI0MTcxLmpwZy8xMDAweDEwMDBiYi5qcGcKgQFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMjIxL3Y0LzE1L2M3LzU1LzE1Yzc1NWJjLTc2MDMtM2NlMy1lMjQzLWU1OWYxZjk4NjNlYS82MDI1Mjc3MjQxNzEuanBnLzEwMHgxMDBiYi5qcGcKgwFodHRwczovL2lzMS1zc2wubXpzdGF0aWMuY29tL2ltYWdlL3RodW1iL011c2ljMjExL3Y0L2IwL2NhLzA1L2IwY2EwNWFhLTI5YzktNGUwMS01YTE2LWY2ZmEwNmJjZTA1Yy82MDI1Mjc1OTQzNDcuanBnLzEwMDB4MTAwMGJiLmpwZwqBAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMyMTEvdjQvYjAvY2EvMDUvYjBjYTA1YWEtMjljOS00ZTAxLTVhMTYtZjZmYTA2YmNlMDVjLzYwMjUyNzU5NDM0Ny5qcGcvMTAweDEwMGJiLmpwZwqDAWh0dHBzOi8vaXMxLXNzbC5tenN0YXRpYy5jb20vaW1hZ2UvdGh1bWIvTXVzaWMxMTUvdjQvYTcvMTAvZTAvYTcxMGUwNWYtZTdmNS0yZWFkLTQ2YzEtOGIwNzNiOTU1YmJjLzg4NjQ0MzcwMjU0Ny5qcGcvMTAwMHgxMDAwYmIuanBnCoEBaHR0cHM6Ly9pczEtc3NsLm16c3RhdGljLmNvbS9pbWFnZS90aHVtYi9NdXNpYzExNS92NC9hNy8xMC9lMC9hNzEwZTA1Zi1lN2Y1LTJlYWQtNDZjMS04YjA3M2I5NTViYmMvODg2NDQzNzAyNTQ3LmpwZy8xMDB4MTAwYmIuanBnClJodHRwczovL2NvdmVyYXJ0YXJjaGl2ZS5vcmcvcmVsZWFzZS81ZjRkNzgwMi05YWI3LTRmYzUtOWRjZi1lNmQ5ZjdhNmZiYjgvZnJvbnQtNTAwCk5odHRwczovL2NvdmVyYXJ0YXJjaGl2ZS5vcmcvcmVsZWFzZS81ZjRkNzgwMi05YWI3LTRmYzUtOWRjZi1lNmQ5ZjdhNmZiYjgvZnJvbnQKUmh0dHBzOi8vY292ZXJhcnRhcmNoaXZlLm9yZy9yZWxlYXNlL2Y2N2ExZTU4LTY5M2ItNGM2NC04YWNkLTkzYWFlZmIxMzQ1Zi9mcm9udC01MDAKTmh0dHBzOi8vY292ZXJhcnRhcmNoaXZlLm9yZy9yZWxlYXNlL2Y2N2ExZTU4LTY5M2ItNGM2NC04YWNkLTkzYWFlZmIxMzQ1Zi9mcm9udApSaHR0cHM6Ly9jb3ZlcmFydGFyY2hpdmUub3JnL3JlbGVhc2UvNmQxODMwY2UtMmFjNi00NmEzLWIzYmUtZjU2YjhlYjE0YTk4L2Zyb250LTUwMApOaHR0cHM6Ly9jb3ZlcmFydGFyY2hpdmUub3JnL3JlbGVhc2UvNmQxODMwY2UtMmFjNi00NmEzLWIzYmUtZjU2YjhlYjE0YTk4L2Zyb250"
           }
         },
@@ -761,7 +761,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:album:nonexistentalbum_xyz_12345:nonexistentartist_xyz_98765"
+            "key": "app.moosync.cover_art.cover:album:nonexistentalbum_xyz_12345:nonexistentartist_xyz_98765"
           }
         },
         "response": {
@@ -929,7 +929,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:artist:the beatles"
+            "key": "app.moosync.cover_art.cover:artist:the beatles"
           }
         },
         "response": {
@@ -986,7 +986,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:artist:the beatles",
+            "key": "app.moosync.cover_art.cover:artist:the beatles",
             "data": "CmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvMTY5MjVlZDhmOTZlYjYyMWVjZDU2YzJjOGJhM2RhNmUvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvNjI5YzNiNDYxZjk4MzJjMjc0N2VmYjM0ZWM4M2Q0ZjcvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvYWQ2NmJjZWMyM2U4NjAzYTE4OTY3ODY1YWFhYWMwMTgvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBn"
           }
         },
@@ -1002,7 +1002,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:artist:john"
+            "key": "app.moosync.cover_art.cover:artist:john"
           }
         },
         "response": {
@@ -1059,7 +1059,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.cover_art.cover:artist:john",
+            "key": "app.moosync.cover_art.cover:artist:john",
             "data": "CmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvNWU1Nzk3NTlmNjUyNjhjY2EwMjk0MGRhM2MyNWMyY2UvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvZDI3Y2FjMjEwM2FhOTBkZjdjYjFhNTNiNDJjYmY1MzYvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBnCmdodHRwczovL2Nkbi1pbWFnZXMuZHpjZG4ubmV0L2ltYWdlcy9hcnRpc3QvNzI3NzM1ZmIxZDMwMmY3Yzg4MWU0NjNmMTVjYjVlMjQvMTAwMHgxMDAwLTAwMDAwMC04MC0wLTAuanBn"
           }
         },
@@ -1075,7 +1075,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:artist:nonexistentartist_xyz_98765"
+            "key": "app.moosync.cover_art.cover:artist:nonexistentartist_xyz_98765"
           }
         },
         "response": {
@@ -1134,7 +1134,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.cover_art.cover:song:cached track:cached artist"
+            "key": "app.moosync.cover_art.cover:song:cached track:cached artist"
           }
         },
         "response": {

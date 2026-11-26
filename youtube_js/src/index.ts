@@ -163,7 +163,7 @@ class YoutubeJsExtension {
 
     try {
       await api.registerOauth(
-        new RegisterOauthRequest({ url: "moosync.youtube.js" }),
+        new RegisterOauthRequest({ url: "app.moosync.youtube.js" }),
       );
       const baseFetch = Platform.shim.fetch;
       const fetchWithAuthFallback: typeof Platform.shim.fetch = async (
@@ -297,7 +297,7 @@ class YoutubeJsExtension {
         account: new ExtensionAccountDetail({
           id: "youtube",
           name: "YouTube",
-          packageName: "moosync.youtube_js",
+          packageName: "app.moosync.youtube_js",
           bgColor: "#FF0000",
           icon: "",
           loggedIn,
@@ -722,7 +722,7 @@ class YoutubeJsExtension {
       const ext = song.song?.extension ?? "";
       const isYoutubeOrigin =
         !ext ||
-        ext === "moosync.youtube.js" ||
+        ext === "app.moosync.youtube.js" ||
         ext === "youtube_js" ||
         ext === "youtube";
       const songType = song.song?.type;

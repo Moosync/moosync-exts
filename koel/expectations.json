@@ -6,7 +6,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -21,7 +21,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -36,7 +36,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -51,7 +51,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -66,7 +66,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -82,7 +82,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3"
             }
@@ -131,7 +131,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -149,7 +149,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -167,7 +167,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -185,7 +185,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -248,7 +248,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -267,7 +267,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -314,7 +314,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.search:moosync"
+            "key": "app.moosync.koel.search:moosync"
           }
         },
         "response": {
@@ -366,7 +366,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.koel.search:moosync",
+            "key": "app.moosync.koel.search:moosync",
             "data": "CpkBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAA",
             "ttl_seconds": "7200"
           }
@@ -384,7 +384,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -402,7 +402,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -420,7 +420,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -438,7 +438,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -501,7 +501,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -520,7 +520,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -567,7 +567,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.user_playlists"
+            "key": "app.moosync.koel.user_playlists"
           }
         },
         "response": {
@@ -619,7 +619,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.koel.user_playlists",
+            "key": "app.moosync.koel.user_playlists",
             "data": "ChYKCWFsbF9zb25ncxIJQWxsIHNvbmdzCkUKJDAxYTFmY2VlLTNmOWItNzBiYS1hYmMzLWQyMWNkMjdhODNhMRIVTW9vc3luYyBUZXN0IFBsYXlsaXN0OgRrb2VsSAEKRQokMDFhMWZjZWUtNTk2NC03M2MzLWE2MDktZGE2MDE5OWZjNDljEhVNb29zeW5jIFRlc3QgUGxheWxpc3Q6BGtvZWxIAQ==",
             "ttl_seconds": "3600"
           }
@@ -637,7 +637,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -655,7 +655,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -673,7 +673,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -691,7 +691,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -754,7 +754,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -773,7 +773,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -820,7 +820,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:"
+            "key": "app.moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:"
           }
         },
         "response": {
@@ -872,7 +872,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:",
+            "key": "app.moosync.koel.playlist_songs:01a1fcee-5964-73c3-a609-da60199fc49c:",
             "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdA==",
             "ttl_seconds": "3600"
           }
@@ -890,7 +890,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -908,7 +908,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -926,7 +926,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -944,7 +944,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1007,7 +1007,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1026,7 +1026,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1073,7 +1073,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.album_songs:Test Album:"
+            "key": "app.moosync.koel.album_songs:Test Album:"
           }
         },
         "response": {
@@ -1166,7 +1166,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.koel.album_songs:Test Album:",
+            "key": "app.moosync.koel.album_songs:Test Album:",
             "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdBIBMg=="
           }
         },
@@ -1183,7 +1183,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1201,7 +1201,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1219,7 +1219,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -1237,7 +1237,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1300,7 +1300,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1319,7 +1319,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1366,7 +1366,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.artist_songs:Test Artist:"
+            "key": "app.moosync.koel.artist_songs:Test Artist:"
           }
         },
         "response": {
@@ -1459,7 +1459,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.koel.artist_songs:Test Artist:",
+            "key": "app.moosync.koel.artist_songs:Test Artist:",
             "data": "CvQBCpYBCiQwMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2YyEk1vb3N5bmMgVGVzdCBUcmFja0IEMjAxNnIICLsBEML5tiqiAT8KPWV4dGVuc2lvbjovL21vb3N5bmMua29lbC8wMWExZmNlZC1lYmNhLTcxOWEtYjMwNC04NjdiNzZiZjBiM2bRAQAAAAAAAAAAEi4KGjAxbTd5ZXZ0bnduc3R6ZTljdmYxY2QwazN2EgpUZXN0IEFsYnVtMgQyMDE2GikKGjAxbTd5ZXZ0MW5waHQ4Y3plY3J5cWY2YjR2GgtUZXN0IEFydGlzdBIBMg==",
             "ttl_seconds": "86400"
           }
@@ -1477,7 +1477,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1495,7 +1495,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1513,7 +1513,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -1531,7 +1531,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1594,7 +1594,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1613,7 +1613,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1663,7 +1663,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1681,7 +1681,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1699,7 +1699,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -1717,7 +1717,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1780,7 +1780,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1799,7 +1799,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3",
               "logged_in": true
@@ -1849,7 +1849,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1864,7 +1864,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_instance_url"
+              "key": "app.moosync.koel.koel_instance_url"
             }
           }
         },
@@ -1879,7 +1879,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_username"
+              "key": "app.moosync.koel.koel_username"
             }
           }
         },
@@ -1894,7 +1894,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1909,7 +1909,7 @@
         "request": {
           "get_preference": {
             "data": {
-              "key": "moosync.koel.koel_password"
+              "key": "app.moosync.koel.koel_password"
             }
           }
         },
@@ -1925,7 +1925,7 @@
           "set_account": {
             "account": {
               "id": "koel",
-              "package_name": "moosync.koel",
+              "package_name": "app.moosync.koel",
               "name": "Koel",
               "bg_color": "#2196f3"
             }
@@ -1971,7 +1971,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.koel.search:ambient"
+            "key": "app.moosync.koel.search:ambient"
           }
         },
         "response": {

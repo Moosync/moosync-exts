@@ -7,7 +7,7 @@ package(default_visibility = ["//visibility:public"])
 rust_extension(
     name = "apple_music",
     srcs = glob(["src/**/*.rs"]),
-    package_name = "moosync.apple.music",
+    package_name = "app.moosync.apple.music",
     display_name = "Apple Music",
     allowed_hosts = [
         "*",

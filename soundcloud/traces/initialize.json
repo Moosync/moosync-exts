@@ -4,7 +4,7 @@
     {
       "type": "getProviderScopes",
       "data": {
-        "packageName": "moosync.soundcloud"
+        "packageName": "app.moosync.soundcloud"
       },
       "expected": [
         "search",
@@ -21,12 +21,12 @@
     },
     {
       "type": "customRequest",
-      "data": ["extension://moosync.soundcloud/230155983"],
+      "data": ["extension://app.moosync.soundcloud/230155983"],
       "expected": "ignore"
     },
     {
       "type": "requestedPlaylistSongs",
-      "data": ["moosync.soundcloud:1831511154", false, ""],
+      "data": ["app.moosync.soundcloud:1831511154", false, ""],
       "expected": null
     }
   ],

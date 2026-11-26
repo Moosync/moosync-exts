@@ -455,8 +455,8 @@ def test_can_play_not_premium(entry: Moounit):
     ret = entry.send_command(
         ExtensionCommand(
             can_play=CanPlayRequest(
-                src="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                src="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC",
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -514,7 +514,7 @@ def test_player_methods_unauthorized(entry: Moounit):
         ExtensionCommand(
             can_play=CanPlayRequest(
                 src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -526,7 +526,7 @@ def test_player_methods_unauthorized(entry: Moounit):
                 player_load_track=PlayerLoadTrackRequest(
                     src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
                     song=Song(
-                        song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")
+                        song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")
                     ),
                 )
             )
@@ -565,7 +565,7 @@ def test_soloist_pairing(authed_entry: Moounit):
         ExtensionCommand(
             can_play=CanPlayRequest(
                 src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -621,7 +621,7 @@ def test_soloist_pairing(authed_entry: Moounit):
         ExtensionCommand(
             can_play=CanPlayRequest(
                 src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -713,7 +713,7 @@ def test_search(authed_entry: Moounit):
     assert ret.HasField("requested_search_result")
     songs = ret.requested_search_result.songs
     assert len(songs) > 0
-    assert songs[0].song.id.startswith("moosync.spotify:")
+    assert songs[0].song.id.startswith("app.moosync.spotify:")
 
 
 def test_playlists(authed_entry: Moounit):
@@ -723,7 +723,7 @@ def test_playlists(authed_entry: Moounit):
     assert ret.HasField("requested_playlists")
     playlists = ret.requested_playlists.playlists
     assert len(playlists) > 0
-    assert playlists[0].playlist_id.startswith("moosync.spotify:")
+    assert playlists[0].playlist_id.startswith("app.moosync.spotify:")
 
 
 def test_playlist_songs(authed_entry: Moounit):
@@ -743,7 +743,7 @@ def test_playlist_songs(authed_entry: Moounit):
     assert len(ret.requested_playlist_songs.songs) > 0
     assert (
         ret.requested_playlist_songs.songs[0].song.id
-        == "moosync.spotify:spotify:track:0QMZuNKnGppi7KW9IAGHjC"
+        == "app.moosync.spotify:spotify:track:0QMZuNKnGppi7KW9IAGHjC"
     )
 
 
@@ -751,35 +751,35 @@ def test_album_songs(authed_entry: Moounit):
     ret = authed_entry.send_command(
         ExtensionCommand(
             requested_album_songs=RequestedAlbumSongsRequest(
-                album=Album(album_id="moosync.spotify:4aawyAB9vmqN3uQ7FjRGTy")
+                album=Album(album_id="app.moosync.spotify:4aawyAB9vmqN3uQ7FjRGTy")
             )
         )
     )
     assert ret.HasField("requested_album_songs")
     songs = ret.requested_album_songs.songs
     assert len(songs) > 0
-    assert songs[0].song.id.startswith("moosync.spotify:")
+    assert songs[0].song.id.startswith("app.moosync.spotify:")
 
 
 def test_artist_songs(authed_entry: Moounit):
     ret = authed_entry.send_command(
         ExtensionCommand(
             requested_artist_songs=RequestedArtistSongsRequest(
-                artist=Artist(artist_id="moosync.spotify:06HL4z0CvFAxyc27GXpf02")
+                artist=Artist(artist_id="app.moosync.spotify:06HL4z0CvFAxyc27GXpf02")
             )
         )
     )
     assert ret.HasField("requested_artist_songs")
     songs = ret.requested_artist_songs.songs
     assert len(songs) > 0
-    assert songs[0].song.id.startswith("moosync.spotify:")
+    assert songs[0].song.id.startswith("app.moosync.spotify:")
 
 
 def test_song_from_id(authed_entry: Moounit):
     ret = authed_entry.send_command(
         ExtensionCommand(
             requested_song_from_id=RequestedSongFromIdRequest(
-                id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC"
+                id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC"
             )
         )
     )
@@ -787,7 +787,7 @@ def test_song_from_id(authed_entry: Moounit):
     assert ret.requested_song_from_id.song is not None
     assert (
         ret.requested_song_from_id.song.song.id
-        == "moosync.spotify:spotify:track:4uLU6hMCjMI75M1A2tKUQC"
+        == "app.moosync.spotify:spotify:track:4uLU6hMCjMI75M1A2tKUQC"
     )
 
 
@@ -804,7 +804,7 @@ def test_soloist_playback(authed_entry: Moounit):
         ExtensionCommand(
             can_play=CanPlayRequest(
                 src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -844,7 +844,7 @@ def test_soloist_playback(authed_entry: Moounit):
                 can_play=CanPlayRequest(
                     src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
                     song=Song(
-                        song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")
+                        song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")
                     ),
                 )
             )
@@ -855,7 +855,7 @@ def test_soloist_playback(authed_entry: Moounit):
         ExtensionCommand(
             player_load_track=PlayerLoadTrackRequest(
                 src="spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-                song=Song(song=InnerSong(id="moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:4uLU6hMCjMI75M1A2tKUQC")),
             )
         )
     )
@@ -889,7 +889,7 @@ def test_soloist_playback(authed_entry: Moounit):
         ExtensionCommand(
             player_load_track=PlayerLoadTrackRequest(
                 src="spotify:track:next_track_999",
-                song=Song(song=InnerSong(id="moosync.spotify:next_track_999")),
+                song=Song(song=InnerSong(id="app.moosync.spotify:next_track_999")),
             )
         )
     )
@@ -1042,7 +1042,7 @@ def test_logout_clears_playlists(moounit: Moounit):
             set_account=SetAccountRequest(
                 account=ExtensionAccountDetail(
                     id="spotify",
-                    package_name="moosync.spotify",
+                    package_name="app.moosync.spotify",
                     name="Spotify",
                     bg_color="#07C330",
                     logged_in=True,
@@ -1117,7 +1117,7 @@ def test_logout_clears_playlists(moounit: Moounit):
         times=-1,
     )
     moounit.expect_command(
-        MainCommand(register_oauth=RegisterOauthRequest(url="moosync.spotify")),
+        MainCommand(register_oauth=RegisterOauthRequest(url="app.moosync.spotify")),
         MainCommandResponse(register_oauth=RegisterOauthResponse(success=True)),
         times=-1,
     )
@@ -1137,7 +1137,7 @@ def test_logout_clears_playlists(moounit: Moounit):
             set_account=SetAccountRequest(
                 account=ExtensionAccountDetail(
                     id="spotify",
-                    package_name="moosync.spotify",
+                    package_name="app.moosync.spotify",
                     name="Spotify",
                     bg_color="#07C330",
                     logged_in=False,

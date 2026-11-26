@@ -4,7 +4,7 @@
         {
             "type": "getAccounts",
             "data": {
-                "packageName": "moosync.spotify"
+                "packageName": "app.moosync.spotify"
             },
             "expected": [
                 {
@@ -13,7 +13,7 @@
                     "icon": "",
                     "loggedIn": true,
                     "name": "Spotify",
-                    "packageName": "moosync.spotify",
+                    "packageName": "app.moosync.spotify",
                     "username": "Oveno"
                 }
             ]

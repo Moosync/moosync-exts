@@ -45,41 +45,52 @@ jobs:
           bazel build $SIGN_FLAG //:all //:manifest
           rm -f signing_key.asc
           mkdir -p dist
-          find -L bazel-bin -maxdepth 2 -name "*.msxt" -exec cp -f {} dist/ \;
+          python3 - <<'PYEOF'
+          import glob, os, shutil, zipfile, re
+
+          os.makedirs("dist", exist_ok=True)
+          for path in glob.glob("bazel-bin/*/*.msxt", recursive=False):
+              with zipfile.ZipFile(path, "r") as zf:
+                  pkg_name = None
+                  if "manifest.pb" in zf.namelist():
+                      # Parse package_name (field 1, length-delimited string) from ExtensionManifest
+                      data = zf.read("manifest.pb")
+                      if len(data) >= 2 and data[0] == 0x0A:
+                          length = data[1]
+                          if length < 128 and len(data) >= 2 + length:
+                              pkg_name = data[2:2 + length].decode("utf-8", errors="ignore")
+                  out_name = f"{pkg_name}.msxt" if pkg_name else os.path.basename(path)
+                  shutil.copy2(path, os.path.join("dist", out_name))
+                  print(f"Prepared {out_name} from {path}")
+          PYEOF
           cp -f bazel-bin/manifest.pb dist/
           ls -1 dist/*.msxt dist/manifest.pb
 
-      - name: Get release name
-        id: date
-        run: |
-          echo "{release_name}={Extensions release ($(date +'%Y-%m-%d'))}" >> $GITHUB_STATE
-
       - name: Create Release
-        uses: actions/github-script@v2
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log('environment', process.versions);
-
             const fs = require('fs').promises;
 
             const { repo: { owner, repo }, sha } = context;
             console.log({ owner, repo, sha });
 
-            const release = await github.repos.createRelease({
+            const release = await github.rest.repos.createRelease({
               owner, repo,
               tag_name: `release-${sha}`,
+              name: `Extensions release (${new Date().toISOString().slice(0, 10)})`,
               draft: false,
               target_commitish: sha
             });
 
-            console.log('created release', { release });
+            console.log('created release', { release_id: release.data.id });
 
-            for (let file of await fs.readdir('./dist')) {
+            for (const file of await fs.readdir('./dist')) {
               if (file.endsWith('.msxt') || file.endsWith('.pb')) {
                 console.log('uploading', file);
 
-                await github.repos.uploadReleaseAsset({
+                await github.rest.repos.uploadReleaseAsset({
                   owner, repo,
                   release_id: release.data.id,
                   name: file,

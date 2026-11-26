@@ -7,7 +7,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "spotify",
-    package_name = "moosync.spotify",
+    package_name = "app.moosync.spotify",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "*",

@@ -90,7 +90,7 @@ impl Provider for KoelExtension {
         &self,
         req: RequestedPlaylistSongsRequest,
     ) -> MoosyncResult<RequestedPlaylistSongsResponse> {
-        let id = req.id.replace("moosync.koel:", "");
+        let id = req.id.replace("app.moosync.koel:", "");
         let cache_key = cache_keys::playlist_songs(&id, req.page_token.as_deref());
         if let Ok(Some(cached)) = get_cache::<RequestedPlaylistSongsResponse>(&cache_key) {
             return Ok(cached);
@@ -156,19 +156,19 @@ impl Provider for KoelExtension {
         let inner = song.song.ok_or("No inner song provided")?;
         let is_koel_ext = matches!(
             inner.extension.as_deref(),
-            Some("moosync.koel") | Some("koel")
+            Some("app.moosync.koel") | Some("koel")
         );
         let id_or_url = inner
             .playback_url
             .map(|p| p.url)
             .or(inner.id)
             .ok_or("No song id or playback_url")?;
-        let is_koel_url = id_or_url.starts_with("extension://moosync.koel/")
-            || id_or_url.starts_with("moosync.koel:");
+        let is_koel_url = id_or_url.starts_with("extension://app.moosync.koel/")
+            || id_or_url.starts_with("app.moosync.koel:");
         if !is_koel_ext && !is_koel_url {
             return Err("Not a Koel song".into());
         }
-        let cleaned = id_or_url.replace("moosync.koel:", "");
+        let cleaned = id_or_url.replace("app.moosync.koel:", "");
         let stream_url = self.inner.lock().unwrap().handle_custom_request(cleaned)?;
         Ok(PlaybackDetailsRequestedResponse {
             url: stream_url,

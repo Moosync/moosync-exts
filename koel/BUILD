@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "koel",
-    package_name = "moosync.koel",
+    package_name = "app.moosync.koel",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "*",

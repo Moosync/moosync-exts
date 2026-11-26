@@ -18,7 +18,7 @@
         // {
         //     "type": "requestedPlaylistSongs",
         //     "data": [
-        //         "moosync.spotify:spotify:playlist:1YfTwDfA8RBOfswonR7u9f",
+        //         "app.moosync.spotify:spotify:playlist:1YfTwDfA8RBOfswonR7u9f",
         //         false,
         //         null
         //     ],

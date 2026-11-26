@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "discord",
-    package_name = "moosync.discord.rpc",
+    package_name = "app.moosync.discord.rpc",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "api.imgbb.com",

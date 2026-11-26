@@ -1,6 +1,9 @@
 load("//tools/dev_registry:dev_registry.bzl", "dev_registry")
+load("//tools:registry_manifest.bzl", "registry_manifest")
 
 package(default_visibility = ["//visibility:public"])
+
+exports_files(glob(["*.asc"], allow_empty = True))
 
 filegroup(
     name = "all",
@@ -17,12 +20,10 @@ filegroup(
     ],
 )
 
-genrule(
+registry_manifest(
     name = "manifest",
     srcs = [":all"],
-    outs = ["manifest.pb"],
-    cmd = "$(location //tools:gen_manifest) --out $@ $(SRCS)",
-    tools = ["//tools:gen_manifest"],
+    out = "manifest.pb",
 )
 
 dev_registry(

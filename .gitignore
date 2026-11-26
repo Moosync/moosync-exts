@@ -4,6 +4,7 @@ dist
 node_modules
 *.*venv
 bazel-*
+*.asc
 rust-project.json
 go.work
 go.work.sum

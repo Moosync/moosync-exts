@@ -6,7 +6,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "lyrics",
-    package_name = "moosync.lyrics",
+    package_name = "app.moosync.lyrics",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "*.lrclib.net",

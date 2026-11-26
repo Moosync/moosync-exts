@@ -6,7 +6,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "cover_art",
-    package_name = "moosync.cover_art",
+    package_name = "app.moosync.cover_art",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "api.deezer.com",

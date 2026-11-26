@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 rust_extension(
     name = "radio",
-    package_name = "moosync.radio",
+    package_name = "app.moosync.radio",
     srcs = glob(["src/**/*.rs"]),
     allowed_hosts = [
         "*.api.radio-browser.info",

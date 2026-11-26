@@ -6,7 +6,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track:yesterday:the beatles"
+            "key": "app.moosync.lyrics.lyrics:track:yesterday:the beatles"
           }
         },
         "response": {
@@ -63,7 +63,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.lyrics.lyrics:track:yesterday:the beatles",
+            "key": "app.moosync.lyrics.lyrics:track:yesterday:the beatles",
             "data": "CjIKLVllc3RlcmRheSwgYWxsIG15IHRyb3VibGVzIHNlZW1lZCBzbyBmYXIgYXdheRDEJwowCitOb3cgaXQgbG9va3MgYXMgdGhvdWdoIHRoZXkncmUgaGVyZSB0byBzdGF5ENppCiAKGk9oLCBJIGJlbGlldmUgaW4geWVzdGVyZGF5ENiGAQoxCitTdWRkZW5seSwgSSdtIG5vdCBoYWxmIHRoZSBtYW4gSSB1c2VkIHRvIGJlEPCwAQomCiBUaGVyZSdzIGEgc2hhZG93IGhhbmdpbmcgb3ZlciBtZRDE6gEKIQobT2gsIHllc3RlcmRheSBjYW1lIHN1ZGRlbmx5EMKMAgoXChFXaHkgc2hlIGhhZCB0byBnbxDItwIKJAoeSSBkb24ndCBrbm93LCBzaGUgd291bGRuJ3Qgc2F5EKjZAgocChZJIHNhaWQgc29tZXRoaW5nIHdyb25nEISDAwoeChhOb3cgSSBsb25nIGZvciB5ZXN0ZXJkYXkQ1KYDCjMKLVllc3RlcmRheSwgbG92ZSB3YXMgc3VjaCBhbiBlYXN5IGdhbWUgdG8gcGxheRDe0wMKJQofTm93IEkgbmVlZCBhIHBsYWNlIHRvIGhpZGUgYXdheRCekgQKIAoaT2gsIEkgYmVsaWV2ZSBpbiB5ZXN0ZXJkYXkQ2rAEChcKEVdoeSBzaGUgaGFkIHRvIGdvEJ7dBAokCh5JIGRvbid0IGtub3csIHNoZSB3b3VsZG4ndCBzYXkQwv4EChwKFkkgc2FpZCBzb21ldGhpbmcgd3JvbmcQoKkFCh4KGE5vdyBJIGxvbmcgZm9yIHllc3RlcmRheRCKywUKMwotWWVzdGVyZGF5LCBsb3ZlIHdhcyBzdWNoIGFuIGVhc3kgZ2FtZSB0byBwbGF5EPj4BQolCh9Ob3cgSSBuZWVkIGEgcGxhY2UgdG8gaGlkZSBhd2F5EMy3BgogChpPaCwgSSBiZWxpZXZlIGluIHllc3RlcmRheRCu1QYKBBCU9QYQAQ=="
           }
         },
@@ -79,7 +79,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track:hello:adele"
+            "key": "app.moosync.lyrics.lyrics:track:hello:adele"
           }
         },
         "response": {
@@ -136,7 +136,7 @@
         "type": "send_main_command",
         "request": {
           "set_cache": {
-            "key": "moosync.lyrics.lyrics:track:hello:adele",
+            "key": "app.moosync.lyrics.lyrics:track:hello:adele",
             "data": "ChMKDkhlbGxvLCBpdCdzIG1lEMwwCkAKO0kgd2FzIHdvbmRlcmluZyBpZiBhZnRlciBhbGwgdGhlc2UgeWVhcnMgeW91J2QgbGlrZSB0byBtZWV0EMBcChsKFVRvIGdvIG92ZXIgZXZlcnl0aGluZxCojAEKTQpHVGhleSBzYXkgdGhhdCB0aW1lJ3Mgc3VwcG9zZWQgdG8gaGVhbCB5YSwgYnV0IEkgYWluJ3QgZG9uZSBtdWNoIGhlYWxpbmcQrrcBCh0KF0hlbGxvLCBjYW4geW91IGhlYXIgbWU/EJruAQo4CjJJJ20gaW4gQ2FsaWZvcm5pYSBkcmVhbWluZyBhYm91dCB3aG8gd2UgdXNlZCB0byBiZRDwmQIKIwodV2hlbiB3ZSB3ZXJlIHlvdW5nZXIgYW5kIGZyZWUQwMcCCkIKPEkndmUgZm9yZ290dGVuIGhvdyBpdCBmZWx0IGJlZm9yZSB0aGUgd29ybGQgZmVsbCBhdCBvdXIgZmVldBDA+QIKKgokVGhlcmUncyBzdWNoIGEgZGlmZmVyZW5jZSBiZXR3ZWVuIHVzENylAwoZChNBbmQgYSBtaWxsaW9uIG1pbGVzEMDYAwofChlIZWxsbyBmcm9tIHRoZSBvdGhlciBzaWRlEICNBAonCiFJIG11c3QndmUgY2FsbGVkIGEgdGhvdXNhbmQgdGltZXMQ/LcECjkKM1RvIHRlbGwgeW91IEknbSBzb3JyeSBmb3IgZXZlcnl0aGluZyB0aGF0IEkndmUgZG9uZRD85AQKMAoqQnV0IHdoZW4gSSBjYWxsLCB5b3UgbmV2ZXIgc2VlbSB0byBiZSBob21lEL6QBQocChZIZWxsbyBmcm9tIHRoZSBvdXRzaWRlEMTKBQooCiJBdCBsZWFzdCBJIGNhbiBzYXkgdGhhdCBJJ3ZlIHRyaWVkEPz1BQozCi1UbyB0ZWxsIHlvdSBJJ20gc29ycnkgZm9yIGJyZWFraW5nIHlvdXIgaGVhcnQQlqEGCkQKPkJ1dCBpdCBkb24ndCBtYXR0ZXIsIGl0IGNsZWFybHkgZG9lc24ndCB0ZWFyIHlvdSBhcGFydCBhbnltb3JlEIbQBgoZChNIZWxsbywgaG93IGFyZSB5b3U/EOy1Bwo7CjVJdCdzIHNvIHR5cGljYWwgb2YgbWUgdG8gdGFsayBhYm91dCBteXNlbGYsIEknbSBzb3JyeRDC4QcKHQoXSSBob3BlIHRoYXQgeW91J3JlIHdlbGwQnJQICkgKQkRpZCB5b3UgZXZlciBtYWtlIGl0IG91dCBvZiB0aGF0IHRvd24gd2hlcmUgbm90aGluZyBldmVyIGhhcHBlbmVkPxDOwQgKKAoiSXQncyBubyBzZWNyZXQgdGhhdCB0aGUgYm90aCBvZiB1cxCY8QgKHQoXQXJlIHJ1bm5pbmcgb3V0IG9mIHRpbWUQ+qIJCi8KKVNvIGhlbGxvIGZyb20gdGhlIG90aGVyIHNpZGUgKG90aGVyIHNpZGUpEI7QCQo4CjJJIG11c3QndmUgY2FsbGVkIGEgdGhvdXNhbmQgdGltZXMgKHRob3VzYW5kIHRpbWVzKRDSgQoKOQozVG8gdGVsbCB5b3UgSSdtIHNvcnJ5IGZvciBldmVyeXRoaW5nIHRoYXQgSSd2ZSBkb25lEMSsCgowCipCdXQgd2hlbiBJIGNhbGwsIHlvdSBuZXZlciBzZWVtIHRvIGJlIGhvbWUQ6NcKCiYKIEhlbGxvIGZyb20gdGhlIG91dHNpZGUgKG91dHNpZGUpEPqSCwo1Ci9BdCBsZWFzdCBJIGNhbiBzYXkgdGhhdCBJJ3ZlIHRyaWVkIChJJ3ZlIHRyaWVkKRDKwAsKMwotVG8gdGVsbCB5b3UgSSdtIHNvcnJ5IGZvciBicmVha2luZyB5b3VyIGhlYXJ0EJzqCwpECj5CdXQgaXQgZG9uJ3QgbWF0dGVyLCBpdCBjbGVhcmx5IGRvZXNuJ3QgdGVhciB5b3UgYXBhcnQgYW55bW9yZRCAmAwKIgocKEhpZ2hzLCBoaWdocywgaGlnaHMsIGhpZ2hzKRDuzwwKKwolT29oIChsb3dzLCBsb3dzLCBsb3dzLCBsb3dzKSwgYW55bW9yZRCQ5gwKIgocKEhpZ2hzLCBoaWdocywgaGlnaHMsIGhpZ2hzKRDW/wwKKwolT29oIChsb3dzLCBsb3dzLCBsb3dzLCBsb3dzKSwgYW55bW9yZRCylQ0KIgocKEhpZ2hzLCBoaWdocywgaGlnaHMsIGhpZ2hzKRC+rw0KKwolT29oIChsb3dzLCBsb3dzLCBsb3dzLCBsb3dzKSwgYW55bW9yZRCuxQ0KIgocKEhpZ2hzLCBoaWdocywgaGlnaHMsIGhpZ2hzKRD+3g0KJgogQW55bW9yZSAobG93cywgbG93cywgbG93cywgbG93cykQsPMNCiwKJkhlbGxvIGZyb20gdGhlIG90aGVyIHNpZGUgKG90aGVyIHNpZGUpENyODgo4CjJJIG11c3QndmUgY2FsbGVkIGEgdGhvdXNhbmQgdGltZXMgKHRob3VzYW5kIHRpbWVzKRCWuw4KOQozVG8gdGVsbCB5b3UgSSdtIHNvcnJ5IGZvciBldmVyeXRoaW5nIHRoYXQgSSd2ZSBkb25lEJzmDgowCipCdXQgd2hlbiBJIGNhbGwsIHlvdSBuZXZlciBzZWVtIHRvIGJlIGhvbWUQuJIPCiYKIEhlbGxvIGZyb20gdGhlIG91dHNpZGUgKG91dHNpZGUpEILMDwo1Ci9BdCBsZWFzdCBJIGNhbiBzYXkgdGhhdCBJJ3ZlIHRyaWVkIChJJ3ZlIHRyaWVkKRDu+A8KMwotVG8gdGVsbCB5b3UgSSdtIHNvcnJ5IGZvciBicmVha2luZyB5b3VyIGhlYXJ0EIikEApECj5CdXQgaXQgZG9uJ3QgbWF0dGVyLCBpdCBjbGVhcmx5IGRvZXNuJ3QgdGVhciB5b3UgYXBhcnQgYW55bW9yZRC40BAQAQ=="
           }
         },
@@ -152,7 +152,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track:nonexistentsongtitle_xyz_12345:nonexistentartist_xyz_98765"
+            "key": "app.moosync.lyrics.lyrics:track:nonexistentsongtitle_xyz_12345:nonexistentartist_xyz_98765"
           }
         },
         "response": {
@@ -264,7 +264,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track::the beatles"
+            "key": "app.moosync.lyrics.lyrics:track::the beatles"
           }
         },
         "response": {
@@ -277,7 +277,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track::"
+            "key": "app.moosync.lyrics.lyrics:track::"
           }
         },
         "response": {
@@ -290,7 +290,7 @@
         "type": "send_main_command",
         "request": {
           "get_cache": {
-            "key": "moosync.lyrics.lyrics:track:cached song:cached artist"
+            "key": "app.moosync.lyrics.lyrics:track:cached song:cached artist"
           }
         },
         "response": {

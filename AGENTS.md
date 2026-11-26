@@ -37,3 +37,6 @@
 4. **Specific Assertions**: Always assert specific IDs, titles, URLs, durations, and account states in tests. Avoid weak or generic assertions.
 5. **No `local_path_override` in `MODULE.bazel`**: Never commit `local_path_override` or `local_repository` for `moosync` or `extensions_sdk`; always use `git_override` and verify with `bazel run //tools:check_git_override`.
 6. **Never Commit `.env` or Secret Files**: Ensure `.env` files are never tracked in `jj` history (`jj file untrack <path>` if tracked; verify `jj log -r 'files(glob:"**/.env")'` is empty).
+7. **Minimize `unsafe` & Use External Crates**: Prefer established safe crates (e.g., `object` for ELF inspection/alignment) over `unsafe` or manual binary parsing. Every `unsafe` block requires a `// SAFETY:` comment and explicit null/bounds validation.
+8. **Event-Driven over `thread::sleep`**: Avoid `thread::sleep` polling loops in threads; use `ChildProcess` output/exit callbacks (`on_stdout`, `on_stderr`, `on_exit`) or synchronization primitives.
+9. **Clean Structure & Constants**: Extract repeated paths/string literals into constants, document non-obvious FFI/shim functions, and modularize large helpers into dedicated files.

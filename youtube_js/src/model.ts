@@ -19,11 +19,11 @@ export function sanitizeId(id: string): string {
   if (!id) return "";
   let clean = id.trim();
   const prefixes = [
-    "extension://moosync.youtube_js/",
+    "extension://app.moosync.youtube_js/",
     "extension://moosync.youtube/",
     "extension://moosync.youtubedl/",
-    "moosync.youtube.js:",
-    "moosync.youtube_js:",
+    "app.moosync.youtube.js:",
+    "app.moosync.youtube_js:",
     "moosync.youtube:",
     "youtube_js:",
     "youtube-playlist:",

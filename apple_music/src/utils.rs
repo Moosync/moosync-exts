@@ -224,7 +224,7 @@ pub fn album_from_ramdl(album: &albums::Albums) -> Album {
         album_coverpath_high: cover,
         album_song_count: count,
         year,
-        extension: Some("moosync.apple.music".into()),
+        extension: Some("app.moosync.apple.music".into()),
         ..Default::default()
     }
 }
@@ -241,7 +241,7 @@ pub fn album_from_search(album: &search::Album) -> Album {
         album_coverpath_high: Some(cover),
         album_song_count: attr.track_count as f64,
         year: Some(attr.release_date.clone()),
-        extension: Some("moosync.apple.music".into()),
+        extension: Some("app.moosync.apple.music".into()),
         ..Default::default()
     }
 }
@@ -254,7 +254,7 @@ pub fn artist_from_search(artist: &search::Artist) -> Artist {
         artist_id: Some(id),
         artist_name: Some(artist.attributes.name.clone()),
         artist_coverpath: cover,
-        extension: Some("moosync.apple.music".into()),
+        extension: Some("app.moosync.apple.music".into()),
         ..Default::default()
     }
 }
@@ -273,7 +273,7 @@ pub fn playlist_from_ramdl(playlist: &playlists::Playlists) -> Playlist {
         playlist_name: attr.name.clone(),
         playlist_coverpath: cover,
         playlist_desc: desc,
-        extension: Some("moosync.apple.music".into()),
+        extension: Some("app.moosync.apple.music".into()),
         ..Default::default()
     }
 }
@@ -289,7 +289,7 @@ pub fn playlist_from_search(playlist: &search::Playlist) -> Playlist {
         playlist_name: attr.name.clone(),
         playlist_coverpath: cover,
         playlist_desc: desc,
-        extension: Some("moosync.apple.music".into()),
+        extension: Some("app.moosync.apple.music".into()),
         ..Default::default()
     }
 }

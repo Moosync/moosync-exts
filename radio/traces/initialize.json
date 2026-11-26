@@ -4,7 +4,7 @@
     {
       "type": "getProviderScopes",
       "data": {
-        "packageName": "moosync.radio"
+        "packageName": "app.moosync.radio"
       },
       "expected": ["search"]
     },

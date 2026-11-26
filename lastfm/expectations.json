@@ -6,7 +6,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.lastfm.session"
+              "key": "app.moosync.lastfm.session"
             }
           }
         },
@@ -22,7 +22,7 @@
           "set_account": {
             "account": {
               "id": "lastfm",
-              "package_name": "moosync.lastfm",
+              "package_name": "app.moosync.lastfm",
               "name": "Last.fm",
               "bg_color": "red"
             }
@@ -67,7 +67,7 @@
         "request": {
           "get_secure": {
             "data": {
-              "key": "moosync.lastfm.session"
+              "key": "app.moosync.lastfm.session"
             }
           }
         },
@@ -83,7 +83,7 @@
           "set_account": {
             "account": {
               "id": "lastfm",
-              "package_name": "moosync.lastfm",
+              "package_name": "app.moosync.lastfm",
               "name": "Last.fm",
               "bg_color": "red"
             }

@@ -21,7 +21,7 @@ func (s *SoundcloudExtension) PlaybackDetailsRequested(req *extensions.PlaybackD
 		return nil, fmt.Errorf("missing song id")
 	}
 
-	rawId := strings.TrimPrefix(*req.Song.Song.Id, "moosync.soundcloud:")
+	rawId := strings.TrimPrefix(*req.Song.Song.Id, "app.moosync.soundcloud:")
 	id, err := strconv.ParseInt(rawId, 10, 64)
 	if err != nil {
 		return nil, err
@@ -115,13 +115,13 @@ func (s *SoundcloudExtension) RequestedSearchResult(req *extensions.RequestedSea
 
 func (s *SoundcloudExtension) RequestedPlaylistSongs(req *extensions.RequestedPlaylistSongsRequest) (ret *extensions.RequestedPlaylistSongsResponse, err error) {
 	id := req.Id
-	if strings.HasPrefix(id, "moosync.soundcloud:") {
+	if strings.HasPrefix(id, "app.moosync.soundcloud:") {
 		cacheKey := PlaylistSongsCacheKey(id)
 		if cached, err := api.GetCache[*extensions.RequestedPlaylistSongsResponse](cacheKey); err == nil && cached != nil {
 			return cached, nil
 		}
 
-		playlistId, err := strconv.ParseInt(strings.TrimPrefix(id, "moosync.soundcloud:"), 10, 64)
+		playlistId, err := strconv.ParseInt(strings.TrimPrefix(id, "app.moosync.soundcloud:"), 10, 64)
 		if err != nil {
 			return ret, err
 		}

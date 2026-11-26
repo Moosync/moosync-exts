@@ -250,7 +250,7 @@ impl ApiClient {
     }
 
     pub fn match_id(&self, id: String) -> bool {
-        id.starts_with("moosync.spotify:")
+        id.starts_with("app.moosync.spotify:")
     }
 
     pub async fn fetch_user_playlists(
@@ -280,7 +280,7 @@ impl ApiClient {
         let playlist_id_str = playlist.playlist_id.ok_or("Playlist ID cannot be none")?;
 
         let playlist_id = playlist_id_str
-            .strip_prefix("moosync.spotify:")
+            .strip_prefix("app.moosync.spotify:")
             .unwrap_or(&playlist_id_str);
 
         let items = self
@@ -401,7 +401,7 @@ impl ApiClient {
 
     pub async fn song_from_id(&self, id: String) -> MoosyncResult<Song> {
         let stripped_id = id
-            .strip_prefix("moosync.spotify:")
+            .strip_prefix("app.moosync.spotify:")
             .or_else(|| id.strip_prefix("spotify:track:"))
             .or_else(|| id.strip_prefix("spotify:"))
             .unwrap_or(&id);
@@ -447,7 +447,7 @@ impl ApiClient {
         }
 
         if let Some(id) = raw_id {
-            let id = id.replace("moosync.spotify:", "");
+            let id = id.replace("app.moosync.spotify:", "");
             let album_id = AlbumId::from_id_or_uri(&id).map_err(|e| e.to_string())?;
 
             let full_album = self
@@ -512,7 +512,7 @@ impl ApiClient {
         }
 
         if let Some(id) = raw_id {
-            let id = id.replace("moosync.spotify:", "");
+            let id = id.replace("app.moosync.spotify:", "");
             let artist_id = ArtistId::from_id_or_uri(&id).map_err(|e| e.to_string())?;
 
             let mut songs = vec![];

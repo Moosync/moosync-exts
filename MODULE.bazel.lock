@@ -399,6 +399,22 @@
         ]
       }
     },
+    "@@extensions_sdk+//:signing.bzl%signing": {
+      "general": {
+        "bzlTransitiveDigest": "GCtNAVn2bKOLp5sO0xuUsk5KygRyrfSvnMDSgdiUZws=",
+        "usagesDigest": "LggmC3o7Uqc+N4MK1o2/39HVcztM+GU1NnJ6WARR5uM=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "signing_config": {
+            "repoRuleId": "@@extensions_sdk+//:signing.bzl%_signing_config_repo",
+            "attributes": {}
+          }
+        },
+        "recordedRepoMappingEntries": []
+      }
+    },
     "@@rules_android_ndk+//:extension.bzl%android_ndk_repository_extension": {
       "general": {
         "bzlTransitiveDigest": "xc3QMdf+3zdO7NDOoD4F2/nsRe6EQIktGSlbWnie1/8=",

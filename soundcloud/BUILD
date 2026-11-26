@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 go_extension(
     name = "soundcloud",
-    package_name = "moosync.soundcloud",
+    package_name = "app.moosync.soundcloud",
     srcs = [
         "cache_keys.go",
         "main.go",
