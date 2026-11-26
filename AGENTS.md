@@ -35,3 +35,5 @@
 2. **Zero `any` and Zero `as` in TypeScript**: Strictly type all models and APIs using protobuf types and type guards (`item.is(...)`).
 3. **No Unsanitized Expectations**: Never commit live OAuth tokens, refresh tokens, or bearer headers in `expectations.json`. Always sanitize after recording.
 4. **Specific Assertions**: Always assert specific IDs, titles, URLs, durations, and account states in tests. Avoid weak or generic assertions.
+5. **No `local_path_override` in `MODULE.bazel`**: Never commit `local_path_override` or `local_repository` for `moosync` or `extensions_sdk`; always use `git_override` and verify with `bazel run //tools:check_git_override`.
+6. **Never Commit `.env` or Secret Files**: Ensure `.env` files are never tracked in `jj` history (`jj file untrack <path>` if tracked; verify `jj log -r 'files(glob:"**/.env")'` is empty).

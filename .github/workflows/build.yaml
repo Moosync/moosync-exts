@@ -34,8 +34,16 @@ jobs:
           repository-cache: true
 
       - name: Build extensions and manifest
+        env:
+          EXTENSION_SIGNING_KEY: ${{ secrets.EXTENSION_SIGNING_KEY }}
         run: |
-          bazel build //:all //:manifest
+          SIGN_FLAG=""
+          if [ -n "$EXTENSION_SIGNING_KEY" ]; then
+            printf '%s\n' "$EXTENSION_SIGNING_KEY" > signing_key.asc
+            SIGN_FLAG="--@extensions_sdk//:signing_key=//:signing_key.asc"
+          fi
+          bazel build $SIGN_FLAG //:all //:manifest
+          rm -f signing_key.asc
           mkdir -p dist
           find -L bazel-bin -maxdepth 2 -name "*.msxt" -exec cp -f {} dist/ \;
           cp -f bazel-bin/manifest.pb dist/
